@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+	<link rel="shortcut icon" href="@assets/imgs/init_favicon.ico" type="image/x-icon">
+
+	<!-- Jquery -->
+	<script src="@assets/js/jquery.min.js"></script>
+	<!-- Popper -->
+	<script src="@assets/js/popper.min.js"></script>
+	<!-- Bootstrap -->
+	<script src="@assets/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="@assets/css/bootstrap.css">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="@assets/css/fontawesome.css">
+	<!-- Custom -->
+	<script src="@assets/js/main.js"></script>
+	<link rel="stylesheet" href="@assets/css/main.css">
+</head>
+<body>
+
+	<!-- view codes... -->
+	<div class="bg-white my-5 text-center">
+		<h1 class="display-3">The Doe Family</h1>
+
+		@stmt $users = json_decode($users, true);
+		@foreach ($users as $user)
+			<li class="display-4">{{$user}}</li>
+		@endforeach
+		
+	</div>
+
+</body>
+</html>
