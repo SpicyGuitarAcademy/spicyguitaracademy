@@ -1,0 +1,179 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "bdc37ad0b1593354a1d553a2d7da7147",
+    "packages": [
+        {
+            "name": "apache/log4php",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/apache/logging-log4php.git",
+                "reference": "5118e1427f685b3eda309668336e014ecf966a4e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/apache/logging-log4php/zipball/5118e1427f685b3eda309668336e014ecf966a4e",
+                "reference": "5118e1427f685b3eda309668336e014ecf966a4e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.7"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/main/php/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "A versatile logging framework for PHP",
+            "homepage": "http://logging.apache.org/log4php/",
+            "keywords": [
+                "log",
+                "logging",
+                "php"
+            ],
+            "time": "2012-10-26T09:10:35+00:00"
+        },
+        {
+            "name": "ezyang/htmlpurifier",
+            "version": "v4.12.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ezyang/htmlpurifier.git",
+                "reference": "a617e55bc62a87eec73bd456d146d134ad716f03"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/a617e55bc62a87eec73bd456d146d134ad716f03",
+                "reference": "a617e55bc62a87eec73bd456d146d134ad716f03",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2"
+            },
+            "require-dev": {
+                "simpletest/simpletest": "dev-master#72de02a7b80c6bb8864ef9bf66d41d2f58f826bd"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "HTMLPurifier": "library/"
+                },
+                "files": [
+                    "library/HTMLPurifier.composer.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Edward Z. Yang",
+                    "email": "admin@htmlpurifier.org",
+                    "homepage": "http://ezyang.com"
+                }
+            ],
+            "description": "Standards compliant HTML filter written in PHP",
+            "homepage": "http://htmlpurifier.org/",
+            "keywords": [
+                "html"
+            ],
+            "time": "2019-10-28T03:44:26+00:00"
+        },
+        {
+            "name": "initframework/initframework",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Ebuka18/initframework.git",
+                "reference": "377eb6f0f4a2b5913bc604fc06fea3e8ebb115be"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Ebuka18/initframework/zipball/377eb6f0f4a2b5913bc604fc06fea3e8ebb115be",
+                "reference": "377eb6f0f4a2b5913bc604fc06fea3e8ebb115be",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ebuka Odini",
+                    "email": "ebukaodini@gmail.com",
+                    "homepage": "http://github.com/Ebuka18",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A minimalistic web framework for php developers.",
+            "homepage": "http://initframework.com",
+            "keywords": [
+                "initframework",
+                "minimalistic",
+                "php",
+                "web framework"
+            ],
+            "time": "2020-04-16T18:00:17+00:00"
+        },
+        {
+            "name": "owasp/esapi",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/renaatdemuynck/PHP-ESAPI.git",
+                "reference": "25e51639c6e6655f8d2533b57fc351aa591784b8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/renaatdemuynck/PHP-ESAPI/zipball/25e51639c6e6655f8d2533b57fc351aa591784b8",
+                "reference": "25e51639c6e6655f8d2533b57fc351aa591784b8",
+                "shasum": ""
+            },
+            "require": {
+                "apache/log4php": "2.0.0",
+                "ezyang/htmlpurifier": "~4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "OWASP Enterprise Security API",
+            "time": "2015-04-28T14:54:36+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "initframework/initframework": 20,
+        "owasp/esapi": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
+}

@@ -1,0 +1,17 @@
+{
+    "name": "ebuka/testinitframework",
+    "description": "I will be testing initframework",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ebuka",
+            "email": "ebukaodini@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "initframework/initframework": "dev-master",
+        "owasp/esapi": "dev-master"
+    }
+}
