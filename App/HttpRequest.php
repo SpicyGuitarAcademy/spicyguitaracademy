@@ -141,6 +141,8 @@ class HttpRequest
          echo "$key ===========> $value <br>";
       }
 
+      exit;
+
       // set the ip address
       $this->ipAddr = $_SERVER['REMOTE_ADDR'];
    }
