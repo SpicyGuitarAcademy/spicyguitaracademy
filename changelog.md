@@ -5,6 +5,8 @@
    + To use asset files, just use @assets followed by the asset directory
      E.g "@assets/css/main.css"
      This would be converted to "public/assets/css/main.css"
+     Note: Any line on your view file with "@assets/, would be converted to "public/assets/
+           @assets would not be converted, @assets/ would not be converted
 
    - On the views, you can now remove the {{storage('')}} function when calling storage files
    + To use storage files, just call the storage file as "storage/your_image.png"
