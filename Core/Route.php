@@ -12,8 +12,8 @@ class Route
    public function __construct()
    {
       \session_start();
-      \setWebRoute();
-      \setApiRoute();
+      // \setWebRoute();
+      // \setApiRoute();
       $this->setRequestURL();
    }
 
@@ -219,8 +219,10 @@ class Route
    public static function redirect(string $name, array $data = null)
    {
       $url = self::getUri($name, $data);
-      header("Location: ". $url);
-      exit;
+      if (!\headers_sent()) {
+         header("Location: ". $url);
+         exit;
+      }
    }
 
    /**

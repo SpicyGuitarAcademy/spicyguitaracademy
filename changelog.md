@@ -13,3 +13,6 @@
 
    - On the views, you can now call route ends without the {{route('')}} function
    + To call and endpoint, use "./your_endpoint/1" (prefered) or "your_endpoint/1"
+
+# Routing
+  `Every application is supposed to have an entry point, like a main(List<String> args) function. For web application in php, traditionally this is the index.php page which returns a html page. But Init Framework would not be doing that.`

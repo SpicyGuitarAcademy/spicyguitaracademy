@@ -1,17 +1,45 @@
 <?php
 use Core\Route;
 
-// Configs
-include_once '../config.php';
+class App
+{
+   public function __construct()
+   {
 
-// Routes
-include_once '../routes/web.php';
-include_once '../routes/api.php';
+      // Include the Autoload file
+      include_once '../autoload.php';
 
-// autoload
-include_once '../autoload.php';
+      // Setup Configurations
+      include_once '../config.php';
+
+      // Set the Routes
+      $this->setWebRoutes();
+      $this->setApiRoutes();
+
+      // Start Routing
+      (new Route)->Init();
+
+   }
+
+   protected function setWebRoutes()
+   {
+
+      /// Web Route Endpoints
+      ///
+      /// Your route endpoints are the entry point to your applications
+      /// 
+
+      Route::get('/','home','HomeController@index');
+      Route::get('/users','users','HomeController@users');
+   }
+
+   protected function setApiRoutes()
+   {
+
+   }
+}
 
 // Initialize Application 😉
-(new Route)->Init();
+new App();
 
 ?>
