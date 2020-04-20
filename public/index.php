@@ -22,9 +22,9 @@ class App
       $this->setApiRoutes();
 
       // Start Routing
-      (new Route)->Init();
+      // (new Route)->Init();
 
-      // new HttpRequest();
+      new Request();
 
    }
 
@@ -40,7 +40,7 @@ class App
       */ 
 
       Route::get('/','home','HomeController@index');
-      Route::get('/users','users','HmeController@users');
+      Route::get('/users','users','HomeController@users');
    }
 
    protected function setApiRoutes()

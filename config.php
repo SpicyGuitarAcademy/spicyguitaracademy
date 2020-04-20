@@ -6,17 +6,31 @@ CONST Config = [
    "APP" => "TESTFRAMEWORK",
    "DOMAIN" => "/testframework",
    // "DOMAIN" => "http://test.initframework.com",
+
+   "APP_URL" => "http://localhost",
+   "APP_DEBUG" => "true",
+   "APP_NAME" => "TESTFRAMEWORK",
    
    // DATABASE CONFIGURATION
-   "DB_CONNECTION" => "mysql",
+   "DB_DRIVER" => "mysql",
    "DB_HOST" => "localhost",
    "DB_PORT" => "3306",
    "DB_DATABASE" => "",
    "DB_USERNAME" => "",
    "DB_PASSWORD" => "",
+
+   "MAIL_DRIVER" => "smtp",
+   "MAIL_HOST" => "smtp.mailtrap.io",
+   "MAIL_PORT" => "2525",
+   "MAIL_USERNAME" => "null",
+   "MAIL_PASSWORD" => "null",
+   "MAIL_ENCRYPTION" => "null",
    
    // AUTH
    "AUTH_TIMEOUT" => 1, # 1 = 1 hour
+
+   "SERVER_ADMIN" => "webmaster@test.initframework.com", // postmaster@localhost
+
 ];
 
 // DISPLAY ERROR
