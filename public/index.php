@@ -12,7 +12,7 @@ class App
 
       // Include the Autoload files
       include_once '../autoload.php';
-      include_once '../vendor/autoload.php';
+      // include_once '../vendor/autoload.php';
 
       // Setup Configurations
       include_once '../config.php';
@@ -22,9 +22,9 @@ class App
       $this->setApiRoutes();
 
       // Start Routing
-      // (new Route)->Init();
+      (new Route)->Init();
 
-      new HttpRequest();
+      // new HttpRequest();
 
    }
 
