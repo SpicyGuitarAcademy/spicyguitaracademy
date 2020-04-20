@@ -30,13 +30,14 @@ class App
 
    protected function setWebRoutes()
    {
-      // use App\Route;
       /*
          ----------------------------------------------------------------
          Web Routes
          ----------------------------------------------------------------
          
          These are the entry points into your Web Applications.
+
+         ----------------------------------------------------------------
       */ 
 
       Route::get('/','home','HomeController@index');

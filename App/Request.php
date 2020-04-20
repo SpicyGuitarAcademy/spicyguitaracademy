@@ -18,34 +18,56 @@ class Request
 
    private $uri;
 
+   private $method;
+
    public function __construct()
    {
       
-      // get the server
-      $server = $_SERVER;
+      // get the request data
+      $request = $_SERVER;
 
-      // get the ip address
-      $this->ip = $server['REMOTE_ADDR'];
+      // set the ip address
+      $this->ip = $request['REMOTE_ADDR'];
 
-      // get the request scheme
-      $this->scheme = $server['REQUEST_SCHEME'];
+      // set the request scheme
+      $this->scheme = $request['REQUEST_SCHEME'];
 
-      // get the request host
-      $this->host = $server['SERVER_NAME'];
+      // set the request host
+      $this->host = $request['SERVER_NAME'];
 
       // get the request uri
-      $uri = $server['REQUEST_URI'];
+      $uri = $request['REQUEST_URI'];
 
       // set the applications full path
       $this->path = $this->scheme . "://" . $this->host . $uri;
 
-      // set the real request uri
-      // remove localhost
-      $this->uri = str_replace(\Config["APP_URL"], "", $uri);
+      // set the query string
+      $this->query = $request['QUERY_STRING'];
 
-      die($this->uri);
+      /* 
+         ----------------------------------------------------------------
+         Setting the real request uri
+         ----------------------------------------------------------------
 
-      $this->query = $server['QUERY_STRING'];
+         When on localhost, the exact request uri cannot be retrieved.
+         Hence we retrieve it by replacing the APP_URL (from Config.php) 
+         in the full request path with an empty string; and also replacing
+         the query string with an empty string.
+
+         ----------------------------------------------------------------
+      */
+      $uri = str_replace(\Config["APP_URL"], "", $this->path);
+      
+      if (!empty($this->query))
+      $this->uri = str_replace("?" . $this->query, "", $uri);
+
+      // set the request method
+      $this->method = $request['REQUEST_METHOD'];
+
+      // Clean up
+      $uri = null;
+      $request = null;
+      $_SERVER = null;
 
    }
 
@@ -56,27 +78,27 @@ class Request
 
    public function path()
    {
-      return $this->request["REQUEST_SCHEME"];
+      return $this->path;
    }
 
    public function scheme()
    {
-      return $this->request["REQUEST_SCHEME"];
+      return $this->scheme;
    }
    
    public function host()
    {
-      return $this->request["REQUEST_SCHEME"];
+      return $this->host;
    }
 
    public function query()
    {
-      return $this->request["REQUEST_SCHEME"];
+      return $this->query;
    }
 
    public function uri()
    {
-      return $this->request["REQUEST_SCHEME"];
+      return $this->uri;
    }
 
 

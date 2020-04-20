@@ -7,7 +7,7 @@ CONST Config = [
    "DOMAIN" => "/testframework",
    // "DOMAIN" => "http://test.initframework.com",
 
-   "APP_URL" => "http://localhost",
+   "APP_URL" => "http://localhost/testframework",
    "APP_DEBUG" => "true",
    "APP_NAME" => "TESTFRAMEWORK",
    
