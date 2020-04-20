@@ -24,24 +24,16 @@ class HomeController extends Controller
 
    public function users(array $data)
    {
-      // View::show('users.html')
-      // ->with([
+      
+      foreach ($_SERVER as $key => $value) {
+         echo "$key ===========> $value <br>";
+      }
+
+      exit;
+
+      // View::with([
       //    "users"=>json_encode(['John Doe','Jane Doe','David Doe','Janet Doe'])
-      // ]);
-
-      // gettype();
-
-      $users = json_decode(json_encode(['John Doe','Jane Doe','David Doe','Janet Doe']));
-
-      // die(gettype($users));
-
-      // foreach ($variable as $key => $value) {
-      //    # code...
-      // }
-
-      View::with([
-         "users"=>json_encode(['John Doe','Jane Doe','David Doe','Janet Doe'])
-      ])->show('users.html');
+      // ])->show('users.html');
    }
 
 }
