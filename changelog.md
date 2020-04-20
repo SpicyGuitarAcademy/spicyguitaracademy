@@ -15,4 +15,7 @@
    + To call and endpoint, use "./your_endpoint/1" (prefered) or "your_endpoint/1"
 
 # Routing
-  `Every application is supposed to have an entry point, like a main(List<String> args) function. For web application in php, traditionally this is the index.php page which returns a html page. But Init Framework would not be doing that.`
+  `Every application is supposed to have an entry point, like a main(List<String> args) function. For web application in php, traditionally this is the index.php page which returns a html page. But Init Framework has one major indpoint which is the public/index.php. It is in this entry file that other entry points are defined both for the web and for apis.`
+
+  - One less directory in th eroot directory (i.e. routes)
+  + The routes are now methods (setWebRoutes, setApiRoutes) in the App Class
