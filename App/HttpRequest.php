@@ -137,11 +137,7 @@ class HttpRequest
    {
       // echo json_encode($_SERVER, JSON_PRETTY_PRINT);
 
-      foreach ($_SERVER as $key => $value) {
-         echo "$key ===========> $value <br>";
-      }
-
-      exit;
+      
 
       // set the ip address
       $this->ipAddr = $_SERVER['REMOTE_ADDR'];

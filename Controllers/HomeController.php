@@ -13,7 +13,13 @@ class HomeController extends Controller
 
    public function index(array $data)
    {
-      View::show('welcome.html');
+      // View::show('welcome.html');
+
+      foreach ($_SERVER as $key => $value) {
+         echo "$key ===========> $value <br>";
+      }
+
+      exit;
    }
 
    public function users(array $data)
