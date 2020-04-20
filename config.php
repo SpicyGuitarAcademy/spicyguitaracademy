@@ -4,8 +4,8 @@
 CONST Config = [
    // APP
    "APP" => "TESTFRAMEWORK",
-   "DOMAIN" => "/testframework",
-   // "DOMAIN" => "http://testinitframework.com",
+//    "DOMAIN" => "/testframework",
+   "DOMAIN" => "http://initframework.com/test",
    
    // DATABASE CONFIGURATION
    "DB_CONNECTION" => "mysql",
