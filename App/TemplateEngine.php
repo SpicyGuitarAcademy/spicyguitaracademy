@@ -1,6 +1,6 @@
 <?php
-namespace Core;
-use Core\Error;
+namespace App;
+use App\Error;
 
 class TemplateEngine
 {

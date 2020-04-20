@@ -1,7 +1,7 @@
 <?php
-namespace Core;
+namespace App;
 
-class HttpRequest
+class Request
 {
    /**
     * A method that returns all the parameters in Get Request
@@ -123,6 +123,34 @@ class HttpRequest
       return [$uriMatch, $httpParams];
 
    }
+
+}
+
+
+
+class HttpRequest
+{
+
+   private $ipAddr;
+
+   public function __construct()
+   {
+      // echo json_encode($_SERVER, JSON_PRETTY_PRINT);
+
+      foreach ($_SERVER as $key => $value) {
+         echo "$key ===========> $value <br>";
+      }
+
+      // set the ip address
+      $this->ipAddr = $_SERVER['REMOTE_ADDR'];
+   }
+
+   public function ipAddr()
+   {
+      return $this->ipAddr;
+   }
+
+
 
 }
 

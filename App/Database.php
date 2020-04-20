@@ -1,8 +1,8 @@
 <?php
-namespace Core;
+namespace App;
 use PDO;
 use PDOException;
-use Core\Error;
+use App\Error;
 
 class Database
 {

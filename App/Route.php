@@ -1,7 +1,7 @@
 <?php
-namespace Core;
-use Core\HttpRequest;
-use Core\Error;
+namespace App;
+use App\HttpRequest;
+use App\Error;
 
 class Route
 {
@@ -47,6 +47,7 @@ class Route
     * @param string $name the unique name of the route
     * @param string $controller the controller to be called when url is matched
     */
+    
    public static function get(string $uri, string $name, string $controller)
    {
       if ( isset($uri) && isset($name) && isset($controller) && (self::checkUnique($uri,$name) == true) ){
@@ -147,16 +148,21 @@ class Route
                $controller = $namespace.$controllerName;
 
                // Create a new instance of the Controller
-               $controller = new $controller();
-               // if the requested method exists
-               if (method_exists($controller, $methodName)){
-                  // send the result from the controller to the HttpResponse class to return response to the user
-                  // NB: httpParams would always be sent to a controller method
-                  $routed = true;
-                  $controller->$methodName($httpParams);
-               }else{
+               if (class_exists($controller)) {
+                  $controller = new $controller();
+                  // if the requested method exists
+                  if (method_exists($controller, $methodName)){
+                     // send the result from the controller to the HttpResponse class to return response to the user
+                     // NB: httpParams would always be sent to a controller method
+                     $routed = true;
+                     $controller->$methodName($httpParams);
+                  }else{
+                     // handle error
+                     Error::notFound("Requested Controller Method <i><b>'$methodName'</b></i> not found in controller <i><b>'$controllerName'</b></i> <!--");
+                  }
+               } else{
                   // handle error
-                  Error::notFound("Requested method <i><b>'$methodName'</b></i> not found in controller <i><b>'$controllerName'</b></i> <!--");
+                  Error::notFound("Requested Controller <i><b>'$controller'</b></i> not found <!--");
                }
                break;
             } else {

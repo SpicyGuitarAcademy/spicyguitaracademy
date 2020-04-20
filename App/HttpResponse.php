@@ -1,6 +1,6 @@
 <?php
-namespace Core;
-use Core\Model;
+namespace App;
+use App\Model;
 
 class HttpResponse
 {

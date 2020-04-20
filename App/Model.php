@@ -1,7 +1,7 @@
 <?php
-namespace Core;
-use Core\Database;
-use Core\Error;
+namespace App;
+use App\Database;
+use App\Error;
 use PDO;
 
 class Model extends Database

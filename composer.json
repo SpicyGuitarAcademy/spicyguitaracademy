@@ -12,6 +12,7 @@
     "minimum-stability": "dev",
     "require": {
         "initframework/initframework": "dev-master",
-        "owasp/esapi": "dev-master"
+        "owasp/esapi": "dev-master",
+        "monolog/monolog" : "1.0.0"
     }
 }

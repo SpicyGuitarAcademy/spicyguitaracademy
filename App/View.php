@@ -1,8 +1,8 @@
 <?php
-namespace Core;
-use Core\TemplateEngine;
-use Core\HttpResponse;
-use Core\Error;
+namespace App;
+use App\TemplateEngine;
+use App\HttpResponse;
+use App\Error;
 
 class View
 {
