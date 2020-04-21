@@ -1,9 +1,9 @@
 <?php
 namespace App;
 use App\Route;
-
 use App\Request;
-use Initframework\TestAutoloader;
+// use Initframework\TestAutoloader;
+// use ESAPI;
 
 class App
 {
@@ -12,7 +12,7 @@ class App
 
       // Include the Autoload files
       include_once '../autoload.php';
-      // include_once '../vendor/autoload.php';
+      include_once '../vendor/autoload.php';
 
       // Setup Configurations
       include_once '../config.php';
@@ -22,9 +22,7 @@ class App
       $this->setApiRoutes();
 
       // Start Routing
-      // (new Route)->Init();
-
-      new Request();
+      (new Route)->Init(new Request());
 
    }
 
@@ -46,12 +44,23 @@ class App
 
    protected function setApiRoutes()
    {
+      /*
+         ----------------------------------------------------------------
+         Web Routes
+         ----------------------------------------------------------------
+         
+         These are the entry points into your APIs.
 
+         ----------------------------------------------------------------
+      */
    }
 }
 
 // Initialize Application 😉
 new App();
+
+
+
 
 // // Closures
 // // working
@@ -90,5 +99,8 @@ new App();
 //    return json_encode($arg);
 // };
 // echo $runE(['she','fine']);
+
+
+// include "../vendor/owasp/esapi/src/ESAPI.php";
 
 ?>

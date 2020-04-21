@@ -1,6 +1,7 @@
 <?php
 namespace App;
 use App\HttpRequest;
+use App\Request;
 use App\Error;
 
 class Route
@@ -12,8 +13,6 @@ class Route
    public function __construct()
    {
       \session_start();
-      // \setWebRoute();
-      // \setApiRoute();
       $this->setRequestURL();
    }
 
@@ -104,9 +103,10 @@ class Route
    /**
     * A method to match all the registered route with the current uri, and calls its controller
     */
-   public function Init()
+   public function Init(Request $Request)
    {
-      $Request = new HttpRequest();
+
+      $HRequest = new HttpRequest();
 
       // Loop through all routes
       foreach (self::$allRoutes as $route ) {
@@ -114,7 +114,7 @@ class Route
          
          // break the url
          $routeUriChunks = explode("/", $route["uri"]);
-         $requestUriChunks = explode("/", $this->requestUrl);
+         $requestUriChunks = explode("/", $Request->uri());
          
          $httpVerb = $route["verb"]; // get the http verb
 
@@ -125,12 +125,12 @@ class Route
 
             if ($httpVerb == "get") {
                // get the status of the matching and the parameters if any exists
-               list($status, $httpParams) = $Request->Get($routeUriChunks, $requestUriChunks);
+               list($status, $httpParams) = $HRequest->Get($routeUriChunks, $requestUriChunks);
             }
 
             elseif ($httpVerb == "post") {
                // get the status of the matching and the parameters if any exists
-               list($status, $httpParams) = $Request->Post($routeUriChunks, $requestUriChunks);
+               list($status, $httpParams) = $HRequest->Post($routeUriChunks, $requestUriChunks);
             }
 
             // if at the end of the matching the bool is true, then it can route
@@ -182,6 +182,7 @@ class Route
       }
 
    }
+
    
    /**
     * Depreciated
