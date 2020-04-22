@@ -4,6 +4,7 @@ namespace App;
 use App\Request;
 use App\Response;
 use App\Routing;
+use App\View;
 
 class Http
 {
@@ -18,6 +19,12 @@ class Http
 
    public function __construct()
    {
+
+      // If application is on maintenance
+      // if (\Config['APP_MAINTAINANCE'] == true) {
+
+      // }
+
       $this->request = new Request();
       $this->response = new Response();
 
@@ -102,7 +109,16 @@ class Http
 
    public function end()
    {
-      $this->response->not_found();
+      // $this->response->not_found(
+      //    "Good"
+      //    // View::with([
+      //    //    "code"=>404,
+      //    //    "message"=>"Route not found."
+      //    // // ])->render('framework/404.html')
+      //    // ])->internal_render('framework/404.html')
+      // );
+
+      $this->response->send('',1000);
    }
 
    public static function middleware()
