@@ -1,8 +1,11 @@
 <?php
 namespace App;
+use App\ExceptionHandler;
 
 class Response
 {
+
+   private $response_content_type;
 
    public function __construct()
    {
@@ -40,7 +43,7 @@ class Response
          exit($response_message);
       } else {
          \http_response_code(404);
-         throw new Exception;
+         throw new ExceptionHandler();
          // ("Error Processing Request", 1);
       }
    }
