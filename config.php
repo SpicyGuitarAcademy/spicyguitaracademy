@@ -2,14 +2,20 @@
 
 
 CONST Config = [
-   // APP
+   // APPLICATION
    "APP" => "TESTFRAMEWORK",
-   "DOMAIN" => "/testframework",
+   // "DOMAIN" => "/testframework",
    // "DOMAIN" => "http://test.initframework.com",
 
+   "APP_NAME" => "Initframework",
    "APP_URL" => "http://localhost/testframework",
-   "APP_DEBUG" => "true",
-   "APP_NAME" => "TESTFRAMEWORK",
+   "APP_DEBUG" => true,
+   "APP_MAINTAINANCE" => true,
+
+   // set the ip addresses that can access the application while on maintenance
+   "APP_MAINTENANCE_ALLOWED_IP" => [
+      "::1",
+   ],
    
    // DATABASE CONFIGURATION
    "DB_DRIVER" => "mysql",

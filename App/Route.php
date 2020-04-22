@@ -103,9 +103,9 @@ class Route
    /**
     * A method to match all the registered route with the current uri, and calls its controller
     */
-   public function Init(Request $Request)
+   public function Init()
    {
-
+      $Request = new Request();
       $HRequest = new HttpRequest();
 
       // Loop through all routes
@@ -182,7 +182,6 @@ class Route
       }
 
    }
-
    
    /**
     * Depreciated

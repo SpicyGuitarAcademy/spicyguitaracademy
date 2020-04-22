@@ -13,6 +13,7 @@
     "require": {
         "initframework/initframework": "dev-master",
         "owasp/esapi": "dev-master",
-        "monolog/monolog" : "1.0.0"
+        "monolog/monolog" : "1.0.0",
+        "phpunit/phpunit": "^9.2@dev"
     }
 }

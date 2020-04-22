@@ -28,6 +28,44 @@ class View
       (new HttpResponse)->respondHTML($view);
    }
 
+   public static function internal_render(string $filename)
+   {
+      $view = "";
+      $file = self::$fileRoot . $filename;
+
+      // if file exists
+      if (file_exists($file)) {
+         // Convert PHP Snippets
+         $view = (new TemplateEngine)->convertToHTML($file);
+      } else {
+         $stack = \debug_backtrace();
+         $errfile = $stack[0]['file'];
+         $errline = $stack[0]['line'];
+         Error::internalError("File <i><b>'$file'</b></i> doesn't exist in <b>$errfile</b> on line <b>$errline</b><!--");
+      }
+      
+      return $view;
+   }
+
+   public static function render(string $filename)
+   {
+      $view = "";
+      $file = self::$fileRoot . $filename;
+
+      // if file exists
+      if (file_exists($file)) {
+         // Convert PHP Snippets
+         $view = \file_get_contents($file);
+      } else {
+         $stack = \debug_backtrace();
+         $errfile = $stack[0]['file'];
+         $errline = $stack[0]['line'];
+         Error::internalError("File <i><b>'$file'</b></i> doesn't exist in <b>$errfile</b> on line <b>$errline</b><!--");
+      }
+      
+      return $view;
+   }
+
    public static function with(array $data = [])
    {
       foreach ($data as $key => $value) {

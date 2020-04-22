@@ -26,12 +26,39 @@
 	<div class="bg-white my-5 text-center">
 		<h1 class="display-3">The Doe Family</h1>
 
-		@stmt $users = json_decode($users, true);
-		@foreach ($users as $user)
-			<li class="display-4">{{$user}}</li>
+		@stmt $request = json_decode($request, true);
+		@foreach ($request as $key => $val)
+			<li class="display-4">{{$key}} => {{$val}}</li>
 		@endforeach
+
+		<button class="btn btn-lg btn-dark" onclick="sendPut()">Send a Put Request</button>
 		
 	</div>
 
 </body>
+
+<script>
+
+function sendPut()
+{
+	var settings = {
+	"async": true,
+	"crossDomain": true,
+	"url": "./users",
+	// "url": "http://localhost/testframework/users/4?range=50",
+	"method": "PUT",
+	//   "headers": {
+	//     "authorization": "Basic ZWJ1a2E6MTIzNDU=",
+	//     "cache-control": "no-cache",
+	//     "postman-token": "4d92a96b-b47a-a553-a362-8ba439edf082"
+	// 	}
+	}
+
+	$.ajax(settings).done(function (response) {
+		console.log(response);
+	});
+}
+
+</script>
+
 </html>
