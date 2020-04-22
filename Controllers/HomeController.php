@@ -95,7 +95,11 @@ class HomeController extends Controller
       // View::show('');
       // die("Putty to the World!");
 
-      Http::put('/hla','');
+      // Http::put('/hla','');
+
+      $res->send(
+         View::render('welcome.html'), 300
+      );
    }
 
 }

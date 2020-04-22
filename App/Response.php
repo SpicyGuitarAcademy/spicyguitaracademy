@@ -29,14 +29,26 @@ class Response
       
    }
 
-   public static function send(int $resp_code)
+   public function send(string $response_message = "", int $resp_code = 200)
    {
+      $valid_response_codes = [200, 404, 300];
+      if (in_array($resp_code, $valid_response_codes)) {
+         // set the response code
+         \http_response_code($resp_code);
 
+         // send the response message
+         exit($response_message);
+      } else {
+         \http_response_code(404);
+         throw new Exception;
+         // ("Error Processing Request", 1);
+      }
    }
 
-   public function not_found()
+   public function not_found(string $response_message = "")
    {
-      \http_response_code(404);
+      \http_response_code(403);
+      exit($response_message);
    }
 
    // continue with the remaining response codes
