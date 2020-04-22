@@ -32,46 +32,58 @@ class Http
       $this->uri = $this->request->uri();
    }
 
-   // $this->
-   // self::$
-
    public function get(string $route, string $next)
    {
-      self::__construct();
       // restrict to only GET requests
       if ($this->method != "GET") {
          return;
       }
 
-      // compare the uri with the route
-      list($status, $route_params) = Routing::compare($route, $this->uri);
-
-      // if comparison fails
-      if ($status == false) {
-         return;
-      }
-   
-      // set the route parameter property of Request
-      $this->request->set_route_params($route_params);
-
-      // set a default response header for the request
-
-      // then call the controller method -> next
-      Routing::route($next, $this->request, $this->response);
+      $this->handle_request($route, $next);
    }
 
-   public static function post()
+   public function post(string $route, $next)
    {
-      
+      // restrict to only POST requests
+      if ($this->method != "POST") {
+         return;
+      }
+
+      $this->handle_request($route, $next);
    }
 
    public function put(string $route, $next)
    {
-      // restrict to only GET requests
+      // restrict to only PUT requests
       if ($this->method != "PUT") {
          return;
       }
 
+      $this->handle_request($route, $next);
+   }
+
+   public function patch(string $route, $next)
+   {
+      // restrict to only PATCH requests
+      if ($this->method != "PATCH") {
+         return;
+      }
+
+      $this->handle_request($route, $next);
+   }
+
+   public function delete(string $route, $next)
+   {
+      // restrict to only PATCH requests
+      if ($this->method != "PATCH") {
+         return;
+      }
+
+      $this->handle_request($route, $next);
+   }
+
+   private function handle_request(string $route, $next)
+   {
       // compare the uri with the route
       list($status, $route_params) = Routing::compare($route, $this->uri);
       // list($status, $route_params) = Routing::compare($route, self::$uri);
@@ -95,16 +107,6 @@ class Http
          // then call the controller method -> next
          Routing::route($next, $this->request, $this->response);
       }
-   }
-
-   public static function patch()
-   {
-      
-   }
-
-   public static function delete()
-   {
-      
    }
 
    public function end()
