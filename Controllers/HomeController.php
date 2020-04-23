@@ -1,5 +1,5 @@
 <?php
-namespace Controllers;
+// namespace Controllers;
 use App\Controller;
 use App\Route;
 use App\View;
@@ -8,13 +8,9 @@ use App\Request;
 use App\Response;
 use App\Http;
 
-class HomeController extends Controller
+class HomeController// extends Controller
 {
-   public function __construct()
-   {
-      parent::__construct();
-   }
-
+   
    public function index(array $data)
    {
       View::show('welcome.html');

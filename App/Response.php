@@ -34,18 +34,36 @@ class Response
 
    public function send(string $response_message = "", int $resp_code = 200)
    {
-      $valid_response_codes = [200, 404, 300];
-      if (in_array($resp_code, $valid_response_codes)) {
-         // set the response code
-         \http_response_code($resp_code);
+      $valid_response_codes = [
+         // Information response codes
+         100, 101, 103, 
+         // Success response codes
+         200, 201, 202, 203, 204, 205, 206, 
+         // Redirect response codes
+         300, 301, 302, 303, 304, 306, 307, 308, 
+         // Client response codes
+         400, 401, 402, 403, 404, 405, 406, 407, 408, 
+         409, 410, 411, 412, 413, 414, 415, 416, 417, 
+         // Server response codes
+         500, 501, 502, 503, 504, 505, 511
+      ];
 
-         // send the response message
-         exit($response_message);
-      } else {
-         \http_response_code(404);
-         throw new ExceptionHandler();
-         // ("Error Processing Request", 1);
+      try {
+         if (in_array($resp_code, $valid_response_codes)) {
+            // set the response code
+            \http_response_code($resp_code);
+
+            // send the response message
+            exit($response_message);
+         } else {
+            \http_response_code(404);
+            throw new ExceptionHandler();
+            // ("Error Processing Request", 1);
+         }
+      } catch (\ExceptionHandler $th) {
+         //throw $th;
       }
+      
    }
 
    public function not_found(string $response_message = "")

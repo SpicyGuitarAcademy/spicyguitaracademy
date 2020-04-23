@@ -13,8 +13,8 @@ CONST Config = [
    "APP_MAINTAINANCE" => true,
 
    // set the ip addresses that can access the application while on maintenance
-   "APP_MAINTENANCE_ALLOWED_IP" => [
-      "::1",
+   "APP_MAINTENANCE_WHITELIST_IP" => [
+      
    ],
    
    // DATABASE CONFIGURATION

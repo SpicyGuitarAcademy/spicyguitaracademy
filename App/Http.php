@@ -19,12 +19,6 @@ class Http
 
    public function __construct()
    {
-
-      // If application is on maintenance
-      // if (\Config['APP_MAINTAINANCE'] == true) {
-
-      // }
-
       $this->request = new Request();
       $this->response = new Response();
 
@@ -39,7 +33,7 @@ class Http
          return;
       }
 
-      $this->handle_request($route, $next);
+      $this->handle_web_request($route, $next);
    }
 
    public function post(string $route, $next)
@@ -49,7 +43,7 @@ class Http
          return;
       }
 
-      $this->handle_request($route, $next);
+      $this->handle_web_request($route, $next);
    }
 
    public function put(string $route, $next)
@@ -59,7 +53,7 @@ class Http
          return;
       }
 
-      $this->handle_request($route, $next);
+      $this->handle_web_request($route, $next);
    }
 
    public function patch(string $route, $next)
@@ -69,7 +63,7 @@ class Http
          return;
       }
 
-      $this->handle_request($route, $next);
+      $this->handle_web_request($route, $next);
    }
 
    public function delete(string $route, $next)
@@ -79,18 +73,24 @@ class Http
          return;
       }
 
-      $this->handle_request($route, $next);
+      $this->handle_web_request($route, $next);
    }
 
-   private function handle_request(string $route, $next)
+   private function handle_web_request(string $route, $next)
    {
       // compare the uri with the route
       list($status, $route_params) = Routing::compare($route, $this->uri);
-      // list($status, $route_params) = Routing::compare($route, self::$uri);
 
       // if comparison fails
       if ($status == false) {
          return;
+      }
+      
+      // If application is on maintenance
+      // and client IP is not whitelisted
+      // block the access
+      if (\Config['APP_MAINTAINANCE'] == true && !in_array($this->request->ip(), \Config['APP_MAINTENANCE_WHITELIST_IP'])) {
+         $this->response->send(View::render('framework/maintenance.html'), 403);
       }
    
       // set the route parameter property of Request
@@ -111,16 +111,7 @@ class Http
 
    public function end()
    {
-      // $this->response->not_found(
-      //    "Good"
-      //    // View::with([
-      //    //    "code"=>404,
-      //    //    "message"=>"Route not found."
-      //    // // ])->render('framework/404.html')
-      //    // ])->internal_render('framework/404.html')
-      // );
-
-      $this->response->send('',1000);
+      $this->response->send(View::render('framework/404.html'), 403);
    }
 
    public static function middleware()
