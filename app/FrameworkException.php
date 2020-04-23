@@ -4,7 +4,7 @@ use App\Response;
 use Monolog\Monolog;
 use Exception;
 
-class FrameworkExceptionHandler extends Exception
+class FrameworkException extends Exception
 {
 
    private $response;

@@ -78,6 +78,12 @@ class Http
 
    private function handle_web_request(string $route, $next)
    {
+      // If application is on maintenance mode and client IP is not whitelisted
+      // block the access
+      if (\Config['APP_MAINTAINANCE'] == true && !in_array($this->request->ip(), \Config['APP_MAINTENANCE_WHITELIST_IP'])) {
+         $this->response->send(View::render('framework/maintenance.html'), 403);
+      }
+   
       // compare the uri with the route
       list($status, $route_params) = Routing::compare($route, $this->uri);
 
@@ -86,12 +92,6 @@ class Http
          return;
       }
       
-      // If application is on maintenance mode and client IP is not whitelisted
-      // block the access
-      if (\Config['APP_MAINTAINANCE'] == true && !in_array($this->request->ip(), \Config['APP_MAINTENANCE_WHITELIST_IP'])) {
-         $this->response->send(View::render('framework/maintenance.html'), 403);
-      }
-   
       // set the route parameter property of Request
       $this->request->set_route_params($route_params);
 

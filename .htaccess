@@ -11,14 +11,14 @@
    # Prevent these files from redirecting
       # Note: Separate files or directories with the pipe character (|)
       # Warning: Do not leave any trailing pipe character (|)
-      RewriteRule ^(public/assets/|storage/|init.engine.php|config.php) - [NC,L]
+      RewriteRule ^(public/assets/|storage/|init.engine.php) - [NC,L]
 
    # Redirect all directory to index.php
       RewriteRule ^ public/index.php [NC,L]
 
    # Deny access to these files
       # Note: Files added here are files that are not redirected to the index.php
-      <FilesMatch "(.htaccess|config.php)$">
+      <FilesMatch "(.htaccess|.gitignore|config.php|composer.json|composer.lock)$">
          order allow,deny
          Deny from all
       </FilesMatch>

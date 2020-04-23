@@ -9,6 +9,7 @@ CONST Config = [
 
    "APP_NAME" => "Initframework",
    "APP_URL" => "http://localhost/testframework",
+   // "APP_URL" => "http://test.initframework.com",
    "APP_DEBUG" => false,
    "APP_MAINTAINANCE" => true,
 

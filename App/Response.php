@@ -56,9 +56,9 @@ class Response
             // send the response message
             exit($response_message);
          } else {
-            throw new FrameworkExceptionHandler($this);
+            throw new FrameworkException($this);
          }
-      } catch (FrameworkExceptionHandler $ex) {
+      } catch (FrameworkException $ex) {
          $ex->log_exception(); $ex->email_developer(); $ex->show_developer();
       }
       
