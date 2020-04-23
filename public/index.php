@@ -9,8 +9,7 @@ class App
 {
    public function __construct()
    {
-      // Include the Autoload files
-      include_once '../autoload.php';
+      // Include autoload for composer packages
       include_once '../vendor/autoload.php';
 
       // Setup Configurations

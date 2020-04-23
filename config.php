@@ -14,7 +14,7 @@ CONST Config = [
 
    // set the ip addresses that can access the application while on maintenance
    "APP_MAINTENANCE_WHITELIST_IP" => [
-      
+      "::1"
    ],
    
    // DATABASE CONFIGURATION

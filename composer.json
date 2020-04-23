@@ -15,5 +15,13 @@
         "owasp/esapi": "dev-master",
         "monolog/monolog" : "1.0.0",
         "phpunit/phpunit": "^9.2@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Controllers\\": "controllers/",
+            "Models\\": "models/",
+            "Providers\\": "providers/"
+        }
     }
 }
