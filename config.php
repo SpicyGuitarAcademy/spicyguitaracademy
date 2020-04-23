@@ -9,7 +9,7 @@ CONST Config = [
 
    "APP_NAME" => "Initframework",
    "APP_URL" => "http://localhost/testframework",
-   "APP_DEBUG" => true,
+   "APP_DEBUG" => false,
    "APP_MAINTAINANCE" => true,
 
    // set the ip addresses that can access the application while on maintenance

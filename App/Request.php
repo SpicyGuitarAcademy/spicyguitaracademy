@@ -32,42 +32,44 @@ class Request
       $this->request = $_SERVER;
 
       // et the ip address
-      $this->set_ip();
+      $this->get_ip();
 
       // set the request scheme
-      $this->set_scheme();
+      $this->get_scheme();
 
       // set the request host
-      $this->set_host();
+      $this->get_host();
 
       // set the url path
-      $this->set_path();
+      $this->get_path();
 
       // set the request method
-      $this->set_method();
+      $this->get_method();
 
       // set the request query parameters
-      $this->set_query();
+      $this->get_query();
 
       // set the request body
-      $this->set_body();
+      $this->get_body();
 
       // set the request uri
-      $this->set_uri();
+      $this->get_uri();
 
       // set the files submitted
-      $this->set_files();
+      $this->get_files();
 
+      // accomodating request methods from html
+      $this->get_html_request_methods();
    }
 
    // --------------------------------------------------------- //
 
-   private function set_ip()
+   private function get_ip()
    {
       $this->ip = $this->request['REMOTE_ADDR'];
    }
    
-   private function set_path()
+   private function get_path()
    {
       /* 
          ----------------------------------------------------------------
@@ -85,17 +87,17 @@ class Request
       $this->path = urldecode($this->scheme . "://" . $this->host . $uri);
    }
 
-   private function set_host()
+   private function get_host()
    {
       $this->host = $this->request['SERVER_NAME'];
    }
 
-   private function set_method()
+   private function get_method()
    {
       $this->method = $this->request['REQUEST_METHOD'];
    }
 
-   private function set_scheme()
+   private function get_scheme()
    {
       /* 
          ----------------------------------------------------------------
@@ -110,7 +112,7 @@ class Request
       $this->scheme = $this->request['REQUEST_SCHEME'];
    }
 
-   private function set_uri()
+   private function get_uri()
    {
       /* 
          ----------------------------------------------------------------
@@ -133,7 +135,7 @@ class Request
       $this->uri = str_replace("?" . $queryString, "", $uri);
    }
 
-   private function set_query()
+   private function get_query()
    {
       /* 
          ----------------------------------------------------------------
@@ -150,17 +152,32 @@ class Request
       $this->query = $this->objectify($_GET ?? []);
    }
 
-   private function set_body()
+   private function get_body()
    {
       $this->body = $this->objectify($_POST ?? []);
    }
 
-   private function set_files()
+   private function get_files()
    {
       $this->files = $this->objectify($_FILES ?? []);
    }
 
-   // called from the 
+   private function get_html_request_methods()
+   {  
+      // accomodating methods from html
+      if ($this->method == "POST" && $this->body_exists() == true && isset($this->body()->REQUEST_METHOD) && in_array($this->body()->REQUEST_METHOD, ["PUT", "PATCH", "DELETE"]))
+      {
+         $this->method = $this->body()->REQUEST_METHOD;
+      }
+
+      // echo $this->method;
+      // echo $this->body_exists() ? "true" : "false";
+      // echo $this->body()->HTTP_METHOD;
+      // die;
+   }
+
+   // Called from the Http class //
+   // -------------------------- //
    public function set_route_params(array $params)
    {
       $this->params = $this->objectify($params ?? []);
@@ -186,7 +203,8 @@ class Request
       return null;
    }
 
-   // --------------------------------------------------------- //
+   // Publicly accessible methods for getting the request parameters //
+   // -------------------------------------------------------------- //
 
    public function ip()
    { return $this->ip; }
@@ -226,6 +244,9 @@ class Request
 
    public function params()
    { return $this->params; }
+
+   public function params_exists()
+   { return is_object($this->params); }
    
    // --------------------------------------------------------- //
 

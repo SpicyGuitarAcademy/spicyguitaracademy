@@ -1,6 +1,6 @@
 <?php
 namespace App;
-use App\ExceptionHandler;
+use App\FrameworkExceptionHandler;
 
 class Response
 {
@@ -56,22 +56,14 @@ class Response
             // send the response message
             exit($response_message);
          } else {
-            \http_response_code(404);
-            throw new ExceptionHandler();
-            // ("Error Processing Request", 1);
+            throw new FrameworkExceptionHandler($this);
          }
-      } catch (\ExceptionHandler $th) {
-         //throw $th;
+      } catch (FrameworkExceptionHandler $ex) {
+         $ex->log_exception(); $ex->email_developer(); $ex->show_developer();
       }
       
    }
 
-   public function not_found(string $response_message = "")
-   {
-      \http_response_code(403);
-      exit($response_message);
-   }
-
-   // continue with the remaining response codes
+   // handle the remaining response codes
 
 }

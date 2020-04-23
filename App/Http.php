@@ -110,7 +110,7 @@ class Http
 
    public function end()
    {
-      $this->response->send(View::render('framework/404.html'), 403);
+      $this->response->send(View::render('framework/404.html'), 404);
    }
 
    public static function middleware()

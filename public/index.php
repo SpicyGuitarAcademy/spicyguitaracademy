@@ -1,20 +1,20 @@
 <?php
 namespace App;
 use App\Http;
-
 // use Initframework\TestAutoloader;
 // use ESAPI;
+
+// Include autoload for composer packages
+include_once '../vendor/autoload.php';
+
+// Setup Configurations
+include_once '../config.php';
 
 class App
 {
    public function __construct()
    {
-      // Include autoload for composer packages
-      include_once '../vendor/autoload.php';
-
-      // Setup Configurations
-      include_once '../config.php';
-
+      
       $http = new Http();
 
       // // set the route for the application
@@ -22,11 +22,15 @@ class App
 
       $http->get('/users','HomeController@bar');
 
+      $http->put('/test-put-from-html', function(Request $req, Response $res) {
+         $res->send($req->uri() . " - " . $req->body()->putvar);
+      });
+
       $http->put('/users','HomeController@putty');
 
       // // application can handle functions right here
-      $http->put('/users/{id:d}', function(Request $req, Response $res) {
-         die ($req->uri(). " - " .$req->params()->id. " - " .$req->query()->range);
+      $http->put('/users/{id:x}', function(Request $req, Response $res) {
+         $res->send($req->uri(). " - " .$req->params()->id. " - " .$req->query()->range);
       });
 
       // http::middleware('web')
@@ -35,41 +39,7 @@ class App
       $http->end();
    }
 
-   protected function web()
-   {
-      /*
-         ----------------------------------------------------------------
-         Web Routes
-         ----------------------------------------------------------------
-         
-         These are the entry points into your Web Applications.
-
-         ----------------------------------------------------------------
-      */ 
-
-      Route::get('/','home','HomeController@index');
-      Route::get('/users','users','HomeController@users');
-   }
-
-   protected function api()
-   {
-      /*
-         ----------------------------------------------------------------
-         Web Routes
-         ----------------------------------------------------------------
-         
-         These are the entry points into your APIs.
-
-         ----------------------------------------------------------------
-      */
-      Http::get('/route', function() {
-
-      });
-
-      Routing::auth()->get('/route','HomeController::index()');
-
-   }
 }
 
-// Initialize Application 😉
+// Start Application 😉
 new App();

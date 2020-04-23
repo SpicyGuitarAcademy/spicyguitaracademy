@@ -52,10 +52,7 @@ class HomeController// extends Controller
    public function new(Request $req, Response $res)
    {
 
-      View::show('welcome.html');
-
-      // $res::write();
-      // $res::send();
+      $res->send(View::internal_render('welcome.html'));
 
    }
 

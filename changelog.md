@@ -23,6 +23,11 @@
   - The routes are not in the methods (setWebRoutes, setApiRoutes)
   + The methods are in the __construct method
 
+  + Routing became more fun as you can now determine the datatype of your route parameter:
+  E.g Digits (:d), Alphabets (:a), Alphabets with spaces, underscore & hyphen (:a+), Aphnahumeric (:x), Aphnahumeric with spaces, underscore & hyphen (:x+).
+
+  + You can now handle a request from the index.php file and send back a response to the client, thank to anonymous functions.
+
 # Http
   + The Http Class has been introduced to handle all the http related actions except those of reuest and response classes.
 
@@ -37,4 +42,3 @@
   + The framework now has the site on maintenance mode feature which comes with its own html page; it comes along with the error 404 html page too.
 
   + Now you can use composer packages in your projects, yayy. 💃🏼💃🏼
-  
