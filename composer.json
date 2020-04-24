@@ -21,7 +21,8 @@
             "App\\": "app/",
             "Controllers\\": "controllers/",
             "Models\\": "models/",
-            "Providers\\": "providers/"
+            "Providers\\": "providers/",
+            "Framework\\": "framework/"
         }
     }
 }

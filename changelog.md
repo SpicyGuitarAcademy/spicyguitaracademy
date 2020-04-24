@@ -42,3 +42,9 @@
   + The framework now has the site on maintenance mode feature which comes with its own html page; it comes along with the error 404 html page too.
 
   + Now you can use composer packages in your projects, yayy. 💃🏼💃🏼
+
+  + I just discovered a way of not using the gui method of generating files for the user. It works by registering the path to the engine file as an environment variable (which in our new version would be called `templatr`) then the user of the application can make requests to the templatr with `php $templatr <command>`. But this is for an ad hoc operation, I'd look for a better one.
+
+# Documentation
+  + For documenting Initframework, Templatr and MirrorJ - use Guzzle's style of documentation. And look for a green version of their blue color that would be used by Initframework.
+  What color would Templatr and Mirror JS use?

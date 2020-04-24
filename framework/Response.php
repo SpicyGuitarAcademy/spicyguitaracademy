@@ -1,6 +1,6 @@
 <?php
-namespace App;
-use App\FrameworkExceptionHandler;
+namespace Framework;
+use Framework\FrameworkExceptionHandler;
 
 class Response
 {

@@ -1,10 +1,9 @@
 <?php
-namespace App;
-
-use App\Request;
-use App\Response;
-use App\Routing;
-use App\View;
+namespace Framework;
+use Framework\Request;
+use Framework\Response;
+use Framework\Routing;
+use Framework\View;
 
 class Http
 {

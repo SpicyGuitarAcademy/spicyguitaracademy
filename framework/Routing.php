@@ -1,9 +1,9 @@
 <?php
-namespace App;
+namespace Framework;
 
-use App\Request;
-use App\Response;
-use App\Error;
+use Framework\Request;
+use Framework\Response;
+use Framework\Error;
 
 class Routing
 {

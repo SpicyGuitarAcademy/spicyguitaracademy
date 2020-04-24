@@ -1,6 +1,6 @@
 <?php
-namespace App;
-use App\Response;
+namespace Framework;
+use Framework\Response;
 use Monolog\Monolog;
 use Exception;
 

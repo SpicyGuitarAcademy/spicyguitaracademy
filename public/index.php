@@ -1,6 +1,6 @@
 <?php
 namespace App;
-use App\Http;
+use Framework\Http;
 // use Initframework\TestAutoloader;
 // use ESAPI;
 
