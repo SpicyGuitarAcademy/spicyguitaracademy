@@ -1,12 +1,17 @@
 <?php
 namespace Framework;
 
+use HttpRequest;
+use http\Client;
+
 class Request
 {
    
    private $request;
 
    private $ip;
+
+   private $server_ip;
 
    private $path;
 
@@ -26,40 +31,51 @@ class Request
 
    private $params;
 
+   private $protocol;
+
+   // Auth related properties
+   private $auth_type;
+
    public function __construct()
    {
       // get the request data
       $this->request = $_SERVER;
 
-      // et the ip address
+      // get the ip address
       $this->get_ip();
 
-      // set the request scheme
+      // get the request scheme
       $this->get_scheme();
 
-      // set the request host
+      // get the request host
       $this->get_host();
 
-      // set the url path
+      // get the url path
       $this->get_path();
 
-      // set the request method
+      // get the request method
       $this->get_method();
 
-      // set the request query parameters
+      // get the request query parameters
       $this->get_query();
 
-      // set the request body
+      // get the request body
       $this->get_body();
 
-      // set the request uri
+      // get the request uri
       $this->get_uri();
 
-      // set the files submitted
+      // get the files submitted
       $this->get_files();
+
+      // get the request http protocol
+      $this->get_protocol();
 
       // accomodating request methods from html
       $this->get_html_request_methods();
+
+      // get authentication type
+      $this->get_auth_type();
    }
 
    // --------------------------------------------------------- //
@@ -67,6 +83,7 @@ class Request
    private function get_ip()
    {
       $this->ip = $this->request['REMOTE_ADDR'];
+      $this->server_ip = $this->request['SERVER_ADDR'];
    }
    
    private function get_path()
@@ -162,6 +179,11 @@ class Request
       $this->files = $this->objectify($_FILES ?? []);
    }
 
+   private function get_protocol()
+   {
+      $this->protocol = $this->request['SERVER_PROTOCOL'];
+   }
+
    private function get_html_request_methods()
    {  
       // accomodating methods from html
@@ -169,11 +191,6 @@ class Request
       {
          $this->method = $this->body()->REQUEST_METHOD;
       }
-
-      // echo $this->method;
-      // echo $this->body_exists() ? "true" : "false";
-      // echo $this->body()->HTTP_METHOD;
-      // die;
    }
 
    // Called from the Http class //
@@ -183,6 +200,29 @@ class Request
       $this->params = $this->objectify($params ?? []);
    }
 
+   // Authentication related methods //
+   // ------------------------------ //
+   private function get_auth_type()
+   {
+      // Basic Auth
+      if ( isset($this->request['PHP_AUTH_USER']) && isset($this->request['PHP_AUTH_PW']) ) {
+         $this->auth_type = "Basic";
+      }
+
+      // Digest Auth
+      elseif ( isset($this->request['PHP_AUTH_USER']) ) {
+         $this->auth_type = "Digest";
+      }
+
+   }
+
+   public function auth_type()
+   {
+      return $this->auth_type;
+   }
+
+
+   // method for turning arrays to objects
    private function objectify(array $array)
    {
       if (is_array($array) && $array !== []) {
@@ -208,6 +248,9 @@ class Request
 
    public function ip()
    { return $this->ip; }
+
+   public function server_ip()
+   { return $this->server_ip; }
 
    public function path()
    { return $this->path; }
@@ -252,7 +295,7 @@ class Request
 
    public function __desctruct()
    {
-      $this->request = null;
+      // $this->request = null;
    }
 
 }

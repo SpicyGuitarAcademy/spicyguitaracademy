@@ -1,6 +1,6 @@
 <?php
 namespace Framework;
-use Framework\FrameworkExceptionHandler;
+use Framework\FrameworkException;
 
 class Response
 {
@@ -65,5 +65,22 @@ class Response
    }
 
    // handle the remaining response codes
+
+
+   // header control
+
+   public function remove_header(string $header)
+   {
+      if (!\headers_sent()) {
+         header_remove($header);
+      }
+   }
+
+   public function add_header(string $header, string $value, bool $replace = true)
+   {
+      if (!\headers_sent()) {
+         header(sprintf('%s: %s', $header, $value), $replace);
+      }
+   }
 
 }

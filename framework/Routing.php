@@ -3,7 +3,7 @@ namespace Framework;
 
 use Framework\Request;
 use Framework\Response;
-use Framework\Error;
+use App\Error;
 
 class Routing
 {

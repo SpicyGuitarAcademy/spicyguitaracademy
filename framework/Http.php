@@ -3,29 +3,33 @@ namespace Framework;
 use Framework\Request;
 use Framework\Response;
 use Framework\Routing;
-use Framework\View;
+use Framework\Auth;
+use App\View;
 
 class Http
 {
    
    private $request;
-
    private $response;
+   private $auth;
 
    private $uri;
-
    private $method;
+
+   private $auth_type;
+   private $auth_callback;
 
    public function __construct()
    {
       $this->request = new Request();
       $this->response = new Response();
+      $this->auth = new Auth();
 
       $this->method = $this->request->method();
       $this->uri = $this->request->uri();
    }
 
-   public function get(string $route, string $next)
+   public function get(string $route, $next)
    {
       // restrict to only GET requests
       if ($this->method != "GET") {
@@ -75,6 +79,12 @@ class Http
       $this->handle_web_request($route, $next);
    }
 
+
+
+
+
+
+   // there would be another method called handle api request
    private function handle_web_request(string $route, $next)
    {
       // If application is on maintenance mode and client IP is not whitelisted
@@ -88,9 +98,17 @@ class Http
 
       // if comparison fails
       if ($status == false) {
+         // default the auth type, incase any had been set before
+         $this->default_auth_type();
          return;
       }
       
+      // comparison pass
+      // intercept the process with the middleware
+      if ( $this->auth->check( $this->request, $this->response, $this->auth_type ) == false ) {
+         $this->response->send('', 401);
+      }
+
       // set the route parameter property of Request
       $this->request->set_route_params($route_params);
 
@@ -107,29 +125,88 @@ class Http
       }
    }
 
+
+
+
+
+
+   private function default_auth_type()
+   {
+      $this->auth_type = "None";
+   }
+
+
+
+
+
+
+   // register a middleware authentication if this route matches the uri
+   public function auth(string $auth = "None")
+   {
+      // accepted auth types
+      $valid_auth_types = [
+         "None", "Session", "Basic", "Digest", "OAuth", "OAuth2", "JWT"
+      ];
+
+      if (!in_array($auth, $valid_auth_types)) {
+         // throw Application Exception
+         return;
+      }
+
+      $this->auth_type = $auth;
+      return $this;
+   }
+
+
+
+
+
+
+   /*
+      middlewares
+         auth
+            web
+               auth-type => None | session
+            api
+               auth-type => None | Basic | Digest | OAuth | OAuth2 | JWT
+         guard
+            guard-role
+               abilities
+   */
+
+
+
+
+
+
+   private static function guard()
+   { }
+
+
+
+
+
+
+
+   // only called when no route is found
    public function end()
    {
-      $this->response->send(View::render('framework/404.html'), 404);
+      $this->response->send(View::render('framework/404.html'), 200);
    }
 
-   public static function middleware()
-   {
-      return self;
-   }
 
-   public static function auth()
-   {
-      return self;
-   }
 
-   public static function guard()
-   {
-      
-   }
+
+
 
    public function __desctruct()
    {
       $this->request = null;
    }
+
+
+
+
+
 
 }
