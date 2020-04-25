@@ -1,9 +1,11 @@
 <?php
 namespace Framework;
+use Framework\FrameworkException;
 use Framework\Request;
 use Framework\Response;
 use Framework\Routing;
 use Framework\Auth;
+
 use App\View;
 
 class Http
@@ -40,9 +42,7 @@ class Http
       if ($this->method != "GET") {
          return;
       }
-      // die('allowed ' . $this->route_auth_type . ' - ' . $auth);
-
-      // die($this->route_auth_type . " = " . $this->request->auth_type());
+      
       $this->handle_web_request($route, $next);
    }
 
@@ -111,13 +111,14 @@ class Http
          return;
       }
       
-      // die($this->route_auth_type . " = " . $this->request->auth_type());
-
       // comparison pass
       // intercept the process with the middleware
-      if ( $this->auth->check( $this->request, $this->response, $this->route_auth_type ) == false ) {
-         $this->response->send('Access Denied', 401);
-      }
+      // returns true
+      $this->auth->check( $this->request, $this->response, $this->route_auth_type );
+
+      // if ( $this->auth->check( $this->request, $this->response, $this->route_auth_type ) == false ) {
+      //    $this->response->send('Access Denied', 401);
+      // }
 
       // set the route parameter property of Request
       $this->request->set_route_params($route_params);
@@ -151,7 +152,8 @@ class Http
 
 
    // register a middleware authentication if this route matches the uri
-   public function auth(string $auth)
+   // app_handles_failure allows the user application to handle authentication failure
+   public function auth(string $auth, bool $app_handles_failure = false)
    {
       // accepted auth types
       $valid_auth_types = [
@@ -160,7 +162,6 @@ class Http
 
       if (!\in_array($auth, $valid_auth_types)) {
          // throw Application Exception
-         die('! allowed');
          return $this;
       }
 

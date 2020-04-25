@@ -36,6 +36,8 @@ class Request
    // Auth related properties
    private $auth_type;
 
+   private $auth_credentials;
+
    public function __construct()
    {
       // get the request data
@@ -205,13 +207,38 @@ class Request
    private function get_auth_type()
    {
       // Basic Auth
-      if ( isset($this->request['PHP_AUTH_USER']) && isset($this->request['PHP_AUTH_PW']) ) {
+      if ( isset($this->request['PHP_AUTH_USER']) && isset($this->request['PHP_AUTH_PW']) && !empty($this->request['PHP_AUTH_USER']) && !empty($this->request['PHP_AUTH_PW'])) {
          $this->auth_type = "Basic";
+         // get the auth credentials
+         $this->auth_credentials = $this->objectify([
+            "username" => $this->request['PHP_AUTH_USER'],
+            "password" => $this->request['PHP_AUTH_PW'],
+         ]);
       }
 
       // Digest Auth
       elseif ( isset($this->request['PHP_AUTH_DIGEST']) ) {
          $this->auth_type = "Digest";
+         // get the auth credentials
+         $cred = $this->request['PHP_AUTH_DIGEST'];
+         
+         // protect against missing data
+         $needed_parts = array('nonce'=>1, 'nc'=>1, 'opaque'=>1, 'cnonce'=>1, 'qop'=>1, 'realm'=>1, 'username'=>1, 'uri'=>1, 'response'=>1);
+         $data = array();
+         $keys = implode('|', array_keys($needed_parts));
+
+         preg_match_all('@(' . $keys . ')=(?:([\'"])([^\2]+?)\2|([^\s,]+))@', $cred, $matches, PREG_SET_ORDER);
+
+         foreach ($matches as $m) {
+            $data[trim($m[1])] = $m[3] ? $m[3] : $m[4];
+            unset($needed_parts[$m[1]]);
+         }
+
+         $credentials = $needed_parts ? [] : $data;
+
+         // objectify the credentials
+         $this->auth_credentials = $this->objectify($credentials);
+
       }
 
       // None
@@ -224,6 +251,11 @@ class Request
    public function auth_type()
    {
       return $this->auth_type;
+   }
+
+   public function auth_credentials()
+   {
+      return $this->auth_credentials;
    }
 
 

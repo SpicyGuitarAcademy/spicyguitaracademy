@@ -1,5 +1,6 @@
 <?php
 namespace Framework;
+use App\Auth as AppAuth;
 use OAuth;
 use OAuthProvider;
 use OAuthException;
@@ -7,11 +8,14 @@ use OAuthException;
 class Auth
 {
 
-   public function __construct() {
+   private $app_auth;
 
+   public function __construct() {
+      $this->app_auth = new AppAuth();
    }
 
    // this method would only be called when the request uri matches the route
+   // returns true if success, and exits if failure
    public function check(Request $request, Response $response, string $route_auth_type)
    {
 
@@ -20,7 +24,7 @@ class Auth
          // the default for web applications on the browser
          case 'Session':
             return true;
-            break;
+         break;
 
          // set of authentication types for APIs
          case 'Basic':
@@ -40,67 +44,73 @@ class Auth
 
             if ($request->auth_type() != "Basic") {
 
-               // generate authentication parameters
-               // realm, a revelation to the client as to which username and password to provide
-               $realm = 'Authorized Users of ' . $request->host() ;
+               // request a Basic Authentication from the client
+               $response->auth_basic("Initframework");
 
-               // set the response header
-               $response->add_header('WWW-Authenticate', sprintf('Basic realm="%s"', $realm));
-               return false;
             } else {
+
                // validate the username and password is correct.
-               // assume success
-               return true;
+               if ($this->app_auth->auth_basic($request->auth_credentials()->username, $request->auth_credentials()->password) == true) {
+                  // success
+                  return true;
+               }
+               // request a valid Basic Authentication from the client
+               // or send bad request
+               else {
+                  $response->auth_basic("Initframework");
+               }
+
             }
             
-            break;
+         break;
 
          case 'Digest':
 
             if ($request->auth_type() != "Digest") {
+               
+               // request a Digest Authentication from the client
+               $response->auth_digest("Initframework");
 
-               // generate authentication parameters
-               // nonce, to make each request unique
-               $nonce = md5(uniqid("", true));
-               // opaque, must be returned by the client unaltered
-               $opaque = md5(uniqid());
-               // realm, a revelation to the client as to which username and password to provide
-               $realm = 'Authorized Users of ' . $request->host() ;
-
-               // set the response header
-               $response->remove_all_headers();
-               $response->add_header('WWW-Authenticate', sprintf('Digest realm="%s", nonce="%s", opaque="%s"', $realm, $nonce, $opaque));
-               return false;
             } else {
+
                // validate the username and password is correct.
-               // assume success
-               return true;
+               if ( $this->app_auth->auth_digest($request, $request->auth_credentials()) ) {
+                  // success
+                  return true;
+               }
+               // request a valid Basic Authentication from the client
+               // or send bad request
+               else {
+                  $response->auth_digest("Initframework");
+               }
+
             }
 
-            break;
+         break;
 
          case 'OAuth':
             return true;
-            break;
+         break;
                
          case 'OAuth2':
             return true ;
-            break;
+         break;
          
          // also valid for applications on the web browser
          case 'JWT':
             return true;
-            break;
+         break;
 
          // default when no auth type is indicated
          case 'None':
             return true;
-            break;
+         break;
 
          default:
             // None
             return true;
-            break;
+         break;
+         
       }
 
    }
