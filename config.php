@@ -2,14 +2,13 @@
 
 
 CONST Config = [
-   // APPLICATION
-   "APP" => "TESTFRAMEWORK",
-   // "DOMAIN" => "/testframework",
-   // "DOMAIN" => "http://test.initframework.com",
 
+   // APPLICATION
    "APP_NAME" => "Initframework",
    "APP_URL" => "http://localhost/testframework",
    // "APP_URL" => "http://test.initframework.com",
+
+   // DEVELOPMENT
    "APP_DEBUG" => false,
    "APP_MAINTAINANCE" => true,
 
@@ -22,10 +21,11 @@ CONST Config = [
    "DB_DRIVER" => "mysql",
    "DB_HOST" => "localhost",
    "DB_PORT" => "3306",
-   "DB_DATABASE" => "",
-   "DB_USERNAME" => "",
+   "DB_DATABASE" => "testframework_db",
+   "DB_USERNAME" => "root",
    "DB_PASSWORD" => "",
 
+   // MAIL CONFIGURATION
    "MAIL_DRIVER" => "smtp",
    "MAIL_HOST" => "smtp.mailtrap.io",
    "MAIL_PORT" => "2525",
@@ -33,7 +33,9 @@ CONST Config = [
    "MAIL_PASSWORD" => "null",
    "MAIL_ENCRYPTION" => "null",
    
-   // AUTH
+   // AUTHENTICATION
+   "AUTH_REALM" => "Initframework",
+   
    "AUTH_TIMEOUT" => 1, # 1 = 1 hour
 
    "SERVER_ADMIN" => "webmaster@test.initframework.com", // postmaster@localhost

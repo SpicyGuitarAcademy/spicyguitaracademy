@@ -2,7 +2,7 @@
 namespace Framework;
 use PDO;
 use PDOException;
-use Framework\Error;
+use App\Error;
 
 class Database
 {
