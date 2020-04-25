@@ -69,6 +69,13 @@ class Response
 
    // header control
 
+   public function remove_all_headers()
+   {
+      if (!\headers_sent()) {
+         header_remove();
+      }
+   }
+
    public function remove_header(string $header)
    {
       if (!\headers_sent()) {

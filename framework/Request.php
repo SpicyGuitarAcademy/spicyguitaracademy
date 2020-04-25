@@ -210,8 +210,13 @@ class Request
       }
 
       // Digest Auth
-      elseif ( isset($this->request['PHP_AUTH_USER']) ) {
+      elseif ( isset($this->request['PHP_AUTH_DIGEST']) ) {
          $this->auth_type = "Digest";
+      }
+
+      // None
+      else {
+         $this->auth_type = "None";
       }
 
    }

@@ -16,7 +16,7 @@ class Http
    private $uri;
    private $method;
 
-   private $auth_type;
+   private $route_auth_type;
    private $auth_callback;
 
    public function __construct()
@@ -27,6 +27,11 @@ class Http
 
       $this->method = $this->request->method();
       $this->uri = $this->request->uri();
+
+      // default auth type
+      $this->default_auth_type();
+
+      // die($this->route_auth_type . " = " . $this->request->auth_type());
    }
 
    public function get(string $route, $next)
@@ -35,7 +40,9 @@ class Http
       if ($this->method != "GET") {
          return;
       }
+      // die('allowed ' . $this->route_auth_type . ' - ' . $auth);
 
+      // die($this->route_auth_type . " = " . $this->request->auth_type());
       $this->handle_web_request($route, $next);
    }
 
@@ -94,6 +101,7 @@ class Http
       }
    
       // compare the uri with the route
+      // get the status and the route parameters if declared in the route
       list($status, $route_params) = Routing::compare($route, $this->uri);
 
       // if comparison fails
@@ -103,10 +111,12 @@ class Http
          return;
       }
       
+      // die($this->route_auth_type . " = " . $this->request->auth_type());
+
       // comparison pass
       // intercept the process with the middleware
-      if ( $this->auth->check( $this->request, $this->response, $this->auth_type ) == false ) {
-         $this->response->send('', 401);
+      if ( $this->auth->check( $this->request, $this->response, $this->route_auth_type ) == false ) {
+         $this->response->send('Access Denied', 401);
       }
 
       // set the route parameter property of Request
@@ -132,7 +142,7 @@ class Http
 
    private function default_auth_type()
    {
-      $this->auth_type = "None";
+      $this->route_auth_type = "None";
    }
 
 
@@ -141,19 +151,20 @@ class Http
 
 
    // register a middleware authentication if this route matches the uri
-   public function auth(string $auth = "None")
+   public function auth(string $auth)
    {
       // accepted auth types
       $valid_auth_types = [
          "None", "Session", "Basic", "Digest", "OAuth", "OAuth2", "JWT"
       ];
 
-      if (!in_array($auth, $valid_auth_types)) {
+      if (!\in_array($auth, $valid_auth_types)) {
          // throw Application Exception
-         return;
+         die('! allowed');
+         return $this;
       }
 
-      $this->auth_type = $auth;
+      $this->route_auth_type = $auth;
       return $this;
    }
 
