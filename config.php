@@ -34,8 +34,35 @@ CONST Config = [
    "MAIL_ENCRYPTION" => "null",
    
    // AUTHENTICATION
-   "AUTH_REALM" => "Initframework",
-   
+
+   // Basic Auth
+   "AUTH_BASIC_REALM" => "Initframework",
+
+   // Digest Auth
+   "AUTH_DIGEST_REALM" => "Initframework",
+
+   // Session Auth
+   "AUTH_SESSION_NAME" => "Initframework",
+   "AUTH_SESSION_DOMAIN"=>"http://localhost/testframework",
+
+   // $lifetime = time() + 300;
+   // $path = '/';
+   // $domain = "http://localhost/initframeworktests/";
+   // $secure = true;
+   // $httponly = true;
+   // session_set_cookie_params([
+   //    'lifetime' => $lifetime,
+   //    'path' => $path,
+   //    'domain' => $domain,
+   //    'secure' => $secure,
+   //    'httponly' => $httponly,
+   //    'samesite' => 'Lax'
+   // ]);
+   // session_name("HB");
+   // session_start();
+
+   // Session is accessed by $_SESSION['AUTH']['USERNAME'], $_SESSION['AUTH']['PASSWORD'], $_SESSION['AUTH']['ROLE'], $_SESSION['AUTH']['PRIVILEGES']
+
    "AUTH_TIMEOUT" => 1, # 1 = 1 hour
 
    "SERVER_ADMIN" => "webmaster@test.initframework.com", // postmaster@localhost

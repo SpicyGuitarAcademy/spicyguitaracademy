@@ -16,31 +16,37 @@ class Auth
 
    // this method would only be called when the request uri matches the route
    // returns true if success, and exits if failure
-   public function check(Request $request, Response $response, string $route_auth_type)
+   public function check(Request $request, Response $response, string $route_auth_type, bool $app_handles_failure)
    {
+
+      // LOGIC
+      // this route expects your request to come with the basic auth type and nothing else
+      // if your request came with a diff auth type => you would be requested to authenticate with the right auth type.
+      // if your request came in with the basic auth type, validate the credentials
+      // if the credentials are valid => return true
+      // else => (request re-authentication| send bad request) and return false
 
       switch ($route_auth_type) {
          
          // the default for web applications on the browser
          case 'Session':
-            return true;
+            
+            if ($request->auth_type() != "Session") {
+
+               // request a Session Authentication from the client via login form
+               $response->remove_all_headers();
+               $response->redirect('login');
+
+            } else {
+
+               return $this->app_auth->auth_session($request->auth_credentials());
+
+            }
+
          break;
 
          // set of authentication types for APIs
          case 'Basic':
-
-            // this route requires the auth type basic
-            // then you submitted a request with a uri that matches this route.
-
-            // this route expects your request to come with the basic auth type and nothing else
-
-            // so, there two things involved,
-               // if your request came with a diff auth type => you would be requested to authenticate with the right auth type.
-
-               // if your request came in with the basic auth type, validate the credentials
-                  // if the credentials are valid => return true
-                  // else => request re-authentication and return false
-
 
             if ($request->auth_type() != "Basic") {
 
@@ -110,8 +116,22 @@ class Auth
             // None
             return true;
          break;
-         
+
       }
+
+   }
+
+   public function session_login(object $credentials)
+   {
+
+      $credentials = [
+         // Session is accessed by $_SESSION['AUTH']['USERNAME'], $_SESSION['AUTH']['PASSWORD'], $_SESSION['AUTH']['ROLE'], $_SESSION['AUTH']['PRIVILEGES']
+         "USERNAME" => $req->body()->username,
+         "PASSWORD" => $req->body()->username,
+         "ROLE" => $req->body()->username,
+         "PRIVILEGES" => $req->body()->username,
+      ];
+      $_SESSION['AUTH'] = $credentials;
 
    }
 

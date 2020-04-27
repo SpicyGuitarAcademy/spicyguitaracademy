@@ -3,6 +3,7 @@ namespace App;
 use Framework\Model;
 use Framework\Request;
 use Framework\Response;
+use App\User;
 
 class Auth
 {
@@ -12,22 +13,52 @@ class Auth
 
    }
 
-   public function auth_session()
+   public function auth_session(object $credentials)
    {
+      
+      if ( isset($credentials->username) && !empty($credentials->username) && isset($credentials->role) && !empty($credentials->role) && isset($credentials->privileges) && !empty($credentials->priveleges) ) {
 
+         
+
+      }
+
+      $credentials = [
+         // Session is accessed by $_SESSION['AUTH']['USERNAME'], $_SESSION['AUTH']['PASSWORD'], $_SESSION['AUTH']['ROLE'], $_SESSION['AUTH']['PRIVILEGES']
+         "USERNAME" => $req->body()->username,
+         "PASSWORD" => $req->body()->username,
+         "ROLE" => $req->body()->username,
+         "PRIVILEGES" => $req->body()->username,
+      ];
+      $_SESSION['AUTH'] = $credentials;
+      
    }
 
    public function auth_basic(string $username ,string $password)
    {
-      if ($username == "ebuka" && $password == "odini") {
+      /*
+         Your Model Code Goes Here
+      */
+
+      // Default
+      // username = admin, password = admin
+
+      // Comment this when you have your password from the database
+      $db_username = "admin"; $db_password = "admin";
+
+      // You can replace this with your own authentication code
+      if ($username == $db_username && $password == $db_password) {
+
+         // set the credentials
+
          return true;
       } else {
          (new Response())->auth_basic("Initframework");
          return false;
       }
+
    }
 
-   public function encrypt_password_digest(string $username, string $password)
+   public function create_digest_password(string $username, string $password)
    {
       // md5(username:realm:password)
       return md5($username . ":" . "Initframework" . ":" . $password);
@@ -46,7 +77,7 @@ class Auth
       */
 
       // Default
-      // using username = admin, password = admin, realm = Initframework
+      // username = admin, password = admin, realm = Initframework
       // the database password is 330902e4da960d4a7fd25c09c41ebb8c
       
       // Comment this when you have your password from the database

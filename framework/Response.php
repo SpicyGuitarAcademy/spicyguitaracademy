@@ -159,7 +159,16 @@ class Response
    public function remove_header(string $header)
    {
       if (!\headers_sent()) {
-         header_remove($header);
+         \header_remove($header);
+      }
+   }
+
+   public function remove_headers(array $headers)
+   {
+      if (!\headers_sent()) {
+         foreach ($headers as $header) {
+            header_remove($header);
+         }
       }
    }
 
@@ -168,6 +177,22 @@ class Response
       if (!\headers_sent()) {
          header(sprintf('%s: %s', $header, $value), $replace);
       }
+   }
+
+   public function add_headers(array $headers, bool $replace = true)
+   {
+      if (!\headers_sent()) {
+         foreach ($headers as $header => $value) {
+            \header(\sprintf('%s: %s', $header, $value), $replace);
+         }
+      }
+   }
+
+   // redirection
+   public function redirect(string $location)
+   {
+      $this->add_header("Location", $location);
+      $this->send("", 302);
    }
 
    // authentication headers

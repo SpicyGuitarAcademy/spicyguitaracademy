@@ -19,10 +19,31 @@ class Http
    private $method;
 
    private $route_auth_type;
-   private $auth_callback;
+   private $app_handles_failure;
 
    public function __construct()
    {
+      
+      // Set all Configurations
+      date_default_timezone_set("Africa/Lagos");
+
+      // start the session
+      $lifetime = (1 * 60 );
+      $path = '/';
+      $domain = \Config['APP_URL'];
+      $secure = true;
+      $httponly = true;
+      session_set_cookie_params([
+         'lifetime' => $lifetime,
+         'path' => $path,
+         'domain' => $domain,
+         'secure' => $secure,
+         'httponly' => $httponly,
+         'samesite' => 'Lax'
+      ]);
+      session_name(\Config['AUTH_SESSION_NAME']);
+      \session_start();
+
       $this->request = new Request();
       $this->response = new Response();
       $this->auth = new Auth();
@@ -32,14 +53,15 @@ class Http
 
       // default auth type
       $this->default_auth_type();
-
-      // die($this->route_auth_type . " = " . $this->request->auth_type());
+      
    }
 
    public function get(string $route, $next)
    {
       // restrict to only GET requests
       if ($this->method != "GET") {
+         // default the auth type, incase any had been set before
+         $this->default_auth_type();
          return;
       }
       
@@ -50,6 +72,8 @@ class Http
    {
       // restrict to only POST requests
       if ($this->method != "POST") {
+         // default the auth type, incase any had been set before
+         $this->default_auth_type();
          return;
       }
 
@@ -60,6 +84,8 @@ class Http
    {
       // restrict to only PUT requests
       if ($this->method != "PUT") {
+         // default the auth type, incase any had been set before
+         $this->default_auth_type();
          return;
       }
 
@@ -70,6 +96,8 @@ class Http
    {
       // restrict to only PATCH requests
       if ($this->method != "PATCH") {
+         // default the auth type, incase any had been set before
+         $this->default_auth_type();
          return;
       }
 
@@ -78,8 +106,10 @@ class Http
 
    public function delete(string $route, $next)
    {
-      // restrict to only PATCH requests
-      if ($this->method != "PATCH") {
+      // restrict to only DELETE requests
+      if ($this->method != "DELETE") {
+         // default the auth type, incase any had been set before
+         $this->default_auth_type();
          return;
       }
 
@@ -114,7 +144,7 @@ class Http
       // comparison pass
       // intercept the process with the middleware
       // returns true
-      $this->auth->check( $this->request, $this->response, $this->route_auth_type );
+      $this->auth->check( $this->request, $this->response, $this->route_auth_type, $this->app_handles_failure );
 
       // if ( $this->auth->check( $this->request, $this->response, $this->route_auth_type ) == false ) {
       //    $this->response->send('Access Denied', 401);
@@ -166,8 +196,10 @@ class Http
       }
 
       $this->route_auth_type = $auth;
+      $this->app_handles_failure = $app_handles_failure;
       return $this;
    }
+
 
 
 

@@ -38,9 +38,9 @@ class App
       //    $res->send($req->uri(). " - " .$req->params()->id);
       // });
 
-      // $http->auth("None")->get('/auth-none', function ( Request $req, Response $res ) {
-      //    $res->send("No Auth");
-      // });
+      $http->auth("None")->get('/auth-none', function ( Request $req, Response $res ) {
+         $res->send("No Auth");
+      });
 
       $http->auth("Basic")->get('/auth-basic', function ( Request $req, Response $res ) {
          $res->send("Basic Auth");
@@ -50,12 +50,34 @@ class App
          $res->send("Digest Auth");
       });
 
-      // $http->auth('Basic')->get('/home', function ( Request $req, Response $res) {
-      //    $res->send($req->uri(). " - " .$req->params()->id. " - " .$req->query()->range);
-      // });
+      $http->auth('Session')->get('/auth-session', function ( Request $req, Response $res) {
+         $res->send("Session Auth");
+      });
 
-      // http::middleware('web')
-      // ->get('/route','HomeController@index');
+      $http->get('/login', function ($req, $res) {
+         $res->send(View::render('login.html'));
+      });
+
+      $http->post('/auth', function (Request $req, Response $res) {
+         
+         // as best practice, regenerate session id
+         \session_regenerate_id();
+
+         $credentials = [
+            // Session is accessed by $_SESSION['AUTH']['USERNAME'], $_SESSION['AUTH']['PASSWORD'], $_SESSION['AUTH']['ROLE'], $_SESSION['AUTH']['PRIVILEGES']
+            "USERNAME" => $req->body()->username,
+            "PASSWORD" => $req->body()->username,
+            "ROLE" => $req->body()->username,
+            "PRIVILEGES" => $req->body()->username,
+         ];
+         $_SESSION['AUTH'] = $credentials;
+
+         $res->redirect("dashboard");
+      });
+
+      $http->auth('Session')->get('/dashboard', function ($req, $res) {
+         $res->send("You're Logged In.");
+      });
 
       $http->end();
    }
@@ -66,9 +88,14 @@ class App
 //    echo sprintf("%s =======> %s <br><br>", $key, $value);
 // }
 
+// echo uniqid() . "<br>";
+// echo uniqid("", true) . "<br>";
+// echo uniqid("Init") . "<br>";
+// echo uniqid("Init", true) . "<br>";
+// echo json_encode($_SESSION);
+
+// echo isset($_SESSION['AUTH']) ? 'Yes' : 'No';
+// die;
+
 // Start Application 😉
 new App();
-
-// die(json_encode(
-//    $_SERVER, 1
-// ));

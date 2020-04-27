@@ -33,10 +33,19 @@ class Request
 
    private $protocol;
 
+   private $referer;
+
+   private $cookies;
+
+   private $session;
+
    // Auth related properties
    private $auth_type;
 
    private $auth_credentials;
+
+
+
 
    public function __construct()
    {
@@ -72,6 +81,15 @@ class Request
 
       // get the request http protocol
       $this->get_protocol();
+
+      // get the request referer
+      $this->get_referer();
+
+      // get the cookies that came with the request
+      $this->get_cookies();
+
+      // // get the session that came with the request
+      // $this->get_session();
 
       // accomodating request methods from html
       $this->get_html_request_methods();
@@ -186,6 +204,21 @@ class Request
       $this->protocol = $this->request['SERVER_PROTOCOL'];
    }
 
+   private function get_referer()
+   {
+      $this->referer = $this->request['HTTP_REFERER'] ?? '/';
+   }
+
+   private function get_cookies()
+   {
+      $this->cookies = $this->objectify($_COOKIE ?? []); // $this->request['HTTP_COOKIE'];
+   }
+
+   private function get_session()
+   {
+      // $this->session = $this->objectify($_SESSION ?? []);
+   }
+
    private function get_html_request_methods()
    {  
       // accomodating methods from html
@@ -217,7 +250,7 @@ class Request
       }
 
       // Digest Auth
-      elseif ( isset($this->request['PHP_AUTH_DIGEST']) ) {
+      elseif ( isset($this->request['PHP_AUTH_DIGEST']) && !empty($this->request['PHP_AUTH_DIGEST']) ) {
          $this->auth_type = "Digest";
          // get the auth credentials
          $cred = $this->request['PHP_AUTH_DIGEST'];
@@ -239,6 +272,13 @@ class Request
          // objectify the credentials
          $this->auth_credentials = $this->objectify($credentials);
 
+      }
+
+      // Session Auth
+      elseif ( isset($_SESSION['AUTH']) && !empty($_SESSION['AUTH']) ) {
+         $this->auth_type = "Session";
+         // get the auth credentials
+         $this->auth_credentials = $this->objectify($_SESSION['AUTH']);
       }
 
       // None
