@@ -18,7 +18,7 @@ class Auth
       
       if ( isset($credentials->username) && !empty($credentials->username) && isset($credentials->role) && !empty($credentials->role) && isset($credentials->privileges) && !empty($credentials->priveleges) ) {
 
-         
+         echo "Hola";
 
       }
 
