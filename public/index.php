@@ -6,6 +6,8 @@ use Framework\Response;
 // use Initframework\TestAutoloader;
 // use ESAPI;
 
+use App\Auth as AppAuth;
+
 // Include autoload for composer packages
 include_once '../vendor/autoload.php';
 
@@ -60,23 +62,24 @@ class App
 
       $http->post('/auth', function (Request $req, Response $res) {
          
-         // as best practice, regenerate session id
-         \session_regenerate_id();
+         if ((new AppAuth())->auth_session_login($req, $res)) {
+            
+            $res->redirect("dashboard");
+            // echo json_encode($_SESSION);
+            // die("Good");
 
-         $credentials = [
-            // Session is accessed by $_SESSION['AUTH']['USERNAME'], $_SESSION['AUTH']['PASSWORD'], $_SESSION['AUTH']['ROLE'], $_SESSION['AUTH']['PRIVILEGES']
-            "USERNAME" => $req->body()->username,
-            "PASSWORD" => $req->body()->username,
-            "ROLE" => $req->body()->username,
-            "PRIVILEGES" => $req->body()->username,
-         ];
-         $_SESSION['AUTH'] = $credentials;
-
-         $res->redirect("dashboard");
+         } else {
+            $res->send(View::render('login.html'), 400);
+         }
+         
       });
 
       $http->auth('Session')->get('/dashboard', function ($req, $res) {
-         $res->send("You're Logged In.");
+         $res->send(View::render('dashboard.html'));
+      });
+
+      $http->get('/logout', function ($req, $res) {
+         (new AppAuth())->auth_session_logout($req, $res);
       });
 
       $http->end();
@@ -85,7 +88,7 @@ class App
 }
 
 // foreach ($_SERVER as $key => $value) {
-//    echo sprintf("%s =======> %s <br><br>", $key, $value);
+//    echo sprintf("%s ==========> %s <br>", $key, $value);
 // }
 
 // echo uniqid() . "<br>";

@@ -239,6 +239,8 @@ class Request
    // ------------------------------ //
    private function get_auth_type()
    {
+      echo (json_encode($_SESSION));
+
       // Basic Auth
       if ( isset($this->request['PHP_AUTH_USER']) && isset($this->request['PHP_AUTH_PW']) && !empty($this->request['PHP_AUTH_USER']) && !empty($this->request['PHP_AUTH_PW'])) {
          $this->auth_type = "Basic";
@@ -276,6 +278,7 @@ class Request
 
       // Session Auth
       elseif ( isset($_SESSION['AUTH']) && !empty($_SESSION['AUTH']) ) {
+         // die(json_encode($_SESSION));
          $this->auth_type = "Session";
          // get the auth credentials
          $this->auth_credentials = $this->objectify($_SESSION['AUTH']);

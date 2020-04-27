@@ -24,26 +24,32 @@ class Http
    public function __construct()
    {
       
+      // TODO: prepare csrf token
+      
       // Set all Configurations
       date_default_timezone_set("Africa/Lagos");
 
       // start the session
-      $lifetime = (1 * 60 );
+      $lifetime = (\Config['AUTH_SESSION_TIMEOUT'] * 60);
       $path = '/';
-      $domain = \Config['APP_URL'];
-      $secure = true;
+      $domain = "localhost";
+      $secure = ($_SERVER['REQUEST_SCHEME'] == "http") ? false : true ;
       $httponly = true;
-      session_set_cookie_params([
-         'lifetime' => $lifetime,
-         'path' => $path,
-         'domain' => $domain,
-         'secure' => $secure,
-         'httponly' => $httponly,
-         'samesite' => 'Lax'
-      ]);
-      session_name(\Config['AUTH_SESSION_NAME']);
-      \session_start();
 
+      session_start(
+         [
+            'name' => \Config['AUTH_SESSION_NAME'],
+            'sid_length' => 225,
+            'cookie_lifetime' => $lifetime,
+            'cookie_path' => $path,
+            'cookie_domain' => $domain,
+            'cookie_secure' => $secure,
+            'cookie_httponly' => $httponly,
+            'cookie_samesite' => 'Lax'
+         ]
+      );
+
+      // initiate new request, response and auth
       $this->request = new Request();
       $this->response = new Response();
       $this->auth = new Auth();

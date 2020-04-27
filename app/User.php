@@ -4,21 +4,17 @@ use App;
 class User
 {
 
-   public $username;
-   public $role;
-   public $privileges;
-   
-   public function __construct()
+   public function __construct(array $credentials)
    {
+
+      // make the credentials properties of the user
+      $credentials = $this->objectify($credentials);
+      foreach ($credentials as $key => $value) {
+         $this->$key = $value;
+      }
 
    }
 
-   public function set_credentials(object $credentials)
-   {
-      $this->username = $credentials->username;
-      $this->role = $credentials->role;
-      $this->privileges = $credentials->privileges;
-   }
 
    // method for turning arrays to objects
    private function objectify(array $array)

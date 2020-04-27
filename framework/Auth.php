@@ -34,12 +34,12 @@ class Auth
             if ($request->auth_type() != "Session") {
 
                // request a Session Authentication from the client via login form
-               $response->remove_all_headers();
+               // $response->remove_all_headers();
                $response->redirect('login');
 
             } else {
 
-               return $this->app_auth->auth_session($request->auth_credentials());
+               return $this->app_auth->auth_session($request, $response);
 
             }
 
@@ -56,7 +56,7 @@ class Auth
             } else {
 
                // validate the username and password is correct.
-               if ($this->app_auth->auth_basic($request->auth_credentials()->username, $request->auth_credentials()->password) == true) {
+               if ($this->app_auth->auth_basic($request, $response) == true) {
                   // success
                   return true;
                }
@@ -80,7 +80,7 @@ class Auth
             } else {
 
                // validate the username and password is correct.
-               if ( $this->app_auth->auth_digest($request, $request->auth_credentials()) ) {
+               if ( $this->app_auth->auth_digest($request, $response, $request->auth_credentials()) ) {
                   // success
                   return true;
                }
@@ -121,18 +121,56 @@ class Auth
 
    }
 
-   public function session_login(object $credentials)
+   public static function login(array $credentials, bool $remember)
    {
+      // consider remember
+      if ($remember) {
 
-      $credentials = [
-         // Session is accessed by $_SESSION['AUTH']['USERNAME'], $_SESSION['AUTH']['PASSWORD'], $_SESSION['AUTH']['ROLE'], $_SESSION['AUTH']['PRIVILEGES']
-         "USERNAME" => $req->body()->username,
-         "PASSWORD" => $req->body()->username,
-         "ROLE" => $req->body()->username,
-         "PRIVILEGES" => $req->body()->username,
-      ];
+         // should we use the remember_token in the db
+         // so that i can set a cookie (remember) here
+         // then we use it in the check method.
+
+         // OR
+
+         // should we extend the session time
+         // and add a remember field
+         // so it can be tested for later
+
+         // i would use the second option
+         $remember_credential = [
+            "remember" => $remember
+         ];
+
+         $credentials = array_merge($credentials, $remember_credential);
+
+         // $lifetime = (5 * 60);
+         // $path = '/';
+         // $domain = \Config['APP_URL'];
+         // $secure = true;
+         // $httponly = true;
+         // session_set_cookie_params([
+         //    'lifetime' => $lifetime,
+         //    'path' => $path,
+         //    'domain' => $domain,
+         //    'secure' => $secure,
+         //    'httponly' => $httponly,
+         //    'samesite' => 'Lax'
+         // ]);
+         // session_name(\Config['AUTH_SESSION_NAME']);
+
+      }
+      
       $_SESSION['AUTH'] = $credentials;
+      // die(json_encode($_SESSION));
+      // as best practice, regenerate session id
+      \session_regenerate_id();
 
+   }
+
+   public static function logout()
+   {
+      \session_unset();
+      \session_destroy();
    }
 
 }

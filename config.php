@@ -14,7 +14,7 @@ CONST Config = [
 
    // set the ip addresses that can access the application while on maintenance
    "APP_MAINTENANCE_WHITELIST_IP" => [
-      "::1"
+      "::1","127.0.0.1"
    ],
    
    // DATABASE CONFIGURATION
@@ -35,6 +35,10 @@ CONST Config = [
    
    // AUTHENTICATION
 
+   // Choose authentication method for web and api
+   "AUTH_WEB" => "session", // "jwt" "session"
+   "AUTH_API" => "jwt",     // "basic" "digest" "jwt" "oauth" "oauth2"
+
    // Basic Auth
    "AUTH_BASIC_REALM" => "Initframework",
 
@@ -43,27 +47,7 @@ CONST Config = [
 
    // Session Auth
    "AUTH_SESSION_NAME" => "Initframework",
-   "AUTH_SESSION_DOMAIN"=>"http://localhost/testframework",
-
-   // $lifetime = time() + 300;
-   // $path = '/';
-   // $domain = "http://localhost/initframeworktests/";
-   // $secure = true;
-   // $httponly = true;
-   // session_set_cookie_params([
-   //    'lifetime' => $lifetime,
-   //    'path' => $path,
-   //    'domain' => $domain,
-   //    'secure' => $secure,
-   //    'httponly' => $httponly,
-   //    'samesite' => 'Lax'
-   // ]);
-   // session_name("HB");
-   // session_start();
-
-   // Session is accessed by $_SESSION['AUTH']['USERNAME'], $_SESSION['AUTH']['PASSWORD'], $_SESSION['AUTH']['ROLE'], $_SESSION['AUTH']['PRIVILEGES']
-
-   "AUTH_TIMEOUT" => 1, # 1 = 1 hour
+   "AUTH_SESSION_TIMEOUT" => 60, # Minutes
 
    "SERVER_ADMIN" => "webmaster@test.initframework.com", // postmaster@localhost
 

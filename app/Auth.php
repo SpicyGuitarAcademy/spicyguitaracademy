@@ -3,39 +3,92 @@ namespace App;
 use Framework\Model;
 use Framework\Request;
 use Framework\Response;
+use Framework\Auth as FrameworkAuth;
 use App\User;
 
 class Auth
 {
 
    public function __construct()
-   {
+   {}
 
-   }
-
-   public function auth_session(object $credentials)
+   public function auth_session(Request $request, Response $response)
    {
       
-      if ( isset($credentials->username) && !empty($credentials->username) && isset($credentials->role) && !empty($credentials->role) && isset($credentials->privileges) && !empty($credentials->priveleges) ) {
+      // retrieve credentials
+      $username = $request->auth_credentials()->username;
+      $role = $request->auth_credentials()->role;
+      $privileges = $request->auth_credentials()->privileges;
 
-         echo "Hola";
+      // these are credentials coming from the session
+      if ( isset($username) && !empty($username) && isset($role) && !empty($role) && isset($privileges) && !empty($privileges) ) {
 
+         // set the user credentials
+         return true;
+         
+      } else {
+
+         $response->remove_all_headers();
+         $response->redirect("login", 401);
+         return false;
+      }
+      
+   }
+
+   public function auth_session_logout(Request $request, Response $response)
+   {
+      FrameworkAuth::logout();
+      // return true;
+      $response->redirect("login");
+   }
+
+   public function auth_session_login(Request $request, Response $response)
+   {
+
+      $username = trim($request->body()->username);
+      $password = trim($request->body()->password);
+      $remember = isset($request->body()->remember) ? true : false ;
+
+      if (!empty($username) && !empty($password)) {
+
+         if ($username == "admin" && $password == "admin") {
+
+            // set user credentials
+            // Note: this credentials were used to authenticate the user in the ath_session method above
+            $credentials = [
+               "username" => $username,
+               "role" => "admin",
+               "privileges" => "*"
+            ];
+
+            // log the user in with the valid credentials
+            FrameworkAuth::login($credentials, $remember);
+            return true;
+
+         } else {
+            // $response->remove_all_headers();
+            // $response->redirect("login");
+            // die("Only Admin");
+            return false;
+         }
+
+      } else {
+         // $response->remove_all_headers();
+         // $response->redirect("login");
+         // die("Username & Password is empty");
+         return false;
       }
 
-      $credentials = [
-         // Session is accessed by $_SESSION['AUTH']['USERNAME'], $_SESSION['AUTH']['PASSWORD'], $_SESSION['AUTH']['ROLE'], $_SESSION['AUTH']['PRIVILEGES']
-         "USERNAME" => $req->body()->username,
-         "PASSWORD" => $req->body()->username,
-         "ROLE" => $req->body()->username,
-         "PRIVILEGES" => $req->body()->username,
-      ];
-      $_SESSION['AUTH'] = $credentials;
-      
    }
 
-   public function auth_basic(string $username ,string $password)
+   public function auth_basic(Request $request, Response $response)
    {
+      // retrieve the credentials
+      $username = $request->auth_credentials()->username;
+      $password = $request->auth_credentials()->password;
+
       /*
+         Use the username to retrieve the password from the database.
          Your Model Code Goes Here
       */
 
@@ -48,23 +101,18 @@ class Auth
       // You can replace this with your own authentication code
       if ($username == $db_username && $password == $db_password) {
 
-         // set the credentials
+         // set the user credentials
 
          return true;
       } else {
+         $this->remove_all_headers();
          (new Response())->auth_basic("Initframework");
          return false;
       }
 
    }
 
-   public function create_digest_password(string $username, string $password)
-   {
-      // md5(username:realm:password)
-      return md5($username . ":" . "Initframework" . ":" . $password);
-   }
-
-   public function auth_digest(Request $request, object $credentials)
+   public function auth_digest(Request $request, Response $response, object $credentials)
    {
       
       $username = $credentials->username;
@@ -89,19 +137,26 @@ class Auth
       $cnonce = $credentials->cnonce;
       $qop = $credentials->qop;
       $uri = $credentials->uri;
-      $response = $credentials->response;
+      $request_response = $credentials->response;
 
       $A1 = $password;
       $A2 = md5($request->method() . ":$uri");
-      $request_response = md5("$A1:$nonce:$nc:$cnonce:$qop:$A2");
+      $valid_response = md5("$A1:$nonce:$nc:$cnonce:$qop:$A2");
 
-      if ($response == $request_response) {
+      if ($request_response == $valid_response) {
          return true;
       } else {
-         (new Response())->auth_digest("Initframework");
+         $response->remove_all_headers();
+         $response->auth_digest("Initframework");
          return false;
       }
       
+   }
+
+   public function create_digest_password(string $username, string $password)
+   {
+      // md5(username:realm:password)
+      return md5($username . ":" . "Initframework" . ":" . $password);
    }
 
    public function auth_oauth()
