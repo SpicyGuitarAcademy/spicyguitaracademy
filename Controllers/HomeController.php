@@ -13,11 +13,11 @@ class HomeController extends Controller
 
    public function index(array $data)
    {
-      // View::show('welcome.html');
+      View::show('welcome.html');
 
-      foreach ($_SERVER as $key => $value) {
-         echo "$key ===========> $value <br>";
-      }
+//       foreach ($_SERVER as $key => $value) {
+//          echo "$key ===========> $value <br>";
+//       }
 
       exit;
    }
@@ -25,15 +25,15 @@ class HomeController extends Controller
    public function users(array $data)
    {
       
-      foreach ($_SERVER as $key => $value) {
-         echo "$key ===========> $value <br>";
-      }
+//       foreach ($_SERVER as $key => $value) {
+//          echo "$key ===========> $value <br>";
+//       }
 
-      exit;
+//       exit;
 
-      // View::with([
-      //    "users"=>json_encode(['John Doe','Jane Doe','David Doe','Janet Doe'])
-      // ])->show('users.html');
+      View::with([
+         "users"=>json_encode(['John Doe','Jane Doe','David Doe','Janet Doe'])
+      ])->show('users.html');
    }
 
 }
