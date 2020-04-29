@@ -1,6 +1,6 @@
 <?php
-// namespace Framework\Database;
-// use Framework\Database\Model;
+namespace Framework\Database;
+use Framework\Database\Model;
 
 class Designer // extends Model
 {
@@ -618,6 +618,19 @@ class Designer // extends Model
       $this->fields[$this->field_index][] = "AUTO_INCREMENT";
       return $this;
    }
+
+   // Comment
+   public function comment(string $comment = "I love Initframework")
+   {
+      // restrict from being the first attribute
+      if ($this->open == false){
+         return $this;
+      }
+
+      $this->fields[$this->field_index][] = "COMMENT '$comment'";
+      return $this;
+   }
+
    // --------------------------------------------------------------
 
    // key Section
@@ -635,10 +648,11 @@ class Designer // extends Model
    public function index()
    {
       $this->alter_index++;
-      $this->fields[$this->alter_index] = "INDEX";
+      $this->alter_sql[$this->alter_index] = "ADD INDEX KEY ('" . $this->field . "')";
       return $this;
    }
 
+   // Foreign key
    public function foreign_key(string $local_field, string $foreign_table, string $foreign_field, string $on_update, string $on_delete = "NO")
    {
       $this->alter_index++;
@@ -685,19 +699,3 @@ class Designer // extends Model
 
 
 }
-
-
-$table = new Designer();
-
-$table->create("user_tbl");
-$table->int("id",11)->default("CURRENT_TIMESTAMP")->auto_increment();
-$table->varchar("username",20);
-$table->exe();
-
-echo "\n\n\n";
-
-$table->create("user_tbl");
-$table->int("id",11)->default(0)->primary();
-$table->varchar("username",20)->auto_increment();
-$table->enum("enuum", ["EBUKA", "ODINI"]);
-$table->exe();
