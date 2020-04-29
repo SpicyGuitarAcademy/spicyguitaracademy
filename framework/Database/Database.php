@@ -1,13 +1,13 @@
 <?php
-namespace Framework;
+namespace Framework\Database;
 use PDO;
 use PDOException;
-use App\Error;
+use Framework\FrameworkException;
 
 class Database
 {
 
-   private $driver = \Config["DB_CONNECTION"];
+   private $driver = \Config["DB_DRIVER"];
    private $host = \Config["DB_HOST"];
    private $port = \Config["DB_PORT"];
    private $database = \Config["DB_DATABASE"];

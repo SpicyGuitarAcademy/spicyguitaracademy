@@ -141,6 +141,8 @@ class Auth
             "remember" => $remember
          ];
 
+         // adding the remember to the credentials is now useless, we just increase the remember me time, lets try it on edge
+
          $credentials = array_merge($credentials, $remember_credential);
 
          // $lifetime = (5 * 60);
@@ -157,6 +159,10 @@ class Auth
          //    'samesite' => 'Lax'
          // ]);
          // session_name(\Config['AUTH_SESSION_NAME']);
+
+         // extend the lifetime
+         $lifetime = (\Config['AUTH_REMEMBER_ME_TIMEOUT'] * 60);
+         session_set_cookie_params($lifetime);
 
       }
       

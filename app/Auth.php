@@ -1,10 +1,10 @@
 <?php
 namespace App;
+use App\User;
 use Framework\Model;
 use Framework\Request;
 use Framework\Response;
 use Framework\Auth as FrameworkAuth;
-use App\User;
 
 class Auth
 {
@@ -23,7 +23,13 @@ class Auth
       // these are credentials coming from the session
       if ( isset($username) && !empty($username) && isset($role) && !empty($role) && isset($privileges) && !empty($privileges) ) {
 
+         $credentials = [
+            "username" => $username,
+            "role" => $role,
+            "privileges" => $privileges
+         ];
          // set the user credentials
+         new User($credentials);
          return true;
          
       } else {
@@ -33,13 +39,6 @@ class Auth
          return false;
       }
       
-   }
-
-   public function auth_session_logout(Request $request, Response $response)
-   {
-      FrameworkAuth::logout();
-      // return true;
-      $response->redirect("login");
    }
 
    public function auth_session_login(Request $request, Response $response)
@@ -63,6 +62,10 @@ class Auth
 
             // log the user in with the valid credentials
             FrameworkAuth::login($credentials, $remember);
+
+            // set the users details
+            new User($credentials);
+
             return true;
 
          } else {
@@ -79,6 +82,13 @@ class Auth
          return false;
       }
 
+   }
+
+   public function auth_session_logout(Request $request, Response $response)
+   {
+      FrameworkAuth::logout();
+      // return true;
+      $response->redirect("login");
    }
 
    public function auth_basic(Request $request, Response $response)
@@ -112,10 +122,10 @@ class Auth
 
    }
 
-   public function auth_digest(Request $request, Response $response, object $credentials)
+   public function auth_digest(Request $request, Response $response)
    {
       
-      $username = $credentials->username;
+      $username = $request->auth_credentials()->username;
 
       // use the username to retrieve the password (A1) from the database.
       // the password should be computed as md5(username:realm:actual-password)

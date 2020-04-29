@@ -89,7 +89,7 @@ class Auth extends Model
 			return true;
 		}
 		
-		// else if a cookie has been set
+		// else if a cookie has been set for remember me token
 		elseif (isset($_COOKIE[\Config["APP"]]))
 		{
 			// user used the remember me to remain authenticated

@@ -47,13 +47,10 @@ CONST Config = [
 
    // Session Auth
    "AUTH_SESSION_NAME" => "Initframework",
-   "AUTH_SESSION_TIMEOUT" => 60, # Minutes
+   "AUTH_SESSION_TIMEOUT" => 1, # Minutes
+   "AUTH_REMEMBER_ME_TIMEOUT" => 2, # Minutes
 
+   // Administration
    "SERVER_ADMIN" => "webmaster@test.initframework.com", // postmaster@localhost
 
 ];
-
-// DISPLAY ERROR
-($_SERVER['HTTP_HOST'] == 'localhost') ? ini_set('display_errors', 1) : ini_set('display_errors', 0);
-
-?>

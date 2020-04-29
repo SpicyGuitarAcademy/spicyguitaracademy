@@ -1,7 +1,7 @@
 <?php
-namespace App;
-use App\Database;
-use App\Error;
+namespace Framework\Database;
+use Framework\Database\Database;
+use Framework\FrameworkException;
 use PDO;
 
 class Model extends Database

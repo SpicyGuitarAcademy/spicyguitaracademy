@@ -7,6 +7,7 @@ use Framework\Response;
 // use ESAPI;
 
 use App\Auth as AppAuth;
+use App\User;
 
 // Include autoload for composer packages
 include_once '../vendor/autoload.php';
@@ -63,10 +64,8 @@ class App
       $http->post('/auth', function (Request $req, Response $res) {
          
          if ((new AppAuth())->auth_session_login($req, $res)) {
-            
+
             $res->redirect("dashboard");
-            // echo json_encode($_SESSION);
-            // die("Good");
 
          } else {
             $res->send(View::render('login.html'), 400);
@@ -74,11 +73,13 @@ class App
          
       });
 
-      $http->auth('Session')->get('/dashboard', function ($req, $res) {
+      $http->auth('Session')->get('/dashboard', function (Request $req, Response $res) {
          $res->send(View::render('dashboard.html'));
+         // $user = User::user();
+         // $res->send("Welcome " . ucfirst($user->username) . "<br>You have " . $user->privileges . " privileges." );
       });
 
-      $http->get('/logout', function ($req, $res) {
+      $http->post('/logout', function ($req, $res) {
          (new AppAuth())->auth_session_logout($req, $res);
       });
 
@@ -90,12 +91,6 @@ class App
 // foreach ($_SERVER as $key => $value) {
 //    echo sprintf("%s ==========> %s <br>", $key, $value);
 // }
-
-// echo uniqid() . "<br>";
-// echo uniqid("", true) . "<br>";
-// echo uniqid("Init") . "<br>";
-// echo uniqid("Init", true) . "<br>";
-// echo json_encode($_SESSION);
 
 // echo isset($_SESSION['AUTH']) ? 'Yes' : 'No';
 // die;
