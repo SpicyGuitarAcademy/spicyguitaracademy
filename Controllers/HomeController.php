@@ -1,18 +1,15 @@
 <?php
 namespace Controllers;
-use App\Controller;
-use App\Route;
-use App\View;
-
-use Framework\Request;
-use Framework\Response;
-use Framework\Http;
+use Framework\Http\Http;
+use Framework\Http\Request;
+use Framework\Http\Response;
+use App\Services\Auth;
 
 class HomeController
 {
    public function index(Request $req, Response $res)
    {
-      $res->send(View::internal_render('welcome.html'));
+      $res->send($res->render("welcome.html", ['app'=>'Good']));
    }
 
    public function users(Request $req, Response $res)

@@ -19,17 +19,31 @@
    <!-- Custom -->
    <script src="@assets/js/main.js"></script>
    <link rel="stylesheet" href="@assets/css/main.css">
+
 </head>
 <body class="my-5 bg-white text-center">
    
-   <a class="display-4" href="users">Go to Users</a>
-   
+   @vars
+
+   i love {{ $app }}
+
+   @if ($app == "InittFramework")
+      I LOVE INITFRAMEWORK PP
+   @else ELSEE @endif
+
+   @stmt $hi = "Hi";
+
+   {{ $hi }} Ebuka
+
    <form action="./test-put-from-html" method="post">
       <input type="text" name="putvar" value="">
-      <!-- automate this process with internal_render as @method_PUT -->
-      <input type="hidden" name="REQUEST_METHOD" value="PUT">
+      @method=PUT
       <input type="submit">
    </form>
+
+   <div class="container border rounded mx-auto bg-light p-3 my-3">
+      <p class="display-4">Welcome</p>
+   </div>
 
 
 </body>

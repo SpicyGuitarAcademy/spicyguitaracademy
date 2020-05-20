@@ -1,5 +1,6 @@
+.vscode/
+.git/
 storage/
 vendor/
-config.php
-log.php
-.vscode/
+app/config.php
+php.ini

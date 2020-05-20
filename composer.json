@@ -1,7 +1,10 @@
 {
-    "name": "ebuka/testinitframework",
-    "description": "I will be testing initframework",
+    "name": "ebuka/testframework",
+    "description": "I will be testing Init Framework",
     "type": "project",
+    "require": {
+        "ebukaodini/initframework": "dev-master"
+    },
     "license": "MIT",
     "authors": [
         {
@@ -10,19 +13,11 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {
-        "initframework/initframework": "dev-master",
-        "owasp/esapi": "dev-master",
-        "monolog/monolog" : "1.0.0",
-        "phpunit/phpunit": "^9.2@dev"
-    },
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "Controllers\\": "controllers/",
-            "Models\\": "models/",
-            "Providers\\": "providers/",
-            "Framework\\": "framework/"
+            "App\\": "app",
+            "Controllers\\": "controllers",
+            "Models\\": "models"
         }
     }
 }
