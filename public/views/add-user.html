@@ -17,38 +17,17 @@
    <!-- FontAwesome for Your Icons -->
    <link rel="stylesheet" href="@assets/css/fontawesome.css">
    <!-- Your Custom Assets -->
-   <script src="@assets/js/main.js"></script>
+   <script src="@assets/js/main.js\"></script>
    <link rel="stylesheet" href="@assets/css/main.css">
 </head>
 <body>
 
-   @vars
+   <!-- start buiding that nice interface... 😉 -->
 
-   start buiding that nice interface... 😉
-
-   @if ($user->auth == true)
-      User is Authenticated. <br>
-      Role is {{ $user->role ?? 'No Role' }}
-   @endif
-
-   @import component.html
-
-   <br>
-   <form action="./csrf" method="post">
+   <form action="add-user" method="post">
       @csrftoken
-      <input type="submit" value="Check CSRF">
-   </form>
-
-   <br>
-
-   <form action="./csrf" method="post">
-      <input type="submit" value="Check No CSRF">
-   </form>
-
-   <form action="./formupload" method="post" enctype="multipart/form-data">
-      <input type="file" name="filee" id="">
-      <input type="file" name="fileo" id="">
-      <input type="submit" value="Push File">
+      <input type="text" name="username" placeholder="Add a username">
+      <input type="submit" value="Add">
    </form>
 
 </body>

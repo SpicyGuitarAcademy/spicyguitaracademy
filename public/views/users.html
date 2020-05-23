@@ -24,12 +24,19 @@
 
 	<!-- view codes... -->
 	<div class="bg-white my-5 text-center">
-		<h1 class="display-3">The Doe Family</h1>
+		<h1 class="display-3">Users</h1>
 
-		@stmt $request = json_decode($request, true);
-		@foreach ($request as $key => $val)
-			<li class="display-4">{{$key}} => {{$val}}</li>
-		@endforeach
+		@vars
+
+		
+		{{ $users }}
+		@if ($users)
+			@php $users = json_decode($users);
+			<!-- {{ $users }} -->
+			@foreach ($users as $user)
+				<li class="display-4">{{ $user->username ?? "no" }}</li>
+			@endforeach
+		@endif
 
 		<button class="btn btn-lg btn-dark" onclick="sendPut()">Send a Put Request</button>
 		
