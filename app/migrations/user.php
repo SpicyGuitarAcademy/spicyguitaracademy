@@ -4,6 +4,10 @@ use Framework\Database\Designer;
 
 $table = new Designer();
 
+$table->create("user_tbl");
+$table->int('user_id')->primary()->auto_increment();
+$table->varchar('username', 20)->index();
+$table->exe();
 
 
 /*
