@@ -59,6 +59,23 @@ $http->auth('web')->csrf()->post('/add-user', function($req, $res) {
 
 });
 
+$http->get('/user/{username:a}', function (Request $req, $res) {
+   if ($req->params_exists()) {
+      $params = $req->params();
+      $username = $params->username;
+      $username = (new Sanitize)->string($username);
+      $mdl = new UserModel();
+
+      $user = $mdl->getUser($username);
+
+      echo $user != [] ? json_encode($user) : "Not a user";
+      // echo json_encode($user) ?? "Not a user";
+      die;
+
+   }
+   
+});
+
 $http->ip_allow('::1')->get('/test-ip', function ($req, $res) {
    $res->send('Allowed IP ' . $req->ip());
 });

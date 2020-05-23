@@ -22,4 +22,8 @@ class UserModel extends Model
       return $this->read("*");
    }
 
+   public function getUser($username) {
+      return $this->where("username = '$username'")->read("*");
+   }
+
 }
