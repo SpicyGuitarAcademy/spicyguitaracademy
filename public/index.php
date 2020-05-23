@@ -167,3 +167,5 @@ $http->post('/logout', function ($req, $res) {
 });
 
 $http->end();
+// Initialize Application 😉
+new App();

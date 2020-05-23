@@ -14,6 +14,7 @@ class HomeController
 
    public function users(Request $req, Response $res)
    {
+<<<<<<< HEAD
       $path = $req->path();
       $uri = $req->uri();
       $host = $req->host();
@@ -36,6 +37,28 @@ class HomeController
             "query"=>json_encode($query),
             "method"=>$method,
          ])
+=======
+      View::show('welcome.html');
+
+//       foreach ($_SERVER as $key => $value) {
+//          echo "$key ===========> $value <br>";
+//       }
+
+      exit;
+   }
+
+   public function users(array $data)
+   {
+      
+//       foreach ($_SERVER as $key => $value) {
+//          echo "$key ===========> $value <br>";
+//       }
+
+//       exit;
+
+      View::with([
+         "users"=>json_encode(['John Doe','Jane Doe','David Doe','Janet Doe'])
+>>>>>>> d5a7428bcded5db5576242fa8e07dfb8a1e80244
       ])->show('users.html');
    }
 
