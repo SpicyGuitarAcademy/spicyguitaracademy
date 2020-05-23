@@ -5,7 +5,10 @@ use Framework\Http\Request;
 use Framework\Http\Response;
 use Framework\Handler\IException;
 use App\Services\Auth;
-use App\Services\User;
+use App\Services\Upload;
+use App\Services\Validate;
+use App\Services\Sanitize;
+use Models\UserModel;
 
 // Include autoload for composer packages
 include_once '../vendor/autoload.php';
@@ -17,11 +20,43 @@ $http = new Http();
 
 // Now let's Route 🚀🚀🚀
 
-$http->get("/", function ($req, Response $res) {
+$http->auth('web')->get("/", function ($req, Response $res) {
    $res->send($res->render('home.html', [
-      "app" => APPLICATION,
-      "owner"=>\Framework\File\File::owner()
+      "app" => APPLICATION
    ]), 200);
+});
+
+$http->auth('web')->get('/new-user', function ($req, Response $res) {
+   $res->send(
+      $res->render('add-user.html'), 200);
+});
+
+$http->auth('web')->csrf()->post('/add-user', function($req, $res) {
+   $username = $req->body()->username;
+   $v = new Validate();
+   $v->letters('username', $username)->max(20);
+   $errors = $v->errors();
+
+   if (!$errors) {
+      $username = (new Sanitize)->string($username);
+      $mdl = new UserModel();
+      if ($mdl->addUser($username) == true) {
+         $users = $mdl->getUsers();
+
+         // if ($users) {
+            $res->send(
+            $res->render('users.html', [
+               "users" => json_encode($users)
+            ]), 200);
+         // } else {
+
+         // }
+         
+      } else {
+         die("User is not added");
+      }
+   }
+
 });
 
 $http->ip_allow('::1')->get('/test-ip', function ($req, $res) {
@@ -30,6 +65,21 @@ $http->ip_allow('::1')->get('/test-ip', function ($req, $res) {
 
 $http->csrf()->post('/csrf', function ($req, $res) {
    $res->send('Token Sent ' . $req->csrftoken());
+});
+
+$http->post('/formupload', function ($req, $res) {
+   // echo "File E : " . json_encode($req->files()->filee);
+   // echo "File O : " . json_encode($req->files()->fileo);
+
+   // $array = ["a"=>"A", "b"=>"B"];
+   
+   $up = new Upload(); $files = $req->files();
+   $up->image("File E", $files->filee)->upload('tutorials/', \Framework\Cipher\Encrypt::hash());
+   // $up->image("File O", $files->fileo)->upload();
+   echo json_encode($up->errors());
+   echo $up->uri('File E');
+   // $up->uri('tutorials/File O'));
+   die;
 });
 
 $http->get('/test-zip', function ($req,$res) {
@@ -92,9 +142,7 @@ $http->post('/auth', function (Request $req, Response $res) {
 });
 
 $http->auth('web')->guard('staff','admin')->get('/dashboard', function (Request $req, Response $res) {
-   $user = User::user();
    $res->send($res->render('dashboard.html'));
-   // $res->send("Welcome " . ucfirst($user->username) . "<br>You have " . $user->privileges . " privileges." );
 });
 
 $http->post('/logout', function ($req, $res) {
