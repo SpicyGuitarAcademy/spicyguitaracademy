@@ -37,13 +37,16 @@ class Auth
                $lifetime = (REMEMBER_ME_LIFETIME * 60);
                session_set_cookie_params($lifetime);
             }
+
             // add auth to session
             $_SESSION['AUTH'] = $credentials;
             // as best practice, regenerate session id
             \session_regenerate_id();
 
             // set the users details
-            new User($credentials);
+            User::$auth = true;
+            User::$username = $credentials['username'];
+            User::$role = $credentials['role'];
 
             return true;
 
@@ -73,6 +76,9 @@ class Auth
    }
    
 
+   // Auths
+
+   // Session Auth
    public static function session(Request $request, Response $response)
    {
       
@@ -83,13 +89,10 @@ class Auth
 
       // these are credentials coming from the session
       if ( isset($username) && !empty($username) && isset($role) && !empty($role) && isset($privileges) && !empty($privileges) ) {
-         $credentials = [
-            "username" => $username,
-            "role" => $role,
-            "privileges" => $privileges
-         ];
-         // set the user credentials
-         new User($credentials);
+         // set the users details
+         User::$auth = true;
+         User::$username = $username;
+         User::$role = $role;
       } else {
          $response->remove_all_headers();
          $response->redirect("login", 401);
@@ -97,6 +100,7 @@ class Auth
       
    }
 
+   // Basic Auth
    public static function basic(Request $request, Response $response)
    {
       // retrieve the credentials
@@ -126,6 +130,7 @@ class Auth
 
    }
 
+   // Digest Auth
    public static function digest(Request $request, Response $response)
    {
       
@@ -168,16 +173,19 @@ class Auth
       
    }
 
+   // JWT Auth
    public static function jwt()
    {
 
    }
 
+   // OAuth Auth
    public static function oauth()
    {
 
    }
 
+   // OAuth2 Auth
    public static function oauth2()
    {
 
@@ -185,13 +193,16 @@ class Auth
 
    // ---------------------
 
-   public static function digest_password(string $username, string $password)
-   {
-      Encrypt::digest($username, $password);
-   }
+   // public static function digest_password(string $username, string $password)
+   // {
+   //    Encrypt::digest($username, $password);
+   // }
 
    // ---------------------
 
+
+   // Middleware Handlers
+   // Guard
    public static function guard(Request $request, Response $response, $roles)
    {
       $username = $request->auth_credentials()->username;
@@ -204,6 +215,7 @@ class Auth
       }
    }
 
+   // Ip
    public static function ip_allow(Request $request, Response $response, $ips)
    {
       $ip = $request->ip();
@@ -213,12 +225,7 @@ class Auth
       }
    }
 
-   public static function csrfToken()
-   {
-      // return AES::encrypt(SECRET_KEY, session_id() . time());
-      return AES::encrypt( SECRET_KEY, session_id() );
-   }
-
+   // Anti CSRF
    public static function antiCsrf(Request $request, Response $response)
    {
       try {
@@ -233,6 +240,13 @@ class Auth
          $ex->handle();
       }
       
+   }
+
+   // Generating CSRF Token for View
+   public static function csrfToken()
+   {
+      // return AES::encrypt(SECRET_KEY, session_id() . time());
+      return AES::encrypt( SECRET_KEY, session_id() );
    }
 
 }
