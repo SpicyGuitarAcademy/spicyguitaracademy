@@ -4,3 +4,5 @@ storage/
 vendor/
 app/config.php
 php.ini
+.htaccess
+.todo
