@@ -197,7 +197,9 @@ class StudentController
       $new = [];
       foreach ($courses as $course) {
          $id = $course['id'];
-         list($course['done'], $course['total']) = $mdl->getStats($email, $id);
+         $stats = $mdl->getStats($email, $id);
+         $course['done'] = $stats[0];
+         $course['total'] = $stats[1];
          $new[] = $course;
       }
 
@@ -229,11 +231,11 @@ class StudentController
 
          $ldone = $ltotal = 0;
          foreach ($total as $course) {
-            $_1 = $smdl->getStats($email, $course['course_id'])[0];
+            $_1, = $smdl->getStats($email, $course['course_id'])[0];
             $_2 = $mdl->getLessonsByCourse($course['course_id']);
 
             $ldone += $_1;
-            $ltotal += count($_2);
+            $ltotal += $_2;
          }
 
          $countLessonsDone = $ldone;

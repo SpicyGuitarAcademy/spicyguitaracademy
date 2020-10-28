@@ -35,7 +35,7 @@ class StudentCourseModel extends Model
    }
 
    public function getActiveCourse($email) {
-      return $this->where("student_course_tbl.student_id = '$email' AND (student_course_tbl.status = 1 OR student_course_tbl.status = 0) AND student_course_tbl.course_id = course_tbl.id")->misc("ORDER BY course_tbl.ord")
+      return $this->where("student_course_tbl.student_id = '$email' AND student_course_tbl.status = 1 AND student_course_tbl.course_id = course_tbl.id")->misc("ORDER BY course_tbl.ord")
          ->readJoin("course_tbl, student_course_tbl", "course_tbl.*, student_course_tbl.status");
    }
 

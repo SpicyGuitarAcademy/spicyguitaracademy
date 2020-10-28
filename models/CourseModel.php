@@ -59,7 +59,9 @@ class CourseModel extends Model
 
    public function getCoursesByCategory(int $category)
    {
-      return $this->where("category = $category AND active = true")->misc("ORDER BY ord")->read("*");
+    //   return $this->where("category = $category AND active = true")->misc("ORDER BY ord")->read("*");
+    // return $this->where("course_tbl.category = $category AND course_tbl.active = true AND lesson_tbl.active = true AND course_tbl.id = lesson_tbl.course")->misc("ORDER BY ord")->readJoin("course_tbl, lesson_tbl", "course_tbl.*, COUNT(lesson_tbl.course) as lessons");
+    return $this->custom("SELECT *, (SELECT COUNT(*) FROM lesson_tbl WHERE lesson_tbl.active = true AND course_tbl.id = lesson_tbl.course) as lessons FROM course_tbl WHERE category = $category AND active = true", true);
    }
 
    public function removeCourse(int $id)
