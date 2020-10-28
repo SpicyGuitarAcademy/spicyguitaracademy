@@ -1,2 +1,5 @@
 app/config.php
 storage/
+.well-known
+cgi-bin
+.todo
