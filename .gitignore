@@ -3,3 +3,4 @@ storage/
 .well-known
 cgi-bin
 .todo
+.htaccess
