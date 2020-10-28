@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Tutors | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+	<link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+<body class="bg-light">
+   
+   @vars
+
+   @import admin/header.html
+
+   <nav class="container my-4">
+      <div class="h4">
+         <a href="@/admin/tutors">
+            <div class="float-left">
+               <i class="fa fa-users"></i>
+               Tutors
+            </div>
+         </a>
+         <span class="h5">&nbsp;/&nbsp;New</span>
+         <div class="clearfix"></div>
+      </div>
+   </nav>
+
+   <main class="container my-5">
+
+      <div class="my-3 py-2 mx-auto col-lg-6 col-md-6 bg-white border rounded">
+         
+         <div class="h3 text-center font-weight-normal">Add New Tutor</div>
+         <hr class="mb-0">
+         <div class="text-center"><small class="text-info"> <i class="fa fa-info-circle"></i> All fields are required.</small></div>
+
+         @if (isset($errors))
+            @php $errors = json_decode($errors);
+            <div class="text-center">
+            @foreach ($errors as $error)
+               <li class="text-danger">{{$error}}</li>
+            @endforeach
+            </div>
+         @endif
+         
+         <form action="@/admin/tutors/add" method="post">
+            
+            @csrftoken
+
+            <div class="row">
+               
+               <div class="col-lg-6">
+                  <label class="mt-2" for="fname">Firstname</label>
+                  <input type="text" name="firstname" id="fname" required minlength="1" maxlength="20" value="{{$firstname ?? ''}}" class="form-control">
+                  <small class="text-info"> <i class="fa fa-info-circle"></i> This field accepts max of 20 characters</small>
+               </div>
+
+               <div class="col-lg-6">
+                  <label class="mt-2" for="lname">Lastname</label>
+                  <input type="text" name="lastname" id="lname" required minlength="1" maxlength="20" value="{{$lastname ?? ''}}" class="form-control">
+                  <small class="text-info"> <i class="fa fa-info-circle"></i> This field accepts max of 20 characters</small>
+               </div>
+
+            </div>
+
+            <div class="row">
+               
+               <div class="col-lg-6">
+                  <label class="mt-2" for="email">Email</label>
+                  <input type="email" name="email" id="email" required minlength="1" maxlength="100" value="{{$email ?? ''}}" class="form-control">
+               </div>
+
+               <div class="col-lg-6">
+                  <label class="mt-2" for="telephone">Telephone</label>
+                  <input type="telephone" name="telephone" id="telephone" required minlength="1" maxlength="20" value="{{$telephone ?? ''}}" class="form-control">
+               </div>
+
+            </div>
+
+            <div class="row">
+               
+               <div class="col-lg-6">
+                  <label class="mt-2" for="email">Username</label>
+                  <input type="text" name="email" id="email" required minlength="1" maxlength="40" value="{{$email ?? ''}}" class="form-control">
+                  <small class="text-info"> <i class="fa fa-info-circle"></i> The username must be unique to this user.</small>
+               </div>
+
+               <div class="col-lg-6">
+                  <label class="mt-2" for="role">Role</label>
+                  <select name="role" id="role" class="form-control">
+                     <option value="tutor" {{ isset($role) && $role == 'tutor' ? 'selected' : '' }}>Tutor</option>
+                     <option value="admin" {{ isset($role) && $role == 'admin' ? 'selected' : '' }}>Admin</option>
+                  </select>
+                  <small class="text-info"> <i class="fa fa-info-circle"></i> Admin have access to all sections, but Tutor only have access to the tutorial related sections.</small>
+               </div>
+
+            </div>
+
+
+            <label class="mt-2" for="pwd">Password</label>
+            <span style="cursor: pointer;" id="showPassword" onclick="showPassword();" class="float-right mr-2 btn badge cursor-pointer btn-outline-primary"><i class="fa fa-eye"></i> Show</span>
+            <span style="cursor: pointer;" id="hidePassword" onclick="hidePassword();" class="float-right mr-2 btn badge btn-outline-primary"><i class="fa fa-eye-slash"></i> Hide</span>
+            <div class="clearfix"></div>
+            <input type="password" name="password" id="pwd" required minlength="8" value="{{$password ?? ''}}" class="form-control">
+            <small class="text-info"> <i class="fa fa-info-circle"></i> Password must be min 8 chars, and contain uppercase, lowercase, numbers & special characters.</small>
+            <br>
+
+            <label class="mt-2 float-left" for="cpwd">Confirm Password</label>
+            <span style="cursor: pointer;" id="showCPassword" onclick="showCPassword();" class="float-right mr-2 btn badge cursor-pointer btn-outline-primary"><i class="fa fa-eye"></i> Show</span>
+            <span style="cursor: pointer;" id="hideCPassword" onclick="hideCPassword();" class="float-right mr-2 btn badge btn-outline-primary"><i class="fa fa-eye-slash"></i> Hide</span>
+            <div class="clearfix"></div>
+            <input type="password" name="cpassword" id="cpwd" required minlength="8" value="{{$cpassword ?? ''}}" class="form-control">
+
+            <br>
+            <input type="submit" value="Add" class="form-control my-3 btn btn-primary">
+
+         </form>
+
+         
+      </div>
+
+   </main>
+
+   <script>
+
+      window.onload = function() {
+         hidePassword();hideCPassword();
+      }
+      
+      function showPassword() {
+         $("#pwd").attr("type","text");
+         $("#showPassword").hide();
+         $("#hidePassword").show();
+      }
+
+      function hidePassword() {
+         $("#pwd").attr("type","password");
+         $("#hidePassword").hide();
+         $("#showPassword").show();
+      }
+
+      
+      function showCPassword() {
+         $("#cpwd").attr("type","text");
+         $("#showCPassword").hide();
+         $("#hideCPassword").show();
+      }
+
+      function hideCPassword() {
+         $("#cpwd").attr("type","password");
+         $("#hideCPassword").hide();
+         $("#showCPassword").show();
+      }
+
+
+      // fetch()
+      // .then((result) => {
+         
+      // }).catch((err) => {
+         
+      // });
+
+   </script>
+
+   @import admin/footer.html
+   
+</body>
+</html>

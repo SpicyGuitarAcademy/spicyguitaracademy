@@ -1,22 +1,27 @@
 <IfModule mod_rewrite.c>
 
-   # Turn on the RewriteEngine
+  # Turn on the RewriteEngine
       RewriteEngine On
+
+  # Redirect Port 80 to 443
+    RewriteEngine On
+    RewriteCond %{SERVER_PORT} 80
+    RewriteRule ^(.*)$ https://spicyguitaracademy.com/$1 [R,L]
    
-   # Prevent directory listings
+  # Prevent directory listings
       Options All -Indexes
 
-   # The Rewrite Rules
+  # The Rewrite Rules
 
-   # Prevent these files from redirecting to index.php
+  # Prevent these files from redirecting to index.php
       # Note: Separate files or directories with the pipe character (|)
       # Warning: Do not leave any trailing pipe character (|)
       RewriteRule ^(public/assets/|storage/public/) - [NC,L]
 
-   # Redirect all entry point to index.php
+  # Redirect all entry point to index.php
       RewriteRule ^ public/index.php [NC,L]
 
-   # Deny access to these files
+  # Deny access to these files
       # Note: Files added here are files that are not redirected to the index.php
       <FilesMatch "(.htaccess|.gitignore|php.ini|composer.json|composer.lock)$">
          order allow,deny
@@ -24,3 +29,9 @@
       </FilesMatch>
 
 </IfModule>
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the “ea-php73” package as the default “PHP” programming language.
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php73 .php .php7 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit

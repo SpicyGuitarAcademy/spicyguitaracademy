@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Lessons | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+	<link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+<body class="bg-light">
+   
+   @vars
+
+   @import admin/header.html
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/lessons">
+         <div class="float-left">
+            <i class="fa fa-film"></i>
+            Lessons
+         </div>
+      </a>
+
+      <a href="@/admin/lessons/new">
+         <div class="float-right">
+            <button class="btn btn-sm btn-success">New Lesson</button>
+         </div>
+      </a>
+
+      <div class="clearfix"></div>
+   </nav>
+
+   <main class="container my-5">
+
+      <div class="row no-gutters">
+
+         <aside class="col-lg-3">
+            <nav class="nav">
+               <ul type="none" class="">
+
+                  <li>
+                     <a style="cursor: pointer;" onclick="show('#beginners');" 
+                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Beginners</a>
+                  </li>
+                  <li>
+                     <a style="cursor: pointer;" onclick="show('#amateur');" 
+                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Amateur</a>
+                  </li>
+                  <li>
+                     <a style="cursor: pointer;" onclick="show('#intermediate');" 
+                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Intermediate</a>
+                  </li>
+                  <li>
+                     <a style="cursor: pointer;" onclick="show('#advanced');" 
+                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Advanced</a>
+                  </li>
+               </ul>
+            </nav>
+         </aside>
+
+         <!-- beginners -->
+         <section id="beginners" class="col-lg-8 mx-auto">
+
+            @php $beginners = json_decode($beginners);
+            @if ($beginners == [])
+               <div class="alert show text-dark text-center">
+                  There are no lessons. Add a lesson.
+               </div>
+            @else
+
+               @foreach ($beginners as $course)
+
+                  <div class="my-3 card border border-primary text-dark">
+                     @php $id = $course->id; $lessons = $course->lessons
+                     <div class="card-header px-4 py-2 h4">
+                        {{$course->course}}
+
+                        <a href="@/admin/lessons/new?course={{$id}}">
+                           <div class="float-right">
+                              <button class="btn btn-sm btn-success">Add Lesson</button>
+                           </div>
+                        </a>
+                     </div>
+
+                     <div class="card-body">
+                        @foreach ($lessons as $lesson)
+                           <div class="row no-gutters">
+                              
+                              <div class="col-lg-3">
+                                 <img class="img img-thumbnail border-primary h-100" src="@/{{$lesson->thumbnail}}" width="100%" title="{{$lesson->lesson}}" alt="{{$lesson->lesson}}">
+                              </div>
+
+                              <div class="col-lg-9">
+                                 <div class="p-3">
+                                    @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$lesson->date_added)));
+                                    <div class="float-right">{{$date->day}}/{{$date->month}}/{{$date->year}}</div>
+                                    
+                                    <div class="lead">{{$lesson->lesson}}</div>
+                                    <small>{{$lesson->tutor}}</small>
+                                    
+                                    <p class="mt-1" style="word-wrap: break-word;">
+                                       {{$lesson->description}}
+                                    </p>
+
+                                    <div>
+                                       <form action="@/admin/lessons/delete/{{$lesson->id}}" method="post">
+                                          @csrftoken
+                                          @method=DELETE
+                                          <a href="@/admin/lessons/edit/{{$lesson->id}}" class="btn badge btn-sm badge-dark">Edit</a>
+                                          <button class="btn badge btn-sm btn-danger" type="submit">Delete</button>
+                                       </form>
+                                    </div>
+                                    
+                                 </div>
+                              </div>
+
+                           </div>
+                           <hr>
+                        @endforeach
+                     </div>
+                  </div>
+
+               @endforeach
+
+            @endif
+
+         </section>
+
+         <!-- amateur -->
+         <section id="amateur" class="col-lg-8 mx-auto">
+
+            @php $amateur = json_decode($amateur);
+            @if ($amateur == [])
+               <div class="alert show text-dark text-center">
+                  There are no lessons. Add a lesson.
+               </div>
+            @else
+
+               @foreach ($amateur as $course)
+
+                  <div class="my-3 card border border-primary text-dark">
+                     @php $id = $course->id; $lessons = $course->lessons
+                     <div class="card-header px-4 py-2 h4">
+                        {{$course->course}}
+
+                        <a href="@/admin/lessons/new?course={{$id}}">
+                           <div class="float-right">
+                              <button class="btn btn-sm btn-success">Add Lesson</button>
+                           </div>
+                        </a>
+                     </div>
+
+                     <div class="card-body">
+                        @foreach ($lessons as $lesson)
+                           <div class="row no-gutters">
+                              
+                              <div class="col-lg-3">
+                                 <img class="img img-thumbnail border-primary h-100" src="@/{{$lesson->thumbnail}}" width="100%" title="{{$lesson->lesson}}" alt="{{$lesson->lesson}}">
+                              </div>
+
+                              <div class="col-lg-9">
+                                 <div class="p-3">
+                                    @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$lesson->date_added)));
+                                    <div class="float-right">{{$date->day}}/{{$date->month}}/{{$date->year}}</div>
+                                    
+                                    <div class="lead">{{$lesson->lesson}}</div>
+                                    <small>{{$lesson->tutor}}</small>
+                                    
+                                    <p class="mt-1" style="word-wrap: break-word;">
+                                       {{$lesson->description}}
+                                    </p>
+
+                                    <div>
+                                       <form action="@/admin/lessons/delete/{{$lesson->id}}" method="post">
+                                          @csrftoken
+                                          @method=DELETE
+                                          <a href="@/admin/lessons/edit/{{$lesson->id}}" class="btn badge btn-sm badge-dark">Edit</a>
+                                          <button class="btn badge btn-sm btn-danger" type="submit">Delete</button>
+                                       </form>
+                                    </div>
+                                    
+                                 </div>
+                              </div>
+
+                           </div>
+                           <hr>
+                        @endforeach
+                     </div>
+                  </div>
+
+               @endforeach
+
+            @endif
+
+         </section>
+
+         <!-- intermediates -->
+         <section id="intermediate" class="col-lg-8 mx-auto">
+
+            @php $intermediate = json_decode($intermediate);
+            @if ($intermediate == [])
+               <div class="alert show text-dark text-center">
+                  There are no lessons. Add a lesson.
+               </div>
+            @else
+
+               @foreach ($intermediate as $course)
+
+                  <div class="my-3 card border border-primary text-dark">
+                     @php $id = $course->id; $lessons = $course->lessons
+                     <div class="card-header px-4 py-2 h4">
+                        {{$course->course}}
+
+                        <a href="@/admin/lessons/new?course={{$id}}">
+                           <div class="float-right">
+                              <button class="btn btn-sm btn-success">Add Lesson</button>
+                           </div>
+                        </a>
+                     </div>
+
+                     <div class="card-body">
+                        @foreach ($lessons as $lesson)
+                           <div class="row no-gutters">
+                              
+                              <div class="col-lg-3">
+                                 <img class="img img-thumbnail border-primary h-100" src="@/{{$lesson->thumbnail}}" width="100%" title="{{$lesson->lesson}}" alt="{{$lesson->lesson}}">
+                              </div>
+
+                              <div class="col-lg-9">
+                                 <div class="p-3">
+                                    @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$lesson->date_added)));
+                                    <div class="float-right">{{$date->day}}/{{$date->month}}/{{$date->year}}</div>
+                                    
+                                    <div class="lead">{{$lesson->lesson}}</div>
+                                    <small>{{$lesson->tutor}}</small>
+                                    
+                                    <p class="mt-1" style="word-wrap: break-word;">
+                                       {{$lesson->description}}
+                                    </p>
+
+                                    <div>
+                                       <form action="@/admin/lessons/delete/{{$lesson->id}}" method="post">
+                                          @csrftoken
+                                          @method=DELETE
+                                          <a href="@/admin/lessons/edit/{{$lesson->id}}" class="btn badge btn-sm badge-dark">Edit</a>
+                                          <button class="btn badge btn-sm btn-danger" type="submit">Delete</button>
+                                       </form>
+                                    </div>
+                                    
+                                 </div>
+                              </div>
+
+                           </div>
+                           <hr>
+                        @endforeach
+                     </div>
+                  </div>
+
+               @endforeach
+
+            @endif
+
+         </section>
+
+         <!-- advanceds -->
+         <section id="advanced" class="col-lg-8 mx-auto">
+
+            @php $advanced = json_decode($advanced);
+            @if ($advanced == [])
+               <div class="alert show text-dark text-center">
+                  There are no lessons. Add a lesson.
+               </div>
+            @else
+
+               @foreach ($advanced as $course)
+
+                  <div class="my-3 card border border-primary text-dark">
+                     @php $id = $course->id; $lessons = $course->lessons
+                     <div class="card-header px-4 py-2 h4">
+                        {{$course->course}}
+
+                        <a href="@/admin/lessons/new?course={{$id}}">
+                           <div class="float-right">
+                              <button class="btn btn-sm btn-success">Add Lesson</button>
+                           </div>
+                        </a>
+                     </div>
+
+                     <div class="card-body">
+                        @foreach ($lessons as $lesson)
+                           <div class="row no-gutters">
+                              
+                              <div class="col-lg-3">
+                                 <img class="img img-thumbnail border-primary h-100" src="@/{{$lesson->thumbnail}}" width="100%" title="{{$lesson->lesson}}" alt="{{$lesson->lesson}}">
+                              </div>
+
+                              <div class="col-lg-9">
+                                 <div class="p-3">
+                                    @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$lesson->date_added)));
+                                    <div class="float-right">{{$date->day}}/{{$date->month}}/{{$date->year}}</div>
+                                    
+                                    <div class="lead">{{$lesson->lesson}}</div>
+                                    <small>{{$lesson->tutor}}</small>
+                                    
+                                    <p class="mt-1" style="word-wrap: break-word;">
+                                       {{$lesson->description}}
+                                    </p>
+
+                                    <div>
+                                       <form action="@/admin/lessons/delete/{{$lesson->id}}" method="post">
+                                          @csrftoken
+                                          @method=DELETE
+                                          <a href="@/admin/lessons/edit/{{$lesson->id}}" class="btn badge btn-sm badge-dark">Edit</a>
+                                          <button class="btn badge btn-sm btn-danger" type="submit">Delete</button>
+                                       </form>
+                                    </div>
+                                    
+                                 </div>
+                              </div>
+
+                           </div>
+                           <hr>
+                        @endforeach
+                     </div>
+                  </div>
+
+               @endforeach
+
+            @endif
+
+         </section>
+
+      </div>
+
+
+   </main>
+
+   <script>
+      window.onload = () => show('#beginners');
+      function show(id) {
+         hide();
+         $(id).show();
+      }
+
+      function hide() {
+         $('#beginners').hide();
+         $('#amateur').hide();
+         $('#intermediate').hide();
+         $('#advanced').hide();
+      }
+   </script>
+   
+</body>
+</html>

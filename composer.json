@@ -1,11 +1,10 @@
 {
-    "name": "ebuka/testframework",
-    "description": "I will be testing Init Framework",
+    "name": "ebukaodini/spicyguitaradmin",
+    "description": "The Admin application for Spicy guitar academy",
     "type": "project",
     "require": {
         "ebukaodini/initframework": "dev-master"
     },
-    "license": "MIT",
     "authors": [
         {
             "name": "ebuka",
@@ -16,8 +15,11 @@
     "autoload": {
         "psr-4": {
             "App\\": "app",
+            "App\\Services\\": "app/services",
             "Controllers\\": "controllers",
-            "Models\\": "models"
+            "Controllers\\Admin\\": "controllers/admin",
+            "Models\\": "models",
+            "Models\\Admin\\": "models/admin"
         }
     }
 }

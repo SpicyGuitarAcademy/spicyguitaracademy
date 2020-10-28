@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Assignment | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+	<link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+<body class="bg-light">
+   
+   @vars
+
+   @import admin/header.html
+
+   @php $assignment = json_decode($assignment); $answers = json_decode($answers);
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/courses">
+         <div class="float-left">
+            <i class="fa fa-list-ul"></i>
+            Courses
+         </div>
+      </a>
+      <span class="h5">&nbsp;/&nbsp;Assignment</span>
+
+      @if ($assignment == [])
+      <a href="@/admin/courses/{{$courseId}}/assignment/new">
+         <div class="float-right">
+            <button class="btn btn-sm btn-success">Add Assingment</button>
+         </div>
+      </a>
+      @else
+      
+      <form action="@/admin/courses/{{$courseId}}/assignment/delete" method="post" class="float-right">
+         @method=DELETE
+         @csrftoken
+         <div class="float-right mx-1">
+            <button class="btn btn-sm btn-danger">Delete</button>
+         </div>
+
+         <a href="@/admin/courses/{{$courseId}}/assignment/edit">
+            <div class="float-right">
+               <button type="button" class="btn btn-sm btn-success">Edit Assingment</button>
+            </div>
+         </a>
+
+         <div class="clearfix"></div>
+      </form>
+      @endif
+
+   </nav>
+
+   <main class="container my-5">
+
+      <div class="row no-gutters">
+
+         <aside class="col-lg-3">
+            <nav class="nav">
+               <ul type="none" class="">
+                  <li>
+                     <a style="cursor: pointer;" onclick="show('#assignment');" 
+                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Assignment</a>
+                  </li>
+                  <li>
+                     <a style="cursor: pointer;" onclick="show('#answers');" 
+                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Answers</a>
+                  </li>
+               </ul>
+            </nav>
+         </aside>
+
+         <!-- assignment -->
+         <section id="assignment" class="col-lg-8 mx-auto">
+
+            @if ($assignment == [])
+               <div class="alert show text-dark text-center">
+                  There is no assignment for this course. Add an Assignment.
+               </div>
+            @else
+               <div class="my-3 card border border-primary text-dark">
+
+                  <div class="card-header h4">Assignment Note</div>
+                  
+                  <div class="card-body">
+                     {{$assignment->note}}
+                  </div>
+                  
+                  <div class="card-header border-top h4">Assignment Video</div>
+
+                  <div class="card-body">
+                     <center>
+                        <video controls src="@/{{$assignment->video}}" width="100%" class="img-responsive"></video>
+                     </center>
+                  </div>
+
+               </div>
+            @endif
+
+         </section>
+
+         <!-- amateur -->
+         <section id="answers" class="col-lg-8 mx-auto">
+
+            @if ($answers == [])
+               <div class="alert show text-dark text-center">
+                  There are no answers yet.
+               </div>
+            @else
+
+               @foreach ($answers as $answer)
+
+                  <div class="my-3 card border border-primary text-dark">
+                     <div class="row no-gutters">
+                        
+                        <div class="col-lg-3">
+                           <img class="img img-thumbnail border-primary h-100" src="@/{{$amateur->thumbnail}}" width="100%" title="{{$amateur->course}}" alt="{{$amateur->course}}">
+                        </div>
+
+                        <div class="col-lg-9">
+                           <div class="p-3">
+                              @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$amateur->date_added)));
+                              <div class="float-right"><span class="badge badge-primary"> #{{$amateur->ord}}</span><br>{{$date->day}}/{{$date->month}}/{{$date->year}}</div>
+                              
+                              <div class="lead">{{$amateur->course}}</div>
+                              <small>{{$amateur->tutor}}</small>
+                              
+                              <p class="mt-1" style="word-wrap: break-word;">
+                                 {{$amateur->description}}
+                              </p>
+
+                              <div>
+                                 <a href="@/admin/lessons/new?course={{$amateur->id}}" class="btn badge btn-sm btn-success float-right">Add Lesson</a>
+                                 <form action="@/admin/courses/delete/{{$amateur->id}}" method="post">
+                                    @csrftoken
+                                    @method=DELETE
+                                    <a href="@/admin/courses/edit/{{$amateur->id}}" class="btn badge btn-sm badge-dark">Edit</a>
+                                    <button class="btn badge btn-sm btn-danger" type="submit">Delete</button>
+                                 </form>
+                              </div>
+                              
+                           </div>
+                        </div>
+
+                     </div>
+                  </div>
+
+               @endforeach
+
+            @endif
+
+         </section>
+
+      </div>
+
+
+   </main>
+
+   <script>
+      window.onload = () => show('#assignment');
+      function show(id) {
+         hide();
+         $(id).show();
+      }
+
+      function hide() {
+         $('#assignment').hide();
+         $('#answers').hide();
+      }
+   </script>
+   
+</body>
+</html>

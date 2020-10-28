@@ -1,0 +1,35 @@
+
+<div>
+   <center>
+      <nav class="navbar navbar-light bg-light position-sticky static-top">
+         <div class="container">
+            
+            <b class="navbar-brand">
+               <a style="color: inherit; text-decoration: none;" href="@/admin/dashboard" class="text-dark">
+                  <img src="@assets/imgs/spicy_logo.png" alt="Spicy Guitar Academy" width="25">
+               </a>
+   
+               <a style="color: inherit; text-decoration: none;" class="text-primary" href="@/admin/dashboard">
+                  Spicy Guitar Academy
+               </a>
+            </b>
+         
+            <div class="navbar-brand">
+               <div class="dropdown">
+                  <button class="btn btn-lg b tn-light dropdown-toggle" type="button" data-toggle="dropdown">
+                     {{$user->fullname ?? $user->email}}
+                     <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu px-3">
+                     <li><a href="#">Profile <i class="fa fa-user-o"></i></a></li>
+                     <li><a href="@/admin/logout">Logout <i class="fa fa-sign-out"></i></a></li>
+                  </ul>
+                  <a href="#"><i class="fa fa-bell-o text-dark fa-xs"></i></a>
+               </div>
+            </div>
+            
+         </div>
+      </nav>
+      <hr class="bg-primary p-2 my-0">
+   </center>
+</div>

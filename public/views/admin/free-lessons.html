@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Courses | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+	<link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+<body class="bg-light">
+   
+   @vars
+
+   @import admin/header.html
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/lessons/featured">
+         <div class="float-left">
+            <i class="fa fa-video-camera"></i>
+            Free Lessons
+         </div>
+      </a>
+
+      <div class="clearfix"></div>
+   </nav>
+
+   <main class="container my-5">
+
+      <div class="row no-gutters">
+
+         <!-- beginners -->
+         <section class="col-lg-10 mx-auto">
+
+            @php $lessons = json_decode($lessons);
+            @if ($lessons == [])
+               <div class="alert show text-dark text-center">
+                  There are no Featured Lessons. Add some Featured Lessons.
+               </div>
+            @else
+
+            <div class="card-body w-100 mx-auto table-responsive">
+
+               <table class="table table-striped table-hover text-center border border-primary">
+                  <thead class="bg-primary text-light">
+                     <tr>
+                        <td>#</td>
+                        <th>Lesson Title</th>
+                        <th>Price (N)</th>
+                        <th>Action</th>
+                     </tr>
+                  </thead>
+
+                  @php $count = 1;
+                  @foreach ($lessons as $lesson)
+                  <tr>
+                     <td>{{$count}}</td>
+                     <td>{{$lesson->lesson}}</td>
+                     <td>{{$lesson->price}}</td>
+                     <td>
+								<a href="@/admin/lessons/edit/{{$lesson->lesson_id}}" class="btn btn-sm btn-info" onclick=""><span class="fa fa-edit"></span> Edit</button>
+                     </td>
+                  </tr>
+                  @php $count++;
+                  @endforeach
+
+               </table>
+
+            @endif
+
+         </section>
+
+      </div>
+
+
+   </main>
+
+   <script>
+      
+   </script>
+   
+</body>
+</html>

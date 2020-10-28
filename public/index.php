@@ -1,14 +1,9 @@
 <?php
-namespace App;
+// namespace App;
+use Framework\Handler\IException;
 use Framework\Http\Http;
 use Framework\Http\Request;
 use Framework\Http\Response;
-use Framework\Handler\IException;
-use App\Services\Auth;
-use App\Services\Upload;
-use App\Services\Validate;
-use App\Services\Sanitize;
-use Models\UserModel;
 
 // Include autoload for composer packages
 include_once '../vendor/autoload.php';
@@ -20,152 +15,250 @@ $http = new Http();
 
 // Now let's Route 🚀🚀🚀
 
-$http->auth('web')->get("/", function ($req, Response $res) {
-   $res->send($res->render('home.html', [
-      "app" => APPLICATION
-   ]), 200);
+
+
+$http->group('guest');
+/* 
+   ----------------------------------------------------------------
+   Guest Routes
+   ----------------------------------------------------------------
+
+   All public routes for guest users
+
+   ----------------------------------------------------------------
+*/
+
+$http->get('/', function(Request $req, Response $res) {
+   $res->redirect('admin');
 });
 
-$http->auth('web')->get('/new-user', function ($req, Response $res) {
-   $res->send(
-      $res->render('add-user.html'), 200);
+
+
+
+$http->group('user');
+/* 
+   ----------------------------------------------------------------
+   User Routes
+   ----------------------------------------------------------------
+
+   All routes for authenticated users
+
+   ----------------------------------------------------------------
+*/
+
+$http->auth('web')->get('/dashboard', function (Request $req, Response $res) {
+   die('In');
 });
 
-$http->auth('web')->csrf()->post('/add-user', function($req, $res) {
-   $username = $req->body()->username;
-   $v = new Validate();
-   $v->letters('username', $username)->max(20);
-   $errors = $v->errors();
-
-   if (!$errors) {
-      $username = (new Sanitize)->string($username);
-      $mdl = new UserModel();
-      if ($mdl->addUser($username) == true) {
-         $users = $mdl->getUsers();
-
-         // if ($users) {
-            $res->send(
-            $res->render('users.html', [
-               "users" => json_encode($users)
-            ]), 200);
-         // } else {
-
-         // }
-         
-      } else {
-         die("User is not added");
-      }
-   }
-
+$http->auth('web')->get('/logout', function (Request $req, Response $res) {
+   \App\Services\Auth::session_logout( $req, $res );
 });
 
-$http->get('/user/{username:a}', function (Request $req, $res) {
-   if ($req->params_exists()) {
-      $params = $req->params();
-      $username = $params->username;
-      $username = (new Sanitize)->string($username);
-      $mdl = new UserModel();
+$http->group('admin');
+/* 
+   ----------------------------------------------------------------
+   Admin Routes
+   ----------------------------------------------------------------
 
-      $user = $mdl->getUser($username);
+   All routes for authenticated admin users
 
-      echo $user != [] ? json_encode($user) : "Not a user";
-      // echo json_encode($user) ?? "Not a user";
-      die;
+   ----------------------------------------------------------------
+*/
 
-   }
-   
+$http->get('/admin', function(Request $req, Response $res) {
+   $res->redirect('admin/login');
 });
 
-$http->ip_allow('::1')->get('/test-ip', function ($req, $res) {
-   $res->send('Allowed IP ' . $req->ip());
-});
-
-$http->csrf()->post('/csrf', function ($req, $res) {
-   $res->send('Token Sent ' . $req->csrftoken());
-});
-
-$http->post('/formupload', function ($req, $res) {
-   // echo "File E : " . json_encode($req->files()->filee);
-   // echo "File O : " . json_encode($req->files()->fileo);
-
-   // $array = ["a"=>"A", "b"=>"B"];
-   
-   $up = new Upload(); $files = $req->files();
-   $up->image("File E", $files->filee)->upload('tutorials/', \Framework\Cipher\Encrypt::hash());
-   // $up->image("File O", $files->fileo)->upload();
-   echo json_encode($up->errors());
-   echo $up->uri('File E');
-   // $up->uri('tutorials/File O'));
-   die;
-});
-
-$http->get('/test-zip', function ($req,$res) {
-   \Framework\File\Zip::zip('imgs/', 'archive/', 'archive1.zip');
-   die('Zipped whole storage!');
-});
-
-$http->get('/test-mail', function ($req,Response $res) {
-   if (\Framework\Mail\Mail::asText('Hola Dom!')->send("ebukaodini@gmail.com:Ebuka Odini", "lerryjay45@gmail.com:Dominic Olajire", "Testing InitFramework Mail Service", "ebukaodini@gmail.com:Ebuka-Reply"))
-      $res->send("Mail Sent");
-   else
-      $res->send("Mail not Sent");
-});
-
-$http->get('/login', function ($req, Response $res) {
-   $res->send($res->render('login.html'));
-});
-
-// $http->get('/users','HomeController@users');
-
-// set route that are handled here
-// test put from the html
-// $http->put('/test-put-from-html', function ( Request $req, Response $res ) {
-//    $res->send($req->body()->putvar);
-// });
-// // test put from an api client
-// $http->put('/users','HomeController@users');
-
-// // test the route parameter datatype
-// $http->put('/users/{id:d}', function ( Request $req, Response $res ) {
-//    $res->send($req->uri(). " - " .$req->params()->id);
-// });
-
-// $http->auth("None")->get('/auth-none', function ( Request $req, Response $res ) {
-//    $res->send("No Auth");
-// });
-
-// $http->auth("Basic")->get('/auth-basic', function ( Request $req, Response $res ) {
-//    $res->send("Basic Auth");
-// });
-
-// $http->auth("Digest")->get('/auth-digest', function ( Request $req, Response $res ) {
-//    $res->send("Digest Auth");
-// });
-
-$http->auth('Session')->get('/auth-session', function ( Request $req, Response $res) {
-   $res->send("Session Auth");
-});
-
-$http->post('/auth', function (Request $req, Response $res) {
-   
-   if ((new Auth())->session_login($req, $res) == true) {
-
-      $res->redirect("dashboard");
-
+// Auth
+$http->get('/admin/login', function(Request $req, Response $res) {
+   // die(\App\Services\User::$group);
+   if ($req->query_exists() && isset($req->query()->redirect)) {
+      $res->send(
+         $res->render('welcome.html', [
+            "redirect" => $req->query()->redirect
+         ]), 200
+      );
    } else {
-      $res->send($res->render('login.html'), 400);
+      $res->send(
+         $res->render('admin/login.html'), 200
+      );
    }
-   
 });
 
-$http->auth('web')->guard('staff','admin')->get('/dashboard', function (Request $req, Response $res) {
-   $res->send($res->render('dashboard.html'));
+$http->auth('web')->get('/admin/logout', function (Request $req, Response $res) {
+   \App\Services\Auth::session_logout( $req, $res );
 });
 
-$http->post('/logout', function ($req, $res) {
-   (new Auth())->session_logout($req, $res);
+$http->csrf()->post('/admin/auth', 'AuthController@authAdminLogin');
+
+// Dashboard
+$http->auth('web')->guard('admin','tutor')->get('/admin/dashboard', function(Request $req, Response $res) {
+   $res->send(
+      $res->render('admin/dashboard.html'), 200
+   );
 });
+
+// Categories
+$http->auth('web')->guard('admin','tutor')->get('/admin/categories', 'CategoryController@index');
+
+$http->auth('web')->guard('admin','tutor')->get('/admin/categories/new', function ($req, $res) {
+   $res->send(
+      $res->render('admin/new-category.html')
+   );
+});
+
+$http->auth('web')->guard('admin','tutor')->csrf()->post('/admin/add-category', 'CategoryController@create');
+
+// Courses
+$http->auth('web')->guard('admin','tutor')->get('/admin/courses', 'CourseController@index');
+
+$http->auth('web')->guard('admin','tutor')->get('/admin/courses/new', 'CourseController@new');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->post('/admin/courses/add', 'CourseController@create');
+
+$http->auth('web')->guard('admin','tutor')->get('/admin/courses/edit/{id}', 'CourseController@edit');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/courses/update', 'CourseController@update');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->delete('/admin/courses/delete/{id}', 'CourseController@delete');
+
+// Assignments
+
+$http->auth('web')->guard('admin','tutor')->get('/admin/courses/{id}/assignment', 'AssignmentController@index');
+
+$http->auth('web')->guard('admin','tutor')->get('/admin/courses/{id}/assignment/new', 'AssignmentController@new');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->post('/admin/courses/{id}/assignment/add', 'AssignmentController@create');
+
+$http->auth('web')->guard('admin','tutor')->get('/admin/courses/{id}/assignment/edit', 'AssignmentController@edit');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/courses/{id}/assignment/update', 'AssignmentController@update');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->delete('/admin/courses/{id}/assignment/delete', 'AssignmentController@delete');
+
+// lessons
+$http->auth('web')->guard('admin','tutor')->get('/admin/lessons', 'LessonController@index');
+
+$http->auth('web')->guard('admin','tutor')->get('/admin/lessons/new', 'LessonController@new');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->post('/admin/lessons/add', 'LessonController@create');
+
+$http->auth('web')->guard('admin','tutor')->get('/admin/lessons/edit/{id}', 'LessonController@edit');
+
+$http->auth('web')->guard('admin','tutor')->delete('/admin/lessons/delete/{id}', 'LessonController@delete');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->put('/admin/lessons/update/low-video', 'LessonController@updateLowVideo');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->put('/admin/lessons/update/high-video', 'LessonController@updateHighVideo');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->put('/admin/lessons/update/audio', 'LessonController@updateAudio');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->put('/admin/lessons/update/practice', 'LessonController@updatePractice');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->put('/admin/lessons/update/tablature', 'LessonController@updateTablature');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/lessons/update/note', 'LessonController@updateNote');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/lessons/update/details', 'LessonController@updateDetails');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/lessons/update/featured', 'LessonController@updateFeatured');
+
+// Featured Lessons
+$http->auth('web')->guard('admin','tutor')->get('/admin/lessons/featured', 'FeaturedLessonController@index');
+
+$http->auth('web')->guard('admin','tutor')->get('/admin/lessons/free', 'FeaturedLessonController@free');
+
+// tutors
+$http->auth('web')->guard('admin')->get('/admin/tutors', 'TutorController@index');
+
+$http->auth('web')->guard('admin')->get('/admin/tutors/new', 'TutorController@new');
+
+$http->auth('web')->guard('admin')->csrf()->post('/admin/tutors/add', 'TutorController@create');
+
+$http->auth('web')->guard('admin')->csrf()->patch('/admin/tutors/update-status', 'TutorController@updateStatus');
+
+
+/* 
+   ----------------------------------------------------------------
+   API Routes
+   ----------------------------------------------------------------
+
+   All public routes for authenticated APIs
+
+   ----------------------------------------------------------------
+*/
+
+$http->group('api');
+
+// ->auth('api')
+
+$http->post('/api/register','StudentController@register');
+
+$http->post('/api/login','AuthController@authApiLogin');
+
+$http->get('/api/paystack/key', function(Request $req, Response $res) {
+
+});
+
+$http->auth('api')->guard('student')->get('/api/subscription/plans','SubscriptionController@plans');
+
+$http->auth('api')->guard('student')->get('/api/subscription/status','SubscriptionController@status');
+
+// $http->auth('api')->guard('student')->get('/api/subscription/remaining','SubscriptionController@daysRemaining');
+
+$http->auth('api')->guard('student')->post('/api/subscription/initiate','SubscriptionController@initiatePayment');
+
+$http->auth('api')->guard('student')->post('/api/subscription/verify/{reference}','SubscriptionController@verifyPayment');
+
+// $http->auth('api')->guard('student')->post('/api/subscription/subscribe','SubscriptionController@subscribe');
+
+// student statistics
+$http->auth('api')->guard('student')->get('/api/student/statistics','StudentController@stats');
+
+// student select's a cateogry
+$http->auth('api')->guard('student')->post('/api/student/category/select','StudentController@chooseCategory');
+
+// update student lesson status
+// $http->auth('api')->guard('student')->patch('/api/student/lesson/update','StudentController@chooseCategory');
+
+// list all courses
+$http->auth('api')->guard('student')->get('/api/course/all','CourseController@getAllCourses');
+
+// list lessons in a course
+$http->auth('api')->guard('student')->get('/api/course/{course}/lessons','CourseController@getCourseLessons');
+
+// get a lesson
+$http->auth('api')->guard('student')->get('/api/lesson/{lesson}','LessonController@read');
+
+// list student studying course
+$http->auth('api')->guard('student')->get('/api/student/courses/studying','StudentController@studyingCourses');
+
+// list lessons in a course
+$http->auth('api')->guard('student')->get('/api/student/course/lessons','StudentController@studyingCourses');
+
+// get a lesson for the student
+$http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}','StudentController@getStudentLesson');
+
+// get next lesson in a course
+$http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}/next','StudentController@nextLesson');
+
+// get previous lesson in a course
+$http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}/previous','StudentController@previousLesson');
+
+$http->auth('api')->guard('student')->post('/api/student/assignment/answer', 'StudentController@answerAssignment');
+
+$http->auth('api')->guard('student')->get('/api/courses/search', 'CourseController@search');
+
+$http->auth('api')->guard('student')->post('/api/invite-a-friend', 'StudentController@invitefriend');
+
+$http->auth('api')->guard('student')->post('/api/student/avatar/update','StudentController@uploadAvatar');
+
+$http->auth('api')->guard('student')->get('/api/student/quicklessons','StudentController@quickLessons');
+
+$http->auth('api')->guard('student')->get('/api/student/quicklessons/all','StudentController@allQuickLessons');
+
+$http->auth('api')->guard('student')->get('/api/student/freelessons','StudentController@freeLessons');
+
+$http->auth('api')->guard('student')->get('/api/student/quicklesson/{lesson}','StudentController@quickLesson');
 
 $http->end();
-// Initialize Application 😉
-new App();

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Courses | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+	<link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+
+@vars
+<body class="bg-light">
+   
+   @import admin/header.html
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/courses">
+         <div class="float-left">
+            <i class="fa fa-list-ul"></i>
+            Courses
+         </div>
+      </a>
+      <a href="@/admin/lessons">
+         <div class="float-left">
+            &nbsp;/&nbsp;
+            <i class="fa fa-film"></i>
+            Lessons
+         </div>
+      </a>
+      <span class="h5">&nbsp;/&nbsp;Edit</span>
+
+      <a href="@/admin/lessons/new">
+         <div class="float-right">
+            <button class="btn btn-sm btn-success">Add Another Lesson</button>
+         </div>
+      </a>
+
+      <div class="clearfix"></div>
+   </nav>
+
+   <main class="container my-5">
+
+      <div class="row no-gutters">
+
+         <aside class="col-lg-3">
+            <nav class="nav">
+               <ul type="none" class="">
+
+                  <li>
+                     <a style="cursor: pointer;" onclick="show('#details');" 
+                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Details</a>
+                  </li>
+                  <li>
+                     <a style="cursor: pointer;" onclick="show('#lessons');" 
+                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Lessons</a>
+                  </li>
+                  <li>
+                     <a style="cursor: pointer;" onclick="show('#tablatures');" 
+                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Tablature</a>
+                  </li>
+                  <li>
+                     <a style="cursor: pointer;" onclick="show('#practices');" 
+                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Practice</a>
+                  </li>
+                  <li>
+                     <a style="cursor: pointer;" onclick="show('#notes');" 
+                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Note</a>
+                  </li>
+                  <li>
+                     <a style="cursor: pointer;" onclick="show('#featured');" 
+                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Featured</a>
+                  </li>
+               </ul>
+            </nav>
+         </aside>
+
+         <div class="col-lg-6 mx-auto">
+
+            <div class="text-center">
+               @if (isset($errors))
+                  @php $errors = json_decode($errors);
+                  <div class="text-center">
+                  @foreach ($errors as $error)
+                     <li class="text-danger">{{$error}}</li>
+                  @endforeach
+                  </div>
+               @endif
+            </div>
+
+            <!-- Details -->
+            <section id="details">
+
+               <form action="@/admin/lessons/update/details" method="post" enctype="multipart/form-data">
+                  
+                  @csrftoken
+                  @method=PATCH
+                  <input type="hidden" name="id" value="{{$id}}">
+
+                  <label for="course">Select Course</label>
+                  <select name="course" id="course" data-course="{{$course}}" class="form-control">
+                     <optgroup label="Beginners">
+                        <b>Beginners</b>
+                        @php $beginners = json_decode($beginners);
+                        @foreach ($beginners as $beginner)
+                        <option value="{{$beginner->id}}">{{$beginner->course}}</option>
+                        @endforeach
+                     </optgroup>
+
+                     <optgroup label="Amateur">
+                        @php $amateurs = json_decode($amateurs);
+                        @foreach ($amateurs as $amateur)
+                        <option value="{{$amateur->id}}">{{$amateur->course}}</option>
+                        @endforeach
+                     </optgroup>
+
+                     <optgroup label="Intermediate">
+                        @php $intermediates = json_decode($intermediates);
+                        @foreach ($intermediates as $intermediate)
+                        <option value="{{$intermediate->id}}">{{$intermediate->course}}</option>
+                        @endforeach
+                     </optgroup>
+
+                     <optgroup label="Advanced">
+                        @php $advanceds = json_decode($advanceds);
+                        @foreach ($advanceds as $advanced)
+                        <option value="{{$advanced->id}}">{{$advanced->course}}</option>
+                        @endforeach
+                     </optgroup>
+                  </select>
+
+
+                  <label class="mt-2" for="title">Title</label>
+                  <input type="text" name="lesson" id="title" required maxlength="20" value="{{$lesson ?? ''}}" class="form-control">
+
+                  <label class="mt-2" for="description">Description</label>
+                  <textarea name="description" id="description" cols="30" rows="3" maxlength="100" placeholder="No Description" class="form-control">{{$description ?? ''}}</textarea>
+
+                  <label class="mt-2 btn border" for="thumbnail" style="cursor: pointer;">
+                     <i class="fa fa-image"></i> Select Lesson Thumbnail
+                  </label>
+                  <input type="file" name="thumbnail" id="thumbnail" accept="image/*" class="my-2 d-none">
+
+                  <br>
+                  <img src="@/{{$thumbnail}}" id="previewImage" width="100%" class="img img-responsive">
+
+                  <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
+
+               </form>
+
+            </section>
+
+            <!-- Lessons -->
+            <section id="lessons">
+
+               <form action="@/admin/lessons/update/low-video" method="post" enctype="multipart/form-data">
+                  
+                  @csrftoken
+                  @method=PUT
+                  <input type="hidden" name="id" value="{{$id}}">
+
+                  <label class="mt-2 btn border" for="low_video" style="cursor: pointer;">
+                     <i class="fa fa-video-camera"></i> Add Lesson Video (Low)
+                  </label>
+                  <input type="file" name="low_video" id="low_video" accept="video/mp4" class="my-2 d-none">
+
+                  <br>
+                  <video controls src="@/{{$low_video}}" id="previewLowVideo" width="100%" class="img-responsive"></video>
+                  
+                  <br>
+                  <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
+
+               </form>
+            
+               <form action="@/admin/lessons/update/high-video" method="post" enctype="multipart/form-data">
+                  
+                  @csrftoken
+                  @method=PUT
+                  <input type="hidden" name="id" value="{{$id}}">
+
+                  <label class="mt-2 btn border" for="high_video" style="cursor: pointer;">
+                     <i class="fa fa-video-camera"></i> Add Lesson Video (High)
+                  </label>
+                  <input type="file" name="high_video" id="high_video" accept="video/mp4" class="my-2 d-none">
+
+                  <br>
+                  <video controls src="@/{{$high_video}}" id="previewHighVideo" width="100%" class="img-responsive"></video>
+
+                  <br>
+                  <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
+               </form>
+
+               <form action="@/admin/lessons/update/audio" method="post" enctype="multipart/form-data">
+                  
+                  @csrftoken
+                  @method=PUT
+                  <input type="hidden" name="id" value="{{$id}}">
+
+                  <label class="mt-2 btn border" for="audio" style="cursor: pointer;">
+                     <i class="fa fa-microphone"></i> Add Lesson Audio
+                  </label>
+                  <input type="file" name="audio" id="audio" accept="audio/mp3" class="my-2 d-none">
+
+                  <br>
+                  <audio controls src="@/{{$audio}}" id="previewAudio" width="100%" class="img-responsive"></audio>
+                  
+                  <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
+
+               </form>
+
+            </section>
+
+            <!-- Tablature -->
+            <section id="tablatures">
+
+               <form action="@/admin/lessons/update/tablature" method="post" enctype="multipart/form-data">
+                  
+                  @csrftoken
+                  @method=PUT
+                  <input type="hidden" name="id" value="{{$id}}">
+
+                  <label class="mt-2 btn border" for="tablature" style="cursor: pointer;">
+                     <i class="fa fa-file-pdf-o"></i> Add Lesson Tablature
+                  </label>
+                  <input type="file" name="tablature" id="tablature" accept="application/pdf" class="my-2 d-none">
+
+                  <br>
+                  @if ($tablature == null)
+                     <iframe src="" id="previewTablature" width="100%" class="iframe" frameborder="1"></iframe>
+                  @else
+                     <iframe src="@/{{$tablature}}" id="previewTablature" width="100%" class="iframe" height="500px" frameborder="1"></iframe>
+                  @endif
+                  
+                  <br>
+                  <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
+
+               </form>
+
+            </section>
+
+            <!-- Practice -->
+            <section id="practices">
+               
+               <form action="@/admin/lessons/update/practice" method="post" enctype="multipart/form-data">
+                  
+                  @csrftoken
+                  @method=PUT
+                  <input type="hidden" name="id" value="{{$id}}">
+
+                  <label class="mt-2 btn border" for="practice" style="cursor: pointer;">
+                     <i class="fa fa-microphone"></i> Add Practice Audio
+                  </label>
+                  <input type="file" name="practice" id="practice" accept="audio/mp3" class="my-2 d-none">
+
+                  <br>
+                  <audio controls src="@/{{$practice}}" id="previewPractice" width="100%" class="img-responsive"></audio>
+                  
+                  <br>
+                  <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
+
+               </form>
+
+            </section>
+
+            <!-- Notes -->
+            <section id="notes">
+
+               <form action="@/admin/lessons/update/note" method="post">
+                  
+                  @csrftoken
+                  @method=PATCH
+                  <input type="hidden" name="id" value="{{$id}}">
+
+                  <label class="mt-2" for="note">Note</label>
+                  <textarea name="note" id="note" cols="30" rows="3" maxlength="100" class="form-control">{{$note ?? ''}}</textarea>
+
+                  <br>
+                  <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
+
+               </form>
+
+            </section>
+
+            <!-- Featured -->
+            <section id="featured">
+
+               <form action="@/admin/lessons/update/featured" method="post">
+                  
+                  @csrftoken
+                  @method=PATCH
+                  <input type="hidden" name="id" value="{{$id}}">
+
+                  <label class="mt-2" for="note">Status</label>
+                  <input type="checkbox" {{ ($status == true) ? 'checked' : '' }} name="status" >
+                  <br>
+                  <span style="font-size: small;">{{ ($status == true) ? 'This Lesson is Featured, uncheck the box to take it off' : 'This Lesson is not Featured, check the box and enter a price below to add it to featured lessons' }}</span>
+                  <br> <br>
+
+                  
+                  <label class="mt-2" for="note">Free Lesson</label>
+                  <input type="checkbox" {{ ($free == true) ? 'checked' : '' }} name="free" >
+                  <br>
+                  <span style="font-size: small;">{{ ($free == true) ? 'This Lesson is Free' : 'This Lesson is not Free, check the box to make it Free' }}</span>
+                  <br> <br>
+                  
+                  <label class="mt-2" for="note"> (&#8358;) Price</label> <br>
+                  <input type="number" min="0" name="price" id="price" class="form-control" value="{{$price}}">
+                  
+                  <br>
+                  <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
+
+               </form>
+
+            </section>
+
+         </div>
+         
+      </div>
+
+      <!-- <div onload="start('{{$section ?? 1}}');"></div> -->
+
+   </main>
+
+   <script>
+      window.onload = () => show('#details');
+
+      function show(id) {
+         hide();
+         $(id).show();
+      }
+
+      function start(section) {
+         console.log(section);
+         switch (section) {
+            case 1:
+            show('#details');
+            break;
+            case 2:
+            show('#lessons');
+            break;
+            case 3:
+            show('#tablatures');
+            break;
+            case 4:
+            show('#practices');
+            break;
+            case 5:
+            show('#notes');
+            break;
+            default:
+            show('#details');
+            break;
+         }
+      }
+
+      function hide() {
+         $('#details').hide();
+         $('#lessons').hide();
+         $('#practices').hide();
+         $('#tablatures').hide();
+         $('#featured').hide();
+         $('#notes').hide();
+      }
+
+      $("#low_video").on('change', function () {
+         previewFile(this, "previewLowVideo");
+      });
+
+      $("#high_video").on('change', function () {
+         previewFile(this, "previewHighVideo");
+      });
+
+      $("#audio").on('change', function () {
+         previewFile(this, "previewAudio");
+      });
+
+      $("#tablature").on('change', function () {
+         previewFile(this, "previewTablature");
+      });
+
+      $("#practice").on('change', function () {
+         previewFile(this, "previewPractice");
+      });
+
+      function previewFile(input, dest) {
+         if (input.files && input.files[0]) {
+            let reader = new FileReader();
+
+            reader.onload = function(e) {
+               $("#"+dest).attr('src', e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0])
+         }
+      }
+
+      function choose(value) {
+         $("#course")[0].value = value;
+      }
+   </script>
+
+</body>
+</html>

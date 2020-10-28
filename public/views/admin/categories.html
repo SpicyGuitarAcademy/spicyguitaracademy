@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Dashboard | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+	<link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+<body class="bg-light">
+   
+   @vars
+
+   @import admin/header.html
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/categories">
+         <div class="float-left">
+            <i class="fa fa-bookmark"></i>
+            Categories
+         </div>
+      </a>
+
+      @if ($user->role == 'admin')
+      <!-- <a href="@/admin/categories/new">
+         <div class="float-right">
+            <button class="btn btn-sm btn-success">New Category</button>
+         </div>
+      </a> -->
+      @endif
+
+      <div class="clearfix"></div>
+   </nav>
+
+   <main class="container my-5">
+
+      @if ($empty == true)
+
+         <div class="alert show text-dark text-center">
+            There are no categories. Add a category.
+         </div>
+
+      @else
+
+      @php $categories = json_decode($categories); $count = 4;
+
+      @foreach ($categories as $category)
+
+         @if (($count % 2) == 0)
+            <div class="my-5 row no-gutters">
+            
+            <div class="col-lg-4 col-12 my-1 mx-auto card border border-primary text-dark text-center">
+               <img class="img rounded-top" src="@/{{$category->thumbnail}}" width="100%" title="{{$category->category}}" alt="{{$category->category}}">
+               <div class="card-body h3">
+                  {{$category->category}}
+               </div>
+               <div class="p-2 bg-primary rounded-bottom"></div>
+            </div>
+
+         @else
+
+            <div class="col-lg-4 col-12 my-1 mx-auto card border border-primary text-dark text-center">
+               <img class="img rounded-top" src="@/{{$category->thumbnail}}" width="100%" title="{{$category->category}}" alt="{{$category->category}}">
+               <div class="card-body h3">
+                  {{$category->category}}
+               </div>
+               <div class="p-2 bg-primary rounded-bottom"></div>
+            </div>
+
+            </div>
+            
+         @endif
+
+         @php $count--;
+      @endforeach
+
+      </div>
+
+      @endif
+
+
+   </main>
+   
+</body>
+</html>

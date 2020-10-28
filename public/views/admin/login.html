@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Login | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+	<link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+<body class="my-5 text-center">
+   
+   @vars
+
+   <img src="@assets/imgs/spicy_logo.png" alt="Spicy Guitar Academy">
+   
+   <div class="my-3 py-2 mx-auto col-lg-3 col-md-5 col-10 bg-white border rounded border-primary">
+      
+      <form action="@/admin/auth" method="post">
+
+         <h3 class="text-primary display-4">Login</h3>
+         <hr>
+
+         <div class="my-3">
+
+            @if (isset($errors))
+               <span class="text-danger">{{$errors}}</span>
+            @endif
+            
+            @csrftoken
+
+            <input type="hidden" name="redirect" value="{{$redirect ?? ''}}">
+            
+            <input type="email" name="email" placeholder="Email" value="{{$email ?? ''}}" class="form-control text-dark my-1">
+
+            <input type="password" name="password" placeholder="Password" value="{{$password ?? ''}}" class="form-control text-dark my-1">
+
+            <input type="submit" name="submit" value="Login" class="form-control btn-primary my-3">
+
+         </div>
+
+         <a href="@/forgot-password" class="text-dark">Click here to reset your password</a>
+         
+      </form>
+
+   </div>
+
+
+</body>
+</html>

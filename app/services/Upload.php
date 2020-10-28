@@ -38,7 +38,7 @@ class Upload
       "audio/webm"=>".weba",
       "audio/3gpp"=>".3gp",
       "audio/3gpp2"=>".3gp2",
-      // Zip types
+      // Archive types
       "application/x-7z-compressed"=>".7z",
       "application/zip"=>".zip",
       "application/x-tar"=>".tar",
@@ -104,6 +104,86 @@ class Upload
 
    // Image types
    public function image(string $field, object $file, string $errmsg = "image not uploaded!", array $type = [ "image/svg+xml", "image/jpeg", "image/png", "image/gif", "image/bmp", "image/vnd.microsoft.icon", "image/tiff", "image/webp" ])
+   {
+      if ( $file != null && \in_array($file->type, $type) && \array_key_exists($file->type, $this->validTypes) ) {
+         $this->name = $file->name;
+         $this->type = $file->type;
+         $this->tmpfile = $file->tmp_name;
+         $this->size = $file->size;
+         $this->extension = $this->validTypes[$file->type];
+         $this->field = $field;
+         $this->errmsg = $errmsg;
+         $this->uris[$field] = '';
+         $this->status = true;
+      } else {
+         $this->status = false;
+         $this->errors[$field] = $errmsg;
+      }
+      return $this;
+   }
+
+   // Video types
+   public function video(string $field, object $file, string $errmsg = "video not uploaded!", array $type = [ "video/x-msvideo", "video/mpeg", "video/mp4", "video/ogg", "video/mp2t", "video/3gpp", "video/webm", "video/3gpp2" ])
+   {
+      if ( $file != null && \in_array($file->type, $type) && \array_key_exists($file->type, $this->validTypes) ) {
+         $this->name = $file->name;
+         $this->type = $file->type;
+         $this->tmpfile = $file->tmp_name;
+         $this->size = $file->size;
+         $this->extension = $this->validTypes[$file->type];
+         $this->field = $field;
+         $this->errmsg = $errmsg;
+         $this->uris[$field] = '';
+         $this->status = true;
+      } else {
+         $this->status = false;
+         $this->errors[$field] = $errmsg;
+      }
+      return $this;
+   }
+
+   // Audio types
+   public function audio(string $field, object $file, string $errmsg = "audio not uploaded!", array $type = [ "audio/aac", "audio/wav", "audio/ogg", "audio/midi", "audio/x-midi", "audio/mpeg", "audio/mp3", "audio/webm", "audio/3gpp", "audio/3gpp2" ])
+   {
+      if ( $file != null && \in_array($file->type, $type) && \array_key_exists($file->type, $this->validTypes) ) {
+         $this->name = $file->name;
+         $this->type = $file->type;
+         $this->tmpfile = $file->tmp_name;
+         $this->size = $file->size;
+         $this->extension = $this->validTypes[$file->type];
+         $this->field = $field;
+         $this->errmsg = $errmsg;
+         $this->uris[$field] = '';
+         $this->status = true;
+      } else {
+         $this->status = false;
+         $this->errors[$field] = $errmsg;
+      }
+      return $this;
+   }
+
+   // Archive types
+   public function archive(string $field, object $file, string $errmsg = "archive file not uploaded!", array $type = [ "application/x-7z-compressed", "application/zip", "application/x-tar", "application/x-rar-compressed", "application/java-archive", "application/gzip", "application/x-freearc", "application/x-bzip", "application/x-bzip2" ])
+   {
+      if ( $file != null && \in_array($file->type, $type) && \array_key_exists($file->type, $this->validTypes) ) {
+         $this->name = $file->name;
+         $this->type = $file->type;
+         $this->tmpfile = $file->tmp_name;
+         $this->size = $file->size;
+         $this->extension = $this->validTypes[$file->type];
+         $this->field = $field;
+         $this->errmsg = $errmsg;
+         $this->uris[$field] = '';
+         $this->status = true;
+      } else {
+         $this->status = false;
+         $this->errors[$field] = $errmsg;
+      }
+      return $this;
+   }
+
+   // Document
+   public function document(string $field, object $file, string $errmsg = "document not uploaded!", array $type = [ "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "application/vnd.visio", "application/vnd.openxmlformats-officedocument.presentationml.presentation", "application/vnd.ms-powerpoint", "application/vnd.oasis.opendocument.text", "application/vnd.oasis.opendocument.spreadsheet", "application/vnd.oasis.opendocument.presentation", "application/msword", "application/x-abiword", "application/vnd.apple.installer+xml", "application/epub+zip", "application/x-shockwave-flash", "application/vnd.mozilla.xul+xml", "application/ogg", "application/vnd.amazon.ebook", "text/html","text/plain", "text/css", "text/csv", "text/calendar", "text/javascript", "text/xml", "application/xhtml+xml", "appliction/php", "application/pdf", "application/json", "application/ld+json", "application/x-csh", "application/x-sh", "application/octet-stream"])
    {
       if ( $file != null && \in_array($file->type, $type) && \array_key_exists($file->type, $this->validTypes) ) {
          $this->name = $file->name;

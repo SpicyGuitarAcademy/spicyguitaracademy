@@ -1,0 +1,6 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home2/iffpeomy/public_html/
+    - /bin/cp -u -r * $DEPLOYPATH
+    # - /bin/cp .htaccess $DEPLOYPATH

@@ -4,9 +4,10 @@ use Framework\Http\Request;
 use Framework\Http\Response;
 use Framework\Database\Model;
 use Framework\Handler\IException;
-use App\Services\User;
 use Framework\Cipher\Encrypt;
 use Framework\Cipher\AES;
+use Framework\Cipher\JWT;
+use App\Services\User;
 
 class Auth
 {
@@ -28,7 +29,6 @@ class Auth
             $credentials = [
                "username" => $username,
                "role" => "admin",
-               "privileges" => "*"
             ];
 
             // consider remember
@@ -51,15 +51,10 @@ class Auth
             return true;
 
          } else {
-            // $response->remove_all_headers();
-            // $response->redirect("login");
-            // die("Only Admin");
             return false;
          }
 
       } else {
-         // $response->remove_all_headers();
-         // $response->redirect("login");
          // die("Username & Password is empty");
          return false;
       }
@@ -71,31 +66,110 @@ class Auth
    {
       \session_unset();
       \session_destroy();
-      echo 'requesting redirect';
-      $response->redirect("login");
+      if (User::$group == 'admin') {
+         $response->route("/admin/login");
+      } elseif (User::$group == 'user') {
+         $response->route("/login");
+      }
+   }
+
+   // jwt login
+   public static function jwt_login(Request $request, Response $response)
+   {
+      
+      $username = trim($request->body()->username);
+      $password = trim($request->body()->password);
+      $remember = isset($request->body()->remember) ? true : false ;
+
+      if (!empty($username) && !empty($password)) {
+
+         if ($username == "admin" && $password == "admin") {
+      
+            /** 
+             * Create some payload data with user data we would normally retrieve from a
+               * database with users credentials. Then when the client sends back the token,
+               * this payload data is available for us to use to retrieve other data 
+               * if necessary.
+               */
+            // $credentials = [
+            //    "username" => $username,
+            //    "role" => "admin",
+            // ];
+            // $userId = 'USER123456';
+
+            /**
+             * Uncomment the following line and add an appropriate date to enable the 
+               * "not before" feature.
+               */
+            // $nbf = strtotime('2021-01-01 00:00:01');
+
+            /**
+             * Uncomment the following line and add an appropriate date and time to enable the 
+               * "expire" feature.
+               */
+            if ($remember) {
+               $lifetime = REMEMBER_ME_LIFETIME * 60;
+            } else {
+               $lifetime = 60;
+            }
+            $exp = strtotime("$lifetime minutes");
+            
+            // create a token
+            $payloadArray = array();
+            $payloadArray['username'] = $username;
+            $payloadArray['role'] = "admin";
+            if (isset($nbf)) {$payloadArray['nbf'] = $nbf;}
+            if (isset($exp)) {$payloadArray['exp'] = $exp;}
+            $token = JWT::encode($payloadArray, SECRET_KEY);
+
+            // set the users details
+            User::$auth = true;
+            User::$username = $username;
+            User::$role = "admin";
+            User::$token = $token;
+
+            return true;
+
+         } else {
+            return false;
+         }
+
+      } else {
+         // die("Username & Password is empty");
+         return false;
+      }
    }
    
+   // jwt logout
+   public static function jwt_logout(Request $request, Response $response)
+   {
 
-   // Auths
+   }
+
+   // Middleware Auths
 
    // Session Auth
    public static function session(Request $request, Response $response)
    {
-      
       // retrieve credentials
-      $username = $request->auth_credentials()->username;
+      $email = $request->auth_credentials()->email;
       $role = $request->auth_credentials()->role;
-      $privileges = $request->auth_credentials()->privileges;
+      $fullname = $request->auth_credentials()->fullname ?? '';
 
       // these are credentials coming from the session
-      if ( isset($username) && !empty($username) && isset($role) && !empty($role) && isset($privileges) && !empty($privileges) ) {
+      if ( isset($email) && !empty($email) && isset($role) && !empty($role) ) {
          // set the users details
          User::$auth = true;
-         User::$username = $username;
+         User::$email = $email;
          User::$role = $role;
+         User::$fullname = $fullname;
       } else {
          $response->remove_all_headers();
-         $response->redirect("login", 401);
+         if (User::$group == 'admin') {
+            $response->route("/admin/login?redirect=" . $request->uri(), 401);
+         } elseif (User::$group == 'user') {
+            $response->route("/login?redirect=" . $request->uri(), 401);
+         }
       }
       
    }
@@ -174,44 +248,46 @@ class Auth
    }
 
    // JWT Auth
-   public static function jwt()
+   public static function jwt(Request $request, Response $response)
    {
+      try {
+         // retrieve the JSON Web Token
+         $token = $request->auth_credentials()->JWToken ?? null;
 
+         $payload = JWT::decode($token, SECRET_KEY, array('HS256'));
+         User::$auth = true;
+         User::$email = $payload->email ?? '';
+         User::$username = $payload->username ?? '';
+         User::$fullname = $payload->fullname ?? '';
+         User::$role = $payload->role;
+      }
+      catch(IException $ex) {
+         $ex->handle('api');
+         $response->send("Unauthorized Accesss", 401);
+      }
    }
 
    // OAuth Auth
    public static function oauth()
-   {
-
-   }
+   { }
 
    // OAuth2 Auth
    public static function oauth2()
-   {
-
-   }
-
-   // ---------------------
-
-   // public static function digest_password(string $username, string $password)
-   // {
-   //    Encrypt::digest($username, $password);
-   // }
-
-   // ---------------------
-
+   { }
 
    // Middleware Handlers
    // Guard
    public static function guard(Request $request, Response $response, $roles)
    {
-      $username = $request->auth_credentials()->username;
-      $role = $request->auth_credentials()->role;
-      $privileges = $request->auth_credentials()->privileges;
+      $role = User::$role;
 
       if (!\in_array($role, $roles)) {
          $response->remove_all_headers();
-         $response->redirect($request->referer());
+         if (User::$group == 'admin' || User::$group == 'user') {
+            $response->redirect($request->referer());
+         } elseif (User::$group == 'api') {
+            $response->send("Unauthorized Access", 401);
+         }
       }
    }
 
@@ -230,7 +306,7 @@ class Auth
    {
       try {
          if ( $request->csrftoken() == '' 
-         || AES::decrypt(SECRET_KEY, $request->csrftoken()) != session_id()) {
+         || empty(@AES::decrypt(SECRET_KEY, $request->csrftoken())) == true) {
             // log possible csrf attack
             // throw new IException("SECURITY: Possible CSRF attack from IP: " . $request->ip());
             // log user out

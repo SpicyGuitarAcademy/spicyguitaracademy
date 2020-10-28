@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8671c89ce02b58c8e2859a6722dfadda",
+    "content-hash": "ae5e8dddf83d672ef3c4ee39592b9b46",
     "packages": [
         {
             "name": "ebukaodini/initframework",

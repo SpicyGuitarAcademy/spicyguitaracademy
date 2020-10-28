@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Assignment | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+	<link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+<body class="bg-light">
+   
+   @vars
+
+   @import admin/header.html
+
+   <nav class="container my-4">
+      <div class="h4">
+         <a href="@/admin/courses">
+            <div class="float-left">
+               <i class="fa fa-list-ul"></i>
+               Courses
+            </div>
+         </a>
+         <span class="h5">&nbsp;/&nbsp;Edit Assignment</span>
+         <div class="clearfix"></div>
+      </div>
+   </nav>
+
+   <main class="container my-5">
+
+      <div class="my-3 py-2 mx-auto col-lg-5 col-md-5 bg-white border rounded">
+         
+         <div class="h3 text-center font-weight-normal">Edit Assignment</div>
+         <hr>
+
+         @if (isset($errors))
+            @php $errors = json_decode($errors);
+            <div class="text-center">
+            @foreach ($errors as $error)
+               <li class="text-danger">{{$error}}</li>
+            @endforeach
+            </div>
+         @endif
+         
+         @php $assignment = json_decode($assignment)
+
+         <form action="@/admin/courses/{{$courseId}}/assignment/update" method="post" enctype="multipart/form-data">
+            
+            @method=PATCH
+            @csrftoken
+
+            <label class="mt-2" for="note">Assignment Note</label>
+            <textarea name="note" id="note" cols="30" rows="3" maxlength="65535" placeholder="Course Assignment" class="form-control">{{$assignment->note ?? ''}}</textarea>
+
+            <label class="mt-2 btn border" for="video" style="cursor: pointer;">
+               <i class="fa fa-video-camera"></i> Select Assignment Video
+            </label>
+            <input type="file" name="video" id="video" accept="video/*" class="my-2 d-none" >
+
+            <br>
+            <video controls src="@/{{$assignment->video ?? ''}}" id="previewVideo" width="100%" class="img img-responsive"></video>
+
+            <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
+
+         </form>
+
+         
+      </div>
+
+   </main>
+
+   <script>
+      $("#video").on('change', function () {
+         previewFile(this, "previewVideo");
+      });
+
+      function previewFile(input, dest) {
+         if (input.files && input.files[0]) {
+            let reader = new FileReader();
+
+            reader.onload = function(e) {
+               $("#"+dest).attr('src', e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0])
+         }
+      }
+
+   </script>
+   
+</body>
+</html>
