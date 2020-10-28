@@ -1,0 +1,46 @@
+[
+    {
+        "name": "ebukaodini/initframework",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ebukaodini/initframework.git",
+            "reference": "b6e5dbba9d558c700ccf09276835b63e9fb1f81b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ebukaodini/initframework/zipball/b6e5dbba9d558c700ccf09276835b63e9fb1f81b",
+            "reference": "b6e5dbba9d558c700ccf09276835b63e9fb1f81b",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=7.3.0"
+        },
+        "time": "2020-05-23T18:43:24+00:00",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "Framework\\": "src/Framework"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Ebuka Odini",
+                "email": "ebukaodini@gmail.com"
+            }
+        ],
+        "description": "👌🏽 A Simple Web Framework for PHP Developers.",
+        "homepage": "http://github.com/ebukaodini/initframework",
+        "keywords": [
+            "Simple",
+            "php",
+            "web framework"
+        ]
+    }
+]
