@@ -1,6 +1,6 @@
 app/config.php
 storage/
-vendor/
+# vendor/
 .well-known
 cgi-bin
 .todo
