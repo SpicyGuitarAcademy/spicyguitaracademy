@@ -5,3 +5,4 @@ vendor/
 cgi-bin
 .todo
 .htaccess
+storage/logs/
