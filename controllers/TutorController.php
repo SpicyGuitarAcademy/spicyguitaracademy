@@ -164,7 +164,8 @@ class TutorController
 
       $Tutor = new TutorModel();
 
-      if ($Tutor->update([
+      $email = User::$email;
+      if ($Tutor->where("email = '$email'")->update([
          'firstname' => $firstname,
          'lastname' => $lastname,
          'twitter' => $twitter,
