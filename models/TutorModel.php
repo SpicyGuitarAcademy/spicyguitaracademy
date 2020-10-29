@@ -6,7 +6,7 @@ class TutorModel extends Model
 {
    public function __construct()
    {
-      parent::__construct('admin_tbl');
+      return parent::__construct('admin_tbl');
    }
 
    // write wonderful model codes...

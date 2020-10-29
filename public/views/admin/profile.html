@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <!-- SEO Meta Tags -->
+   <title>Init Application</title>
+
+   <!-- Import Assets -->
+   <!-- JQuery for Faster Scripting -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap for Faster Styling -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- FontAwesome for Your Icons -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Your Custom Assets -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+</head>
+<body class="bg-light">
+
+   @vars
+
+   @import admin/header.html
+
+   <!-- {{$tutor}} -->
+   @php $tutor = json_decode($tutor);
+
+   <nav class="container my-4 h4">
+      
+      <div class="float-left">
+         <i class="fa fa-user-circle"></i>
+         Profile
+      </div>
+
+      <div class="clearfix"></div>
+   </nav>
+
+   
+   <main class="container my-5">
+
+      <div class="row">
+
+         <aside class="col-lg-3 col-sm-12 text-center">
+
+            <img id="avatar" class="border-primary rounded-circle" src="@/{{$tutor->avatar ?? 'storage/public/avatars/default.png'}}" alt="{{$tutor->firstname}} {{$tutor->lastname}}" width="200px" height="200px">
+            <br>
+            
+            <p>{{$tutor->email}}</p>
+            <div class="btn btn-group w-lg-100">
+               <label class="btn btn-sm btn-secondary cursor-pointer" for="avatar-update">Change Avatar</label>
+               <label role="button" class="btn btn-sm btn-primary cursor-pointer" onclick="uploadAvatar()">Upload&nbsp;<span class="fa fa-upload"></span></label>
+            </div>
+            <input type="file" id="avatar-update" class="d-none">
+         </aside>
+
+         <main class="col-lg-9 col-sm-12">
+            <button class="float-right btn btn-sm btn-primary" onclick="editProfile();"><span class="fa fa-edit"></span>&nbsp;Edit</button>
+            <div class="clearfix"></div>
+
+            <form action="javascript:void(0);" onsubmit="updateProfile();">
+            
+
+               <div class="form-row my-2">
+                  <div class="col-lg-6 my-2">
+                     <label for="firstname" class="">Firstname</label>
+                     <input type="text" id="firstname" value="{{$tutor->firstname}}" class="form-control rounded-0" readonly>
+                  </div>
+
+                  <div class="col-lg-6 my-2">
+                     <label for="lastname" class="">Lastname</label>
+                     <input type="text" id="lastname" value="{{$tutor->lastname}}" class="form-control rounded-0" readonly>
+                  </div>
+               </div>
+
+               <div class="form-row my-4">
+                  <div class="col-lg-6 my-2">
+                     <label for="telephone" class="">Telephone</label>
+                     <input type="tel" id="telephone" value="{{$tutor->telephone}}" class="form-control rounded-0" readonly>
+                  </div>
+
+                  <div class="col-lg-6 my-2">
+                     <label for="twitter" class="">Twitter&nbsp;Handle</label>
+                     <input type="text" id="twitter" value="{{$tutor->twitter}}" class="form-control rounded-0" readonly>
+                  </div>
+               </div>
+
+               <div class="form-row my-4">
+                  <div class="col-lg-6 my-2">
+                     <label for="experience" class="">You&nbsp;Started Playing Guitar @</label>
+                     <input type="date" pattern="[0-9]{4}" id="experience" value="{{$tutor->experience ?? '0000'}}-01-01" class="form-control rounded-0" readonly>
+                  </div>
+
+               </div>
+            
+               <div class="col-lg-12">
+                  <input type="submit" id="updatebtn" value="Update" class="btn btn-primary form-control rounded-0" disabled>
+               </div>
+
+            </form>
+
+         </main>
+         
+      </div>
+
+   </main>
+
+   <script>
+      function editProfile() {
+         $("#firstname").removeAttr('readonly');
+         $("#lastname").removeAttr('readonly');
+         $("#telephone").removeAttr('readonly');
+         $("#twitter").removeAttr('readonly');
+         $("#experience").removeAttr('readonly');
+         $("#updatebtn").removeAttr('disabled');
+      }
+
+      function doneEditingProfile() {
+         $("#firstname").attr('readonly');
+         $("#lastname").attr('readonly');
+         $("#telephone").attr('readonly');
+         $("#twitter").attr('readonly');
+         $("#experience").attr('readonly');
+         $("#updatebtn").attr('disabled');
+      }
+
+      async function uploadAvatar() {
+         let body = new FormData();
+         console.log($("#avatar"))
+         console.log($("#avatar-update")[0].files[0]);
+         body.append("avatar", $("#avatar-update")[0].files[0])
+         let resp = await request('POST', '@/admin/profile/uploadavatar', body);
+         if (resp.status == true) {
+            $("#avatar")[0].src = "@/" + resp.path;
+            showSuccess(resp.message)
+         } else {
+            showError(resp.message + ": " + resp.error)
+         }
+      }
+
+      async function updateProfile() {
+         let body = new FormData();
+         body.append("firstname", $("#firstname").val())
+         body.append("lastname", $("#lastname").val())
+         body.append("telephone", $("#telephone").val())
+         body.append("twitter", $("#twitter").val())
+         body.append("experience", $("#experience").val())
+         let resp = await request('POST', '@/admin/profile/updateprofile', body);
+         if (resp.status == true) {
+            doneEditingProfile();
+            showSuccess(resp.message)
+         } else {
+            showError(resp.message + ": " + resp.error)
+         }
+      }
+
+   </script>
+
+</body>
+</html>

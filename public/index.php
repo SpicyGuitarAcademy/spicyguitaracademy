@@ -98,6 +98,13 @@ $http->auth('web')->guard('admin','tutor')->get('/admin/dashboard', function(Req
    );
 });
 
+// Profile
+$http->auth('web')->guard('admin','tutor')->get('/admin/profile', 'TutorController@profile');
+
+$http->auth('web')->guard('admin','tutor')->post('/admin/profile/uploadavatar','TutorController@uploadavatar');
+
+$http->auth('web')->guard('admin','tutor')->post('/admin/profile/updateprofile','TutorController@updateprofile');
+
 // Categories
 $http->auth('web')->guard('admin','tutor')->get('/admin/categories', 'CategoryController@index');
 

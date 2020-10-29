@@ -114,9 +114,122 @@ class TutorController
 
    }
 
-   public function read(Request $req, Response $res)
+   public function profile(Request $req, Response $res)
    {
-      // return a resource
+      $Tutor = new TutorModel();
+      $email = User::$email;
+      $tutor = $Tutor->where("email = '$email'")->read("*")[0];
+
+      $res->send(
+         $res->render('admin/profile.html', [
+            "tutor" => json_encode($tutor)
+         ]), 200
+      );
+   }
+
+   public function updateprofile(Request $req, Response $res)
+   {
+      $firstname = trim($req->body()->firstname);
+      $lastname = trim($req->body()->lastname);
+      $twitter = trim($req->body()->twitter);
+      $telephone = trim($req->body()->telephone);
+      $experience = trim($req->body()->experience);
+      
+      $v = new Validate();
+
+      // validate
+      $v->letters("firstname", $firstname, "Invalid Firstname")->max(20);
+      $v->letters("lastname", $lastname, "Invalid Lastname")->max(20);
+      $v->telephone("telephone", $telephone, "Invalid Telephone")->max(20);
+      $errors = $v->errors();
+
+      if ($errors) {
+         $data['errors'] = json_encode($errors);
+         $res->send(
+            $res->json([
+               'status'=>false,
+               'message'=>'Profile not updated',
+               'error'=> implode(", ", $errors)
+            ])
+         );
+      }
+
+      // No errors, sanitize fields
+      $s = new Sanitize();
+      $firstname = $s->string($firstname);
+      $lastname = $s->string($lastname);
+      $twitter = $s->string($twitter);
+      $telephone = $s->string($telephone);
+      $experience = $s->string($experience);
+
+      $Tutor = new TutorModel();
+
+      if ($Tutor->update([
+         'firstname' => $firstname,
+         'lastname' => $lastname,
+         'twitter' => $twitter,
+         'telephone' => $telephone,
+         'experience' => date("Y", strtotime($experience))
+      ])) {
+         $res->send(
+            $res->json([
+               'status' => true,
+               'message' => 'Profile updated'
+            ])
+         );
+      } else {
+         $res->json([
+            'status' => false,
+            'message' => 'Profile not updated'
+         ]);
+      }
+
+   }
+
+   public function uploadavatar(Request $req, Response $res)
+   {
+      $avatar = ($req->files_exists() == true && $req->files()->avatar->error == 0) ? $req->files()->avatar : null ;
+
+      if ($avatar != null) {
+         // upload assignment video
+         $up = new Upload();
+         $up->image('avatar', $avatar, "Profile Picture was not uploaded", ["image/jpeg", "image/png", "image/gif", "image/bmp"]);
+         $up->upload("avatars/", Encrypt::hash());
+
+         $errors = $up->errors();
+
+         if ($errors) {
+            $res->send(
+               $res->json([
+                  'status'=>false,
+                  'message'=>"Profile Picture was not uploaded",
+                  'error'=>implode(", ", $errors['avatar'])
+               ])
+            );
+         } else {
+            $path = $up->uri('avatar');
+            $Tutor = new TutorModel();
+            $Tutor->update([
+               'avatar' => $path
+            ]);
+            $res->send(
+               $res->json([
+                  'status'=>true,
+                  'message'=>"Profile Picture was uploaded",
+                  'path'=>$path
+               ])
+            );
+         }
+      
+      } else {
+         $res->send(
+            $res->json([
+               'status'=>false,
+               'message'=>"Profile Picture was not uploaded",
+               'error'=>"File was not uploaded"
+            ])
+         );
+      }
    }
 
    public function update(Request $req, Response $res)
@@ -138,7 +251,7 @@ class TutorController
       } else {
          $mdl = new AuthModel();
          $updated = $mdl->updateStatus($id, $status);
-
+ 
          // 
          $res->route("/admin/tutors?msg=Account Updated Successfully");
       }

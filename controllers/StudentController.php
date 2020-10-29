@@ -231,7 +231,7 @@ class StudentController
 
          $ldone = $ltotal = 0;
          foreach ($total as $course) {
-            $_1, = $smdl->getStats($email, $course['course_id'])[0];
+            $_1 = $smdl->getStats($email, $course['course_id'])[0];
             $_2 = $mdl->getLessonsByCourse($course['course_id']);
 
             $ldone += $_1;
