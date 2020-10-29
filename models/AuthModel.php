@@ -35,8 +35,8 @@ class AuthModel extends Model
       ->read("id, email, password, role, status");
    }
 
-   public function updateStatus($id, $status) {
-      return $this->where("id = $id")->update([
+   public function updateStatus($email, $status) {
+      return $this->where("email = $email")->update([
          "status"=>$status
       ]);
    }

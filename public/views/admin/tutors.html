@@ -124,7 +124,7 @@
                               @method=PATCH
                               @csrftoken
 
-                              <input type="hidden" name="id" value="{{$tutor->id}}">
+                              <input type="hidden" name="email" value="{{$tutor->email}}">
                               @if ($tutor->status == 'active')
                                  <input type="hidden" name="status" value="blocked">
                                  <button type="submit" class="btn badge btn-sm btn-danger">Block Account</button>

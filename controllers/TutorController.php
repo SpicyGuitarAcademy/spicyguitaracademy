@@ -104,7 +104,7 @@ class TutorController
       }
       
       if ($mdl->addTutor($firstname, $lastname, $email, $telephone, date('Y')) == true) {
-         $res->route("/admin/tutors?msg=Tutor was created successfully;Tutor's login credentials are:<br>Email: $email, Password: $password");
+         $res->route(urlencode("/admin/tutors?msg=Tutor was created successfully;Tutor's login credentials are:<br>Email: $email, Password: $password"));
       } else {
          $data['errors'] = json_encode(['Account was not created. Try again!']);
          $res->send(
@@ -240,18 +240,18 @@ class TutorController
 
    public function updateStatus(Request $req, Response $res)
    {
-      $id = $req->body()->id ?? '';
+      $email = $req->body()->email ?? '';
       $status = $req->body()->status ?? '';
 
       $v = new Validate();
-      $v->numbers("id", $id, "Invalid Id!")->minvalue(1);
+      $v->numbers("email", $email, "Invalid Email!")->minvalue(1);
       $errors = $v->errors();
 
       if ($errors || !in_array($status, ["active", "blocked", "inactive"])) {
          $res->redirect($req->referer());
       } else {
          $mdl = new AuthModel();
-         $updated = $mdl->updateStatus($id, $status);
+         $updated = $mdl->updateStatus($email, $status);
  
          // 
          $res->route("/admin/tutors?msg=Account Updated Successfully");
