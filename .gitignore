@@ -4,5 +4,5 @@ storage/
 .well-known
 cgi-bin
 .todo
-.htacce
+.htaccess
 storage/logs/
