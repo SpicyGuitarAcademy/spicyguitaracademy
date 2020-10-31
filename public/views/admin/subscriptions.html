@@ -43,7 +43,7 @@
          <div class="card my-3">
             <div class="card-header">{{$plan->plan}} Plan</div>
             <div class="card-body">
-               <p id="description-{{$plan->plan_id}}" class="cursor-pointer" onclick="$(this).hide();$('#editdescriptiontab-{{$plan->plan_id}}').show();" maxlength="250">{{$plan->description ?? "This price is for new students who are looking to try out this learning platform but are not sure if they want it. Go on and pay, then feel free to cancel your subscribtion."}}</p>
+               <p id="description-{{$plan->plan_id}}" class="cursor-pointer" onclick="$(this).hide();$('#editdescriptiontab-{{$plan->plan_id}}').show();" maxlength="250">{{$plan->description}}</p>
 
                <div id="editdescriptiontab-{{$plan->plan_id}}" style="display: none;" class="">
                   <textarea class="my-2 form-control" id="editdescription-{{$plan->plan_id}}" cols="30" rows="2">{{$plan->description}}</textarea>
