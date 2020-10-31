@@ -36,7 +36,7 @@ class AuthModel extends Model
    }
 
    public function updateStatus($email, $status) {
-      return $this->where("email = $email")->update([
+      return $this->where("email = '$email'")->update([
          "status"=>$status
       ]);
    }

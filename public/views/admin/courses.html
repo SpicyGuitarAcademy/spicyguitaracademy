@@ -130,7 +130,7 @@
          </section>
 
          <!-- amateur -->
-         <section id="amateur" class="col-lg-8 mx-auto">
+         <section id="amateur" class="col-lg-8 mx-auto" style="display: none;">
 
             @php $amateurs = json_decode($amateurs);
             @if ($amateurs == [])
@@ -186,8 +186,8 @@
 
          </section>
 
-          <!-- intermediates -->
-          <section id="intermediate" class="col-lg-8 mx-auto">
+         <!-- intermediates -->
+         <section id="intermediate" class="col-lg-8 mx-auto" style="display: none;">
 
             @php $intermediates = json_decode($intermediates);
             @if ($intermediates == [])
@@ -243,8 +243,8 @@
 
          </section>
 
-          <!-- advanceds -->
-          <section id="advanced" class="col-lg-8 mx-auto">
+         <!-- advanceds -->
+         <section id="advanced" class="col-lg-8 mx-auto" style="display: none;">
 
             @php $advanceds = json_decode($advanceds);
             @if ($advanceds == [])

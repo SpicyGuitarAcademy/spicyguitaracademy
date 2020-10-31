@@ -5,7 +5,7 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta http-equiv="X-UA-Compatible" content="ie=edge">
    <!-- SEO Meta Tags -->
-   <title>Init Application</title>
+   <title>Profile | Spicy Guitar Academy</title>
 
    <!-- Import Assets -->
    <!-- JQuery for Faster Scripting -->
@@ -91,7 +91,7 @@
                <div class="form-row my-4">
                   <div class="col-lg-6 my-2">
                      <label for="experience" class="">You&nbsp;Started Playing Guitar @</label>
-                     <input type="date" pattern="[0-9]{4}" id="experience" value="{{$tutor->experience ?? '0000'}}-01-01" class="form-control rounded-0" readonly>
+                     <input type="date" id="experience" value="{{$tutor->experience ?? '0000'}}-01-01" class="form-control rounded-0" readonly>
                   </div>
 
                </div>
@@ -129,8 +129,6 @@
 
       async function uploadAvatar() {
          let body = new FormData();
-         console.log($("#avatar"))
-         console.log($("#avatar-update")[0].files[0]);
          body.append("avatar", $("#avatar-update")[0].files[0])
          let resp = await request('POST', '@/admin/profile/uploadavatar', body);
          if (resp.status == true) {

@@ -6,7 +6,7 @@ class SubscriptionModel extends Model
 {
    public function __construct()
    {
-      parent::__construct('subscription_tbl');
+      return parent::__construct('subscription_tbl');
    }
 
    // write wonderful model codes...

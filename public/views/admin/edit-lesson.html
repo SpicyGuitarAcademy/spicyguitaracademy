@@ -164,7 +164,7 @@
             </section>
 
             <!-- Lessons -->
-            <section id="lessons">
+            <section id="lessons" style="display: none;">
 
                <form action="@/admin/lessons/update/low-video" method="post" enctype="multipart/form-data">
                   
@@ -224,7 +224,7 @@
             </section>
 
             <!-- Tablature -->
-            <section id="tablatures">
+            <section id="tablatures" style="display: none;">
 
                <form action="@/admin/lessons/update/tablature" method="post" enctype="multipart/form-data">
                   
@@ -252,7 +252,7 @@
             </section>
 
             <!-- Practice -->
-            <section id="practices">
+            <section id="practices" style="display: none;">
                
                <form action="@/admin/lessons/update/practice" method="post" enctype="multipart/form-data">
                   
@@ -276,7 +276,7 @@
             </section>
 
             <!-- Notes -->
-            <section id="notes">
+            <section id="notes" style="display: none;">
 
                <form action="@/admin/lessons/update/note" method="post">
                   
@@ -295,7 +295,7 @@
             </section>
 
             <!-- Featured -->
-            <section id="featured">
+            <section id="featured" style="display: none;">
 
                <form action="@/admin/lessons/update/featured" method="post">
                   
@@ -303,24 +303,21 @@
                   @method=PATCH
                   <input type="hidden" name="id" value="{{$id}}">
 
-                  <label class="mt-2" for="note">Status</label>
-                  <input type="checkbox" {{ ($status == true) ? 'checked' : '' }} name="status" >
+                  <label class="mt-2" for="note">Add to Featured Lessons</label>
+                  <input onclick="toggleFeaturedFree();" type="checkbox" {{ ($status == true) ? 'checked' : '' }} name="status" id="featuredmode" >
                   <br>
                   <span style="font-size: small;">{{ ($status == true) ? 'This Lesson is Featured, uncheck the box to take it off' : 'This Lesson is not Featured, check the box and enter a price below to add it to featured lessons' }}</span>
-                  <br> <br>
-
-                  
+                  <br>
+                  <label class="mt-2" for="note"> (&#8358;) Price</label> <br>
+                  <input type="number" min="0" name="price" id="price" class="form-control" value="{{$price}}">
+                  <br>
                   <label class="mt-2" for="note">Free Lesson</label>
-                  <input type="checkbox" {{ ($free == true) ? 'checked' : '' }} name="free" >
+                  <input onclick="toggleFeaturedFree();" type="checkbox" {{ ($free == true) ? 'checked' : '' }} name="free" id="freemode">
                   <br>
                   <span style="font-size: small;">{{ ($free == true) ? 'This Lesson is Free' : 'This Lesson is not Free, check the box to make it Free' }}</span>
                   <br> <br>
-                  
-                  <label class="mt-2" for="note"> (&#8358;) Price</label> <br>
-                  <input type="number" min="0" name="price" id="price" class="form-control" value="{{$price}}">
-                  
                   <br>
-                  <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
+                  <input id="submitFeatured" type="submit" value="Update" class="form-control my-3 btn btn-primary">
 
                </form>
 
@@ -342,8 +339,19 @@
          $(id).show();
       }
 
+      function toggleFeaturedFree() {
+         let featured = $("#featuredmode")[0].checked;
+         let free = $("#freemode")[0].checked;
+
+         if (featured && free) {
+            alert("This Lesson cannot be featured and free at the same time");
+            $('#submitFeatured')[0].disabled = 'disabled'
+         } else {
+            $('#submitFeatured')[0].disabled = '';
+         }
+      }
+
       function start(section) {
-         console.log(section);
          switch (section) {
             case 1:
             show('#details');

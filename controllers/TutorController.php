@@ -233,18 +233,13 @@ class TutorController
       }
    }
 
-   public function update(Request $req, Response $res)
-   {
-      // update a resource
-   }
-
    public function updateStatus(Request $req, Response $res)
    {
       $email = $req->body()->email ?? '';
       $status = $req->body()->status ?? '';
 
       $v = new Validate();
-      $v->numbers("email", $email, "Invalid Email!")->minvalue(1);
+      $v->email("email", $email, "Invalid Email!");
       $errors = $v->errors();
 
       if ($errors || !in_array($status, ["active", "blocked", "inactive"])) {

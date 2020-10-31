@@ -28,7 +28,7 @@
    @import admin/header.html
 
    <nav class="container my-4 h4">
-      <a href="@/admin/lessons/featured">
+      <a href="@/admin/lessons/free">
          <div class="float-left">
             <i class="fa fa-video-camera"></i>
             Free Lessons
@@ -59,7 +59,6 @@
                      <tr>
                         <td>#</td>
                         <th>Lesson Title</th>
-                        <th>Price (N)</th>
                         <th>Action</th>
                      </tr>
                   </thead>
@@ -69,7 +68,6 @@
                   <tr>
                      <td>{{$count}}</td>
                      <td>{{$lesson->lesson}}</td>
-                     <td>{{$lesson->price}}</td>
                      <td>
 								<a href="@/admin/lessons/edit/{{$lesson->lesson_id}}" class="btn btn-sm btn-info" onclick=""><span class="fa fa-edit"></span> Edit</button>
                      </td>

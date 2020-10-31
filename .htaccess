@@ -5,7 +5,7 @@
 
   # Redirect Port 80 to 443
     RewriteCond %{SERVER_PORT} 80
-    # RewriteRule ^(.*)$ https://spicyguitaracademy.com/$1 [R,L]
+    RewriteRule ^(.*)$ https://spicyguitaracademy.com/$1 [R,L]
    
   # Prevent directory listings
       Options All -Indexes

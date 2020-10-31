@@ -6,6 +6,7 @@ use Framework\Http\Response;
 use App\Services\Auth;
 use App\Services\User;
 use App\Services\Validate;
+use App\Services\Sanitize;
 use App\Services\Paystack;
 use Framework\Cipher\Encrypt;
 use Models\StudentSubscriptionModel;
@@ -15,6 +16,93 @@ use Models\PaymentModel;
 
 class SubscriptionController
 {
+
+   public function subscriptions(Request $req, Response $res)
+   {
+      $Subscription = new SubscriptionModel();
+      $subscriptions = $Subscription->read("*");
+
+      $res->send(
+         $res->render('admin/subscriptions.html', [
+            "plans" => json_encode($subscriptions)
+         ])
+      );
+   }
+
+   public function updateprice(Request $req, Response $res)
+   {
+      $price = $req->body()->price;
+      $id = $req->body()->id;
+
+      $v = new Validate();
+      $v->amount("Price", $price, "Invalid subscription price");
+      $errors = $v->errors();
+      if (!$errors) {
+         $Subscription = new SubscriptionModel();
+         if ($Subscription->where("plan_id = '$id'")->update([
+            "price" => $price
+         ])) {
+            $res->send(
+               $res->json([
+                  'status' => true,
+                  'message' => 'Subscription price updated'
+               ])
+            );
+         } else {
+            $res->send(
+               $res->json([
+                  'status' => false,
+                  'message' => 'Subscription price not updated'
+               ])
+            );
+         }
+      } else {
+         $res->send(
+            $res->json([
+               'status' => false,
+               'message' => implode(", ", $errors)
+            ])
+         );
+      }
+   }
+
+   public function updatedescription(Request $req, Response $res)
+   {
+      $description = $req->body()->description;
+      $id = $req->body()->id;
+
+      $v = new Validate();
+      $v->any("Description", $description)->max(250);
+      $errors = $v->errors();
+      if (!$errors) {
+         $description = (new Sanitize())->string($description);
+         $Subscription = new SubscriptionModel();
+         if ($Subscription->where("plan_id = '$id'")->update([
+            "description" => $description
+         ])) {
+            $res->send(
+               $res->json([
+                  'status' => true,
+                  'message' => 'Subscription description updated'
+               ])
+            );
+         } else {
+            $res->send(
+               $res->json([
+                  'status' => false,
+                  'message' => 'Subscription description not updated'
+               ])
+            );
+         }
+      } else {
+         $res->send(
+            $res->json([
+               'status' => false,
+               'message' => implode(", ", $errors)
+            ])
+         );
+      }
+   }
 
    public function oldstatus(Request $req, Response $res)
    {

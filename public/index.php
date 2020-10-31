@@ -184,6 +184,12 @@ $http->auth('web')->guard('admin')->csrf()->post('/admin/tutors/add', 'TutorCont
 
 $http->auth('web')->guard('admin')->csrf()->patch('/admin/tutors/update-status', 'TutorController@updateStatus');
 
+// Subscription plans
+$http->auth('web')->guard('admin')->get('/admin/subscriptions', 'SubscriptionController@subscriptions');
+
+$http->auth('web')->guard('admin')->post('/admin/subscriptions/updateprice', 'SubscriptionController@updateprice');
+
+$http->auth('web')->guard('admin')->post('/admin/subscriptions/updatedescription', 'SubscriptionController@updatedescription');
 
 /* 
    ----------------------------------------------------------------

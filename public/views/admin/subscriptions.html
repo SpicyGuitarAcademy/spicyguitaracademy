@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <!-- SEO Meta Tags -->
+   <title>Subscription Plans | Spicy Guitar Academy</title>
+
+   <!-- Import Assets -->
+   <!-- JQuery for Faster Scripting -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap for Faster Styling -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- FontAwesome for Your Icons -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Your Custom Assets -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+</head>
+<body class="bg-light">
+   @vars
+   @import admin/header.html
+
+   <!-- $plans -->
+   @php $plans = json_decode($plans);
+
+   <nav class="container my-4 h4">
+      
+      <div class="float-left">
+         <i class="fa fa-refresh"></i>
+         Subscription Plans
+      </div>
+
+      <div class="clearfix"></div>
+   </nav>
+   
+   <main class="container my-5">
+
+      @foreach ($plans as $plan)
+         <div class="card my-3">
+            <div class="card-header">{{$plan->plan}} Plan</div>
+            <div class="card-body">
+               <p id="description-{{$plan->plan_id}}" class="cursor-pointer" onclick="$(this).hide();$('#editdescriptiontab-{{$plan->plan_id}}').show();" maxlength="250">{{$plan->description ?? "This price is for new students who are looking to try out this learning platform but are not sure if they want it. Go on and pay, then feel free to cancel your subscribtion."}}</p>
+
+               <div id="editdescriptiontab-{{$plan->plan_id}}" style="display: none;" class="">
+                  <textarea class="my-2 form-control" id="editdescription-{{$plan->plan_id}}" cols="30" rows="2">{{$plan->description}}</textarea>
+                  <div class="float-lg-right float-md-right">
+                     <button class="btn btn-sm btn-success" onclick="updateDescription('{{$plan->plan_id}}')">Submit</button>
+                     <button class="btn btn-sm btn-danger" onclick="$('#editdescriptiontab-{{$plan->plan_id}}').hide();$('#description-{{$plan->plan_id}}').show();">Cancel</button>
+                  </div>
+                  <div class="clearfix"></div>
+               </div>
+               
+               <br>
+               
+               <div class="float-left">Price N<span id="displayprice-">{{$plan->price}}</span></div>
+               <button class="btn btn-sm btn-primary float-right" onclick="$('#editprice-{{$plan->plan_id}}').show();">Edit Price</button>
+               <div class="clearfix"></div>
+
+               <div id="editprice-{{$plan->plan_id}}" style="display: none;" class="my-2 btn-group float-lg-right float-md-right">
+                  <input type="text" pattern="[0-9]" id="price-{{$plan->plan_id}}" value="{{$plan->price}}" class="form-control rounded-0 rounded-left rounded-lg">
+                  <button class="btn btn-success btn-append" onclick="updatePrice('{{$plan->plan_id}}', '{{$plan->plan}}')"><span class="fa fa-check"></span></button>
+                  <button class="btn btn-danger btn-append" onclick="$('#editprice-{{$plan->plan_id}}').hide();"><span class="fa fa-times"></span></button>
+               </div>
+               
+            </div>
+         </div>
+      @endforeach
+
+   </main>
+
+</body>
+
+<script>
+   async function updatePrice(id, plan) {
+      confirmOperation("Update Subscription Price", `Are you sure you want to update the subscription price for ${plan}`, async function() {
+         showLoading("Updating price...");
+         let body = new FormData();
+         body.append("id", id);
+         body.append("price", $("#price-"+id).val());
+         let resp = await request("POST", '@/admin/subscriptions/updateprice', body);
+         if (resp.status == true) {
+            $("#editprice-"+id).hide();
+            $("#displayprice-"+id).html($("#price-"+id).val());
+            showSuccess(resp.message);
+         } else {
+            showError(resp.message);
+         }
+      }, function() {
+         $("#editprice-"+id).hide();
+      })
+   }
+
+   async function updateDescription(id) {
+      let body = new FormData();
+      body.append("id", id);
+      body.append("description", $("#editdescription-"+id).val());
+      let resp = await request("POST", '@/admin/subscriptions/updatedescription', body);
+      if (resp.status == true) {
+         $('#editdescriptiontab-'+id).hide();
+         $('#description-'+id).show();
+         $("#description-"+id).html($("#editdescription-"+id).val());
+         showSuccess(resp.message);
+      } else {
+         showError(resp.message);
+      }
+   }
+</script>
+
+</html>
