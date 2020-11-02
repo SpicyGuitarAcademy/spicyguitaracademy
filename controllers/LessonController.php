@@ -138,8 +138,8 @@ class LessonController
 
       // validate
       $v->numbers("course", $course, "Invalid Course")->minvalue(1);
-      $v->alphanumeric("lesson", $lesson, "Invalid Title")->max(20);
-      $v->any("description", $description, "Invalid Description")->max(100);
+      $v->alphanumeric("lesson", $lesson, "Invalid Title")->max(100);
+      $v->any("description", $description, "Invalid Description")->max(500);
       $errors = $v->errors();
 
       if ($errors) {
@@ -583,8 +583,8 @@ class LessonController
       $v = new Validate();
       $v->numbers("id", $id, "Invalid Id!")->minvalue(1);
       $v->numbers("course", $course, "Invalid Course")->minvalue(1);
-      $v->alphanumeric("lesson", $lesson, "Invalid Title")->max(20);
-      $v->any("description", $description, "Invalid Description")->max(100);
+      $v->alphanumeric("lesson", $lesson, "Invalid Title")->max(100);
+      $v->any("description", $description, "Invalid Description")->max(500);
       $errors = $v->errors();
 
       if ($errors) {

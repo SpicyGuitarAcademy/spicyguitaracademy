@@ -102,10 +102,10 @@
 
 
             <label class="mt-2" for="title">Title</label>
-            <input type="text" name="lesson" id="title" required maxlength="20" value="{{$lesson ?? ''}}" class="form-control">
+            <input type="text" name="lesson" id="title" required maxlength="100" value="{{$lesson ?? ''}}" class="form-control">
 
             <label class="mt-2" for="description">Description</label>
-            <textarea name="description" id="description" cols="30" rows="3" maxlength="100" placeholder="No Description" class="form-control">{{$description ?? ''}}</textarea>
+            <textarea name="description" id="description" cols="30" rows="3" maxlength="500" placeholder="No Description" class="form-control">{{$description ?? ''}}</textarea>
 
             <label class="mt-2 btn border" for="thumbnail" style="cursor: pointer;">
                <i class="fa fa-image"></i> Select Lesson Thumbnail

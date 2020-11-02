@@ -73,8 +73,8 @@ class CourseController
 
       // validate
       $v->numbers("category", $category, "Invalid Category")->minvalue(1);
-      $v->alphanumeric("course", $course, "Invalid Title")->max(20);
-      $v->any("description", $description, "Invalid Description")->max(100);
+      $v->alphanumeric("course", $course, "Invalid Title")->max(100);
+      $v->any("description", $description, "Invalid Description")->max(500);
       $v->numbers("order", $order, "Invalid Order")->minvalue(1);
       $errors = $v->errors();
 
@@ -206,8 +206,8 @@ class CourseController
       // validate
       $v->numbers("id", $id, "Incalid Id!")->minvalue(1);
       $v->numbers("category", $category, "Invalid Category")->minvalue(1);
-      $v->alphanumeric("course", $course, "Invalid Title")->max(20);
-      $v->any("description", $description, "Invalid Description")->max(100);
+      $v->alphanumeric("course", $course, "Invalid Title")->max(100);
+      $v->any("description", $description, "Invalid Description")->max(500);
       $v->numbers("order", $order, "Invalid Order")->minvalue(1);
       $errors = $v->errors();
 
