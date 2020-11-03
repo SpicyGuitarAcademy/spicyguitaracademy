@@ -149,6 +149,10 @@
                   <label class="mt-2" for="description">Description</label>
                   <textarea name="description" id="description" cols="30" rows="3" maxlength="100" placeholder="No Description" class="form-control">{{$description ?? ''}}</textarea>
 
+                  <label class="mt-2" for="order">#Order</label>
+                  <input type="number" name="order" id="order" required min="1" value="{{$order ?? ''}}" class="form-control">
+                  <small class="text-info"> <i class="fa fa-info-circle"></i> This is the order in which the course would be listed to the students.</small>
+
                   <label class="mt-2 btn border" for="thumbnail" style="cursor: pointer;">
                      <i class="fa fa-image"></i> Select Lesson Thumbnail
                   </label>

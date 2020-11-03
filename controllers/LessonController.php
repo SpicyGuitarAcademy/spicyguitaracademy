@@ -122,6 +122,7 @@ class LessonController
       $course = trim($req->body()->course);
       $lesson = trim($req->body()->lesson);
       $description = (trim($req->body()->description) != '') ? trim($req->body()->description) : 'No Description' ;
+      $order = trim($req->body()->order);
       $thumbnail = ($req->files_exists() == true && $req->files()->thumbnail->error == 0) ? $req->files()->thumbnail : null ;
       
       $data = [
@@ -131,7 +132,8 @@ class LessonController
          "intermediates" => json_encode($intermediate ?? []),
          "advanceds" => json_encode($advanced ?? []),
          'lesson' => $lesson,
-         'description' => $description
+         'description' => $description,
+         'order' => $order
       ];
 
       $v = new Validate();
@@ -140,6 +142,7 @@ class LessonController
       $v->numbers("course", $course, "Invalid Course")->minvalue(1);
       $v->alphanumeric("lesson", $lesson, "Invalid Title")->max(100);
       $v->any("description", $description, "Invalid Description")->max(500);
+      $v->numbers("order", $order, "Invalid Order")->minvalue(1);
       $errors = $v->errors();
 
       if ($errors) {
@@ -154,6 +157,7 @@ class LessonController
       $course = $s->numbers($course);
       $lesson = $s->string($lesson);
       $description = $s->string($description);
+      $order = $s->numbers($order);
 
       if ($thumbnail != null) {
          // upload thumbnail
@@ -176,7 +180,7 @@ class LessonController
       }
 
       $mdl = new LessonModel();
-      $added = $mdl->addLesson($course, $lesson, $description, $path, User::$fullname ?? 'No Tutor');
+      $added = $mdl->addLesson($course, $lesson, $description, $order, $path, User::$fullname ?? 'No Tutor');
 
 
       if ($added != false) {
@@ -248,6 +252,7 @@ class LessonController
                   // -------------------------------------------
                   "lesson" => $lesson['lesson'] ?? '',
                   "description" => $lesson['description'] ?? '',
+                  "order" => $lesson['ord'] ?? '',
                   "thumbnail" => $lesson['thumbnail'] ?? '',
                   "low_video" => $lesson['low_video'] ?? '',
                   "high_video" => $lesson['high_video'] ?? '',
@@ -285,7 +290,7 @@ class LessonController
 
       } else {
          $res->send(
-            $res->json(['error' => 'No Course'])
+            $res->json(['error' => 'No Lesson'])
          );
       }
 
@@ -319,6 +324,7 @@ class LessonController
             // -------------------------------------------
             "lesson" => $lesson['lesson'] ?? '',
             "description" => $lesson['description'] ?? '',
+            "order" => $lesson['ord'] ?? '',
             "thumbnail" => $lesson['thumbnail'] ?? '',
             "low_video" => $lesson['low_video'] ?? '',
             "high_video" => $lesson['high_video'] ?? '',
@@ -577,6 +583,7 @@ class LessonController
       $course = trim($req->body()->course);
       $lesson = trim($req->body()->lesson);
       $description = (trim($req->body()->description) != '') ? trim($req->body()->description) : 'No Description' ;
+      $order = trim($req->body()->order);
       $thumbnail = ($req->files_exists() == true && $req->files()->thumbnail->error == 0) ? $req->files()->thumbnail : null ;
       
       // validate
@@ -585,6 +592,7 @@ class LessonController
       $v->numbers("course", $course, "Invalid Course")->minvalue(1);
       $v->alphanumeric("lesson", $lesson, "Invalid Title")->max(100);
       $v->any("description", $description, "Invalid Description")->max(500);
+      $v->numbers("order", $order, "Invalid Order")->minvalue(1);
       $errors = $v->errors();
 
       if ($errors) {
@@ -600,6 +608,7 @@ class LessonController
          $course = $s->numbers($course);
          $lesson = $s->string($lesson);
          $description = $s->string($description);
+         $order = $s->numbers($order);
 
          if ($thumbnail != null) {
             // upload thumbnail
@@ -622,7 +631,7 @@ class LessonController
          }
 
          $mdl = new LessonModel();
-         $added = $mdl->updateLesson($id, $course, $lesson, $description, User::$fullname ?? 'No Tutor');
+         $added = $mdl->updateLesson($id, $course, $lesson, $description, $order, User::$fullname ?? 'No Tutor');
 
          $res->route("/admin/lessons/edit/$id");
       }

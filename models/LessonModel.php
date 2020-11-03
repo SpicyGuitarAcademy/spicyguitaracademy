@@ -21,12 +21,13 @@ class LessonModel extends Model
       return $this->where("id = $id AND active = true")->read("*");
    }
 
-   public function addLesson($course, $lesson, $description, $thumbnail, $tutor)
+   public function addLesson($course, $lesson, $description, $order, $thumbnail, $tutor)
    {
       $add = $this->create([
          'course' => $course,
          'lesson' => $lesson,
          'description' => $description,
+         'ord' => $order,
          'thumbnail' => $thumbnail,
          'tutor' => $tutor
       ]);
@@ -38,12 +39,13 @@ class LessonModel extends Model
       }
    }
 
-   public function updateLesson($id, $course, $lesson, $description, $tutor)
+   public function updateLesson($id, $course, $lesson, $description, $order, $tutor)
    {
       return $this->where("id = $id")->update([
          'course' => $course,
          'lesson' => $lesson,
          'description' => $description,
+         'ord' => $order,
          'tutor' => $tutor
       ]);
    }
@@ -99,7 +101,7 @@ class LessonModel extends Model
 
    public function getLessonsByCourse(int $course)
    {
-      return $this->where("course = $course AND active = true")->read("*");
+      return $this->where("course = $course AND active = true ORDER BY ord")->read("*");
    }
 
    public function removeLesson(int $id)
