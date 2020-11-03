@@ -28,7 +28,7 @@ class Auth
             // Note: this credentials were used to authenticate the user in the ath_session method above
             $credentials = [
                "username" => $username,
-               "role" => "admin",
+               "role" => "admin"
             ];
 
             // consider remember
@@ -155,6 +155,7 @@ class Auth
       $email = $request->auth_credentials()->email;
       $role = $request->auth_credentials()->role;
       $fullname = $request->auth_credentials()->fullname ?? '';
+      $avatar = $request->auth_credentials()->avatar ?? '';
 
       // these are credentials coming from the session
       if ( isset($email) && !empty($email) && isset($role) && !empty($role) ) {
@@ -163,6 +164,7 @@ class Auth
          User::$email = $email;
          User::$role = $role;
          User::$fullname = $fullname;
+         User::$avatar = $avatar;
       } else {
          $response->remove_all_headers();
          if (User::$group == 'admin') {
@@ -204,48 +206,48 @@ class Auth
 
    }
 
-   // Digest Auth
-   public static function digest(Request $request, Response $response)
-   {
+   // // Digest Auth
+   // public static function digest(Request $request, Response $response)
+   // {
       
-      $username = $request->auth_credentials()->username;
+   //    $username = $request->auth_credentials()->username;
 
-      // use the username to retrieve the password (A1) from the database.
-      // the password should be computed as md5(username:realm:actual-password)
+   //    // use the username to retrieve the password (A1) from the database.
+   //    // the password should be computed as md5(username:realm:actual-password)
 
-      /*
-         Your Model Code Goes Here
-      */
+   //    /*
+   //       Your Model Code Goes Here
+   //    */
 
-      // Default
-      // username = admin, password = admin, realm = Initframework
-      // the database password is 330902e4da960d4a7fd25c09c41ebb8c
+   //    // Default
+   //    // username = admin, password = admin, realm = Initframework
+   //    // the database password is 330902e4da960d4a7fd25c09c41ebb8c
       
-      // Comment this when you have your password from the database
-      $password = "330902e4da960d4a7fd25c09c41ebb8c";
+   //    // Comment this when you have your password from the database
+   //    $password = "330902e4da960d4a7fd25c09c41ebb8c";
 
-      // $realm = $credentials->realm;
-      $nonce = $credentials->nonce;
-      $nc = $credentials->nc;
-      $cnonce = $credentials->cnonce;
-      $qop = $credentials->qop;
-      $uri = $credentials->uri;
-      $request_response = $credentials->response;
+   //    // $realm = $credentials->realm;
+   //    $nonce = $credentials->nonce;
+   //    $nc = $credentials->nc;
+   //    $cnonce = $credentials->cnonce;
+   //    $qop = $credentials->qop;
+   //    $uri = $credentials->uri;
+   //    $request_response = $credentials->response;
 
-      $A1 = $password;
-      $A2 = md5($request->method() . ":$uri");
-      $valid_response = md5("$A1:$nonce:$nc:$cnonce:$qop:$A2");
+   //    $A1 = $password;
+   //    $A2 = md5($request->method() . ":$uri");
+   //    $valid_response = md5("$A1:$nonce:$nc:$cnonce:$qop:$A2");
 
-      if ($request_response == $valid_response) {
+   //    if ($request_response == $valid_response) {
          
-         return true;
-      } else {
-         $response->remove_all_headers();
-         $response->auth_digest(DIGEST_REALM);
-         return false;
-      }
+   //       return true;
+   //    } else {
+   //       $response->remove_all_headers();
+   //       $response->auth_digest(DIGEST_REALM);
+   //       return false;
+   //    }
       
-   }
+   // }
 
    // JWT Auth
    public static function jwt(Request $request, Response $response)

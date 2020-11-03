@@ -20,7 +20,7 @@
                      {{$user->fullname ?? $user->email}}
                      <span class="caret"></span>
                   </button>
-                  <img class="rounded-circle" src="@/{{$user->avatar ?? 'storage/public/avatars/default.png'}}" alt="{{$user->fullname ?? $user->email}}" width="40px" height="40px">
+                  <img class="rounded-circle" src="@/{{$user->avatar ?? 'storage/public/avatars/default.png'}}" alt="{{$user->fullname ?? $user->email}}" width="30px" height="30px">
                   <ul class="dropdown-menu px-3">
                      <li class="py-1"><a href="@/admin/profile">Profile <i class="fa fa-user-o"></i></a></li>
                      <li class="py-1"><a href="@/admin/logout">Logout <i class="fa fa-sign-out"></i></a></li>

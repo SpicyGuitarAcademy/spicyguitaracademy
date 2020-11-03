@@ -11,7 +11,7 @@ class User
    public static $group = '';
    public static $token = '';
    public static $fullname = null;
-   public static $avatar = null;
+   public static $avatar = '';
 
    public static function user()
    {
