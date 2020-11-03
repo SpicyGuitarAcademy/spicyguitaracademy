@@ -101,7 +101,8 @@ class AuthController
          "email" => $email,
          "role" => $role,
          "status" => $status,
-         "fullname" => User::$fullname = $tutor[0]['firstname'] . " " . $tutor[0]['lastname']
+         "fullname" => User::$fullname = $tutor[0]['firstname'] . " " . $tutor[0]['lastname'],
+         "avatar" => User::$avatar = $tutor[0]['avatar']
       ];
 
       // consider remember
@@ -121,6 +122,7 @@ class AuthController
       User::$email = $email;
       User::$role = $role;
       User::$fullname = $tutor[0]['firstname'] . " " . $tutor[0]['lastname'];
+      User::$avatar = $tutor[0]['avatar'];
 
       // consider redirect to previous working page
       if ($redirect != null) {
@@ -330,11 +332,11 @@ class AuthController
       $mdl = new StudentModel();
       $student = $mdl->getStudent($email)[0];
 
-      if ($remember) {
+      // if ($remember) {
          $lifetime = REMEMBER_ME_LIFETIME * 60;
-      } else {
-         $lifetime = 60;
-      }
+      // } else {
+      //    $lifetime = 60;
+      // }
       $exp = strtotime("$lifetime minutes");
       
       // create a token
