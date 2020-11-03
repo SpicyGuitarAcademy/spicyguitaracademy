@@ -210,7 +210,8 @@ class TutorController
          } else {
             $path = $up->uri('avatar');
             $Tutor = new TutorModel();
-            $Tutor->update([
+            $email = User::$email;
+            $Tutor->where("email = '$email'")->update([
                'avatar' => $path
             ]);
             $res->send(
