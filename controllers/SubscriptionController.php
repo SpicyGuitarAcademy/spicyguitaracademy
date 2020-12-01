@@ -205,7 +205,7 @@ class SubscriptionController
          $variableValue = $title;
          $paymentMedium = "Mobile App";
          $paymentId = 0;
-         $callback = ''; //SERVER . '/api/subscription/verify';
+         $callback = SERVER . '/api/subscription/verify';
 
          // add payment record
          $mdl = new PaymentModel();

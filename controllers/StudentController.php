@@ -229,10 +229,12 @@ class StudentController
          $mdl = new LessonModel();
          $smdl = new StudentLessonModel();
 
+        // exit(json_encode($smdl->getStats($email, 2)));
+
          $ldone = $ltotal = 0;
          foreach ($total as $course) {
-            $_1 = $smdl->getStats($email, $course['course_id'])[0];
-            $_2 = $mdl->getLessonsByCourse($course['course_id']);
+            list($_1, $_2) = $smdl->getStats($email, $course['course_id']);
+            // $_2 = $mdl->getLessonsByCourse($course['course_id']);
 
             $ldone += $_1;
             $ltotal += $_2;

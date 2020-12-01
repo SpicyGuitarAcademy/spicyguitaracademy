@@ -1,0 +1,2 @@
+[29-Oct-2020 16:25:21 Africa/Lagos] PHP Deprecated:  password_hash(): Use of the 'salt' option to password_hash is deprecated in /home2/iffpeomy/public_html/vendor/ebukaodini/initframework/src/Framework/Cipher/Encrypt.php on line 42
+[29-Oct-2020 16:29:40 Africa/Lagos] PHP Deprecated:  password_hash(): Use of the 'salt' option to password_hash is deprecated in /home2/iffpeomy/public_html/vendor/ebukaodini/initframework/src/Framework/Cipher/Encrypt.php on line 42

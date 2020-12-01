@@ -38,8 +38,8 @@ class StudentLessonModel extends Model
 
    public function getStats($email, $course) {
       return [
-         $this->where("student_id = '$email' AND course_id = $course AND (status = 1) AND medium = 'NORMAL'")->read("COUNT(*) as done")[0]['done'],
-         $this->where("student_id = '$email' AND course_id = $course AND (status = 1 OR status = 0) AND medium = 'NORMAL'")->read("COUNT(*) as total")[0]['total']
+         $this->where("student_id = '$email' AND course_id = '$course' AND status = 1 AND medium = 'NORMAL'")->read("COUNT(*) as done")[0]['done'],
+         $this->where("student_id = '$email' AND course_id = '$course' AND medium = 'NORMAL'")->read("COUNT(*) as total")[0]['total']
       ];
    }
 
