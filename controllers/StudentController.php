@@ -475,7 +475,7 @@ class StudentController
    public function invitefriend(Request $req, Response $res) {
       // temporary
       $email = User::$email;
-      $fullname = User::$fullname;
+      
       $friend = $req->body()->friend ?? null;
 
       $v = new Validate();
@@ -487,14 +487,14 @@ class StudentController
          $msg = <<<HTML
          <div>
             <h3>Hi, </h3>
-            <p>Your friend $fullname has invited you to join in and learn how to become a professional guitar player.</p><br>
+            <p>Your friend ($email) has invited you to join in and learn how to become a professional guitar player.</p><br>
 
             <p>Click <a href="https://spicyguitaracademy.com">Here</a> to join.</p><br>
 
             <p>We can't wait to have you on board. 🙂🎉</p>
          </div>
 HTML;
-         $send = Mail::asHTML($msg)->send("$email:$fullname", $friend, ucwords($fullname) . " Invites You.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+         $send = Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $friend, "Your Friend Invites You.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
 
          if ($send == true) {
             $res->send(
