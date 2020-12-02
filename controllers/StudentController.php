@@ -511,8 +511,7 @@ HTML;
             $res->json(['error'=>$error['friend']])
          );
       }
-
-}
+   }
 
    public function uploadAvatar(Request $req, Response $res) {
       // temporary
