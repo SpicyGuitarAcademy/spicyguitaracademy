@@ -498,17 +498,17 @@ HTML;
 
          if ($send == true) {
             $res->send(
-               $res->json(['success'=>'Invitation has been sent.'])
+               $res->json(['status'=>true,'message'=>'Invitation has been sent.'])
             );
          } else {
             $res->send(
-               $res->json(['error'=>"Invitation was not sent. Please try again."])
+               $res->json(['status'=>false,'message'=>"Invitation was not sent. Please try again."])
             );
          }
 
       } else {
          $res->send(
-            $res->json(['error'=>$error['friend']])
+            $res->json(['status'=>false,'message'=>$error['friend']])
          );
       }
 
@@ -627,7 +627,10 @@ HTML;
 
       $free = [];
       foreach ($lessons as $lesson) {
-          $free[] = $lmdl->getLesson($lesson['lesson_id'])[0] ?? null;
+        // get the lesson and check if the lesson is null
+          $l = $lmdl->getLesson($lesson['lesson_id'])[0];
+          if (!is_null($l))
+          $free[] = $l;
       }
 
       $res->send(

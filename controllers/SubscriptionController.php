@@ -155,6 +155,7 @@ class SubscriptionController
          $today = new \DateTime(date("Y-m-d"));
          $expire = new \DateTime(date("Y-m-d", strtotime($sub['sub_expire'])));
          $diff = $today->diff($expire);
+         
 
          if ($today > $expire) {
             $res->send(
@@ -164,10 +165,16 @@ class SubscriptionController
                ])
             );
          } else {
+            $plan = $sub['plan'];
+            // switch ($plan) {
+            //     case '1': $plan = "Beginners"
+            // }
+            
             $res->send(
                $res->json([
                   "days" => $diff->days,
-                  "status" => "ACTIVE"
+                  "status" => "ACTIVE",
+                  "plan" => $plan
                ])
             );
          }
