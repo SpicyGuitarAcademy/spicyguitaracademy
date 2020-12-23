@@ -289,7 +289,7 @@
                   <input type="hidden" name="id" value="{{$id}}">
 
                   <label class="mt-2" for="note">Note</label>
-                  <textarea name="note" id="note" cols="30" rows="3" maxlength="100" class="form-control">{{$note ?? ''}}</textarea>
+                  <textarea name="note" id="note" cols="30" rows="3" maxlength="65535" class="form-control">{{$note ?? ''}}</textarea>
 
                   <br>
                   <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
