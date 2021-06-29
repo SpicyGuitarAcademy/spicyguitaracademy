@@ -177,11 +177,22 @@ $http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/lessons/update
 // Featured Courses
 $http->auth('web')->guard('admin','tutor')->get('/admin/courses/featured', 'CourseController@getFeaturedCourses');
 
+$http->auth('web')->guard('admin','tutor')->get('/admin/courses/featured/new', 'CourseController@newFeaturedCourses');
+
+$http->auth('web')->guard('admin','tutor')->post('/admin/courses/featured/create', 'CourseController@createFeaturedCourse');
+
+$http->auth('web')->guard('admin','tutor')->get('/admin/courses/featured/select', 'CourseController@selectFeaturedCourses');
+
+$http->auth('web')->guard('admin','tutor')->post('/admin/courses/featured/select/submit', 'CourseController@AddLessonsForFeaturedCourse');
+
+$http->auth('web')->guard('admin','tutor')->get('/admin/courses/featured/edit/{id}', 'CourseController@editFeaturedCourse');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/courses/featured/update', 'CourseController@updateFeaturedCourse');
+
 $http->auth('web')->guard('admin','tutor')->get('/admin/lessons/free', 'LessonController@free');
 
 // students
 $http->auth('web')->guard('admin', 'tutors')->get('/admin/students', 'TutorController@students');
-
 
 $http->auth('web')->guard('admin', 'tutors')->get('/admin/student/comments', 'TutorController@studentComments');
 
@@ -268,6 +279,10 @@ $http->auth('api')->guard('student')->get('/api/student/featuredcourses/bought',
 
 // list lessons in a course
 $http->auth('api')->guard('student')->get('/api/course/{course}/lessons','CourseController@getCourseLessons');
+
+// TODO
+// list lessons in a featured course
+$http->auth('api')->guard('student')->get('/api/course/{course}/lessons','CourseController@getFeaturedCourseLessons');
 
 // get a lesson ??
 $http->auth('api')->guard('student')->get('/api/lesson/{lesson}','LessonController@read');

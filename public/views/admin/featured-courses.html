@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,27 +16,28 @@
    <script src="@assets/js/bootstrap.min.js"></script>
    <link rel="stylesheet" href="@assets/css/bootstrap.css">
    <!-- Font Awesome -->
-	<link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
    <!-- Custom -->
    <script src="@assets/js/main.js"></script>
    <link rel="stylesheet" href="@assets/css/main.css">
 
 </head>
+
 <body class="bg-light">
-   
+
    @vars
 
    @import admin/header.html
 
-   <nav class="container my-4 h4">
+   <nav class="container my-4 h4 d-flex justify-content-between">
       <a href="@/admin/courses/featured">
-         <div class="float-left">
-            <i class="fa fa-video-camera"></i>
-            Featured Courses
-         </div>
+         <i class="fa fa-video-camera"></i>
+         Featured Courses
       </a>
 
-      <div class="clearfix"></div>
+      <a href="@/admin/courses/featured/new" class="btn btn-primary">
+         New Featured Course
+      </a>
    </nav>
 
    <main class="container my-5">
@@ -47,9 +49,9 @@
 
             @php $courses = json_decode($courses);
             @if ($courses == [])
-               <div class="alert show text-dark text-center">
-                  There are no Featured Courses. Add some Featured Courses.
-               </div>
+            <div class="alert show text-dark text-center">
+               There are no Featured Courses. Add some Featured Courses.
+            </div>
             @else
 
             <div class="card-body w-100 mx-auto table-responsive">
@@ -71,7 +73,16 @@
                      <td>{{$course->course}}</td>
                      <td>{{$course->featuredprice}}</td>
                      <td>
-								<a href="@/admin/courses/edit/{{$course->id}}" class="btn btn-sm btn-info" onclick=""><span class="fa fa-edit"></span> Edit</button>
+                        <a href="@/admin/courses/featured/edit/{{$course->id}}"
+                           class="btn btn-sm btn-muted text-primary" onclick="">
+                           <span class="fa fa-edit"></span>
+                           Edit
+                        </a>
+                        <a href="@/admin/courses/featured/select?course={{$course->id}}"
+                           class="btn btn-sm btn-muted text-primary" onclick="">
+                           <span class="fa fa-edit"></span>
+                           Lessons
+                        </a>
                      </td>
                   </tr>
                   @php $count++;
@@ -79,7 +90,7 @@
 
                </table>
 
-            @endif
+               @endif
 
          </section>
 
@@ -89,8 +100,9 @@
    </main>
 
    <script>
-      
+
    </script>
-   
+
 </body>
+
 </html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Select Lessons | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+
+<body class="bg-light">
+
+   @vars
+
+   @import admin/header.html
+
+   @php $selectedLessons = json_decode($selectedLessons);
+
+   <form action="@/admin/courses/featured/select/submit?course={{$featuredCourse}}" method="post" enctype="multipart/form-data">
+      <nav class="container my-4 h4 d-flex justify-content-between" id="top">
+         <div>
+            <a href="@/admin/courses/featured">
+               <div class="float-left">
+                  <i class="fa fa-video-camera"></i>
+                  Featured Courses
+               </div>
+            </a>
+            <span class="h5">&nbsp;/&nbsp;Select</span>
+         </div>
+
+         <button type="submit" class="btn btn-small btn-primary">
+            Submit
+         </button>
+
+      </nav>
+
+      <main class="container my-5">
+
+         <div class="row no-gutters">
+
+            <aside class="col-lg-3">
+               <nav class="nav">
+                  <ul type="none" class="">
+
+                     <li>
+                        <a style="cursor: pointer;" onclick="show('#beginners');"
+                           class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Beginners</a>
+                     </li>
+                     <li>
+                        <a style="cursor: pointer;" onclick="show('#amateur');"
+                           class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Amateur</a>
+                     </li>
+                     <li>
+                        <a style="cursor: pointer;" onclick="show('#intermediate');"
+                           class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Intermediate</a>
+                     </li>
+                     <li>
+                        <a style="cursor: pointer;" onclick="show('#advanced');"
+                           class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Advanced</a>
+                     </li>
+                  </ul>
+               </nav>
+            </aside>
+
+            <!-- beginners -->
+            <section id="beginners" class="col-lg-8 mx-auto">
+
+               @php $beginners = json_decode($beginners);
+               @if ($beginners == [])
+               <div class="alert show text-dark text-center">
+                  There are no lessons. Add a lesson.
+               </div>
+               @else
+
+               @foreach ($beginners as $course)
+
+               <div class="my-3 card border border-primary text-dark">
+                  @php $id = $course->id; $lessons = $course->lessons
+                  <div class="card-header px-4 py-2 h4">
+                     {{$course->course}}
+                  </div>
+
+                  <div class="card-body">
+                     @foreach ($lessons as $lesson)
+                     <div class="row no-gutters">
+
+                        <div class="col-lg-3">
+                           <img class="img img-thumbnail border-primary" src="@/{{$lesson->thumbnail}}" width="100%"
+                              title="{{$lesson->lesson}}" alt="{{$lesson->lesson}}">
+                        </div>
+
+                        <div class="col-lg-9">
+                           <div class="px-3">
+                              @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$lesson->date_added)));
+                              <div class="float-right"><span class="badge badge-primary"> #{{$lesson->ord}}</span>
+                                 @if( $lesson->free == true )
+                                 <span class="badge badge-primary">free</span>
+                                 @endif
+                                 <br>{{$date->day}}/{{$date->month}}/{{$date->year}}
+                              </div>
+
+                              <div class="lead">{{$lesson->lesson}}</div>
+                              <small>{{$lesson->tutor}}</small>
+
+                              <p class="mt-1" style="word-wrap: break-word;">
+                                 {{$lesson->description}}
+                              </p>
+
+                              <div class="text-primary">
+                                 <input type="checkbox" name='courselessons[]' {{ in_array($lesson->id, $selectedLessons) ? 'checked' : '' }} id="courselessons{{$lesson->id}}"
+                                    value="{{$lesson->id}}">
+                                 <label for="courselessons{{$lesson->id}}">Select Lesson</label>
+                              </div>
+
+                           </div>
+                        </div>
+
+                     </div>
+                     <hr>
+                     @endforeach
+                  </div>
+               </div>
+
+               @endforeach
+
+               @endif
+
+            </section>
+
+            <!-- amateur -->
+            <section id="amateur" class="col-lg-8 mx-auto" style="display: none;">
+
+               <!--{{$amateur}}-->
+
+               @php $amateur = json_decode($amateur);
+               @if ($amateur == [])
+               <div class="alert show text-dark text-center">
+                  There are no lessons. Add a lesson.
+               </div>
+               @else
+
+               @foreach ($amateur as $course)
+
+               <div class="my-3 card border border-primary text-dark">
+                  @php $id = $course->id; $lessons = $course->lessons
+                  <div class="card-header px-4 py-2 h4">
+                     {{$course->course}}
+                  </div>
+
+                  <div class="card-body">
+                     @foreach ($lessons as $lesson)
+                     <div class="row no-gutters">
+
+                        <div class="col-lg-3">
+                           <img class="img img-thumbnail border-primary" src="@/{{$lesson->thumbnail}}" width="100%"
+                              title="{{$lesson->lesson}}" alt="{{$lesson->lesson}}">
+                        </div>
+
+                        <div class="col-lg-9">
+                           <div class="px-3">
+                              @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$lesson->date_added)));
+                              <div class="float-right"><span class="badge badge-primary"> #{{$lesson->ord}}</span>
+                                 @if( $lesson->free == true )
+                                 <span class="badge badge-primary">free</span>
+                                 @endif
+                                 <br>{{$date->day}}/{{$date->month}}/{{$date->year}}
+                              </div>
+
+                              <div class="lead">{{$lesson->lesson}}</div>
+                              <small>{{$lesson->tutor}}</small>
+
+                              <p class="mt-1" style="word-wrap: break-word;">
+                                 {{$lesson->description}}
+                              </p>
+
+                              <div class="text-primary">
+                                 <input type="checkbox" name='courselessons[]' id="courselessons{{$lesson->id}}"
+                                    value="{{$lesson->id}}">
+                                 <label for="courselessons{{$lesson->id}}">Select Lesson</label>
+                              </div>
+
+                           </div>
+                        </div>
+
+                     </div>
+                     <hr>
+                     @endforeach
+                  </div>
+               </div>
+
+               @endforeach
+
+               @endif
+
+            </section>
+
+            <!-- intermediates -->
+            <section id="intermediate" class="col-lg-8 mx-auto" style="display: none;">
+
+               @php $intermediate = json_decode($intermediate);
+               @if ($intermediate == [])
+               <div class="alert show text-dark text-center">
+                  There are no lessons. Add a lesson.
+               </div>
+               @else
+
+               @foreach ($intermediate as $course)
+
+               <div class="my-3 card border border-primary text-dark">
+                  @php $id = $course->id; $lessons = $course->lessons
+                  <div class="card-header px-4 py-2 h4">
+                     {{$course->course}}
+                  </div>
+
+                  <div class="card-body">
+                     @foreach ($lessons as $lesson)
+                     <div class="row no-gutters">
+
+                        <div class="col-lg-3">
+                           <img class="img img-thumbnail border-primary" src="@/{{$lesson->thumbnail}}" width="100%"
+                              title="{{$lesson->lesson}}" alt="{{$lesson->lesson}}">
+                        </div>
+
+                        <div class="col-lg-9">
+                           <div class="px-3">
+                              @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$lesson->date_added)));
+                              <div class="float-right"><span class="badge badge-primary"> #{{$lesson->ord}}</span>
+                                 @if( $lesson->free == true )
+                                 <span class="badge badge-primary">free</span>
+                                 @endif
+                                 <br>{{$date->day}}/{{$date->month}}/{{$date->year}}
+                              </div>
+
+                              <div class="lead">{{$lesson->lesson}}</div>
+                              <small>{{$lesson->tutor}}</small>
+
+                              <p class="mt-1" style="word-wrap: break-word;">
+                                 {{$lesson->description}}
+                              </p>
+
+                              <div class="text-primary">
+                                 <input type="checkbox" name='courselessons[]' id="courselessons{{$lesson->id}}"
+                                    value="{{$lesson->id}}">
+                                 <label for="courselessons{{$lesson->id}}">Select Lesson</label>
+                              </div>
+
+                           </div>
+                        </div>
+
+                     </div>
+                     <hr>
+                     @endforeach
+                  </div>
+               </div>
+
+               @endforeach
+
+               @endif
+
+            </section>
+
+            <!-- advanceds -->
+            <section id="advanced" class="col-lg-8 mx-auto" style="display: none;">
+
+               @php $advanced = json_decode($advanced);
+               @if ($advanced == [])
+               <div class="alert show text-dark text-center">
+                  There are no lessons. Add a lesson.
+               </div>
+               @else
+
+               @foreach ($advanced as $course)
+
+               <div class="my-3 card border border-primary text-dark">
+                  @php $id = $course->id; $lessons = $course->lessons
+                  <div class="card-header px-4 py-2 h4">
+                     {{$course->course}}
+                  </div>
+
+                  <div class="card-body">
+                     @foreach ($lessons as $lesson)
+                     <div class="row no-gutters">
+
+                        <div class="col-lg-3">
+                           <img class="img img-thumbnail border-primary" src="@/{{$lesson->thumbnail}}" width="100%"
+                              title="{{$lesson->lesson}}" alt="{{$lesson->lesson}}">
+                        </div>
+
+                        <div class="col-lg-9">
+                           <div class="px-3">
+                              @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$lesson->date_added)));
+                              <div class="float-right"><span class="badge badge-primary"> #{{$lesson->ord}}</span>
+                                 @if( $lesson->free == true )
+                                 <span class="badge badge-primary">free</span>
+                                 @endif
+                                 <br>{{$date->day}}/{{$date->month}}/{{$date->year}}
+                              </div>
+
+                              <div class="lead">{{$lesson->lesson}}</div>
+                              <small>{{$lesson->tutor}}</small>
+
+                              <p class="mt-1" style="word-wrap: break-word;">
+                                 {{$lesson->description}}
+                              </p>
+
+                              <div class="text-primary">
+                                 <input type="checkbox" name='courselessons[]' id="courselessons{{$lesson->id}}"
+                                    value="{{$lesson->id}}">
+                                 <label for="courselessons{{$lesson->id}}">Select Lesson</label>
+                              </div>
+
+                           </div>
+                        </div>
+
+                     </div>
+                     <hr>
+                     @endforeach
+                  </div>
+               </div>
+
+               @endforeach
+
+               @endif
+
+            </section>
+
+         </div>
+
+      </main>
+   </form>
+
+   <div style="position: fixed; right: 0; bottom: 0;" class="mb-2 mr-2">
+      <button class="btn btn-sm btn-primary" title='Scroll to top' onclick="scrollToTop();">
+         <span class="fa fa-arrow-up"></span>
+      </button>
+   </div>
+
+
+   <script>
+      window.onload = () => show('#beginners');
+      function show(id) {
+         hide();
+         $(id).show();
+      }
+
+      function hide() {
+         $('#beginners').hide();
+         $('#amateur').hide();
+         $('#intermediate').hide();
+         $('#advanced').hide();
+      }
+
+      function scrollToTop() {
+         document.getElementById('top').scrollIntoView()
+      }
+   </script>
+
+</body>
+
+</html>
