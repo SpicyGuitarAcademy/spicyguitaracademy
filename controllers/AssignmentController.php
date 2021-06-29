@@ -49,6 +49,26 @@ class AssignmentController
 
       }
    }
+   
+   public function updateRating(Request $req, Response $res) {
+       $answerId = $req->body()->answerId ?? null;
+       $rating = $req->body()->rating ?? null;
+       $review = $req->body()->review ?? null;
+       
+       if (is_null($answerId) || is_null($rating)) {
+           $res->redirect($req->referer() ?? '/admin/dashboard');
+       }
+       
+       // Sanitize
+       $s = new Sanitize();
+       $rating = $s->numbers($rating);
+       $review = $s->string($review);
+       
+       $amdl = new StudentAssignmentModel();
+       $amdl->updateRating($answerId, $review, $rating);
+       
+       $res->redirect($req->referer() ?? '/admin/dashboard');
+   }
 
    public function new(Request $req, Response $res)
    {

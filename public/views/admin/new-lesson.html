@@ -111,6 +111,10 @@
             <input type="number" name="order" id="order" required min="1" value="{{$order ?? ''}}" class="form-control">
             <small class="text-info"> <i class="fa fa-info-circle"></i> This is the order in which the course would be listed to the students.</small>
             <br>
+            
+            <label class="mt-2" for="free">Make Lesson Free</label>
+                  <input type="checkbox" {{ ($free == true) ? 'checked' : '' }} name="free" id="free">
+                  <br>
 
             <label class="mt-2 btn border" for="thumbnail" style="cursor: pointer;">
                <i class="fa fa-image"></i> Select Lesson Thumbnail

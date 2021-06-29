@@ -18,12 +18,14 @@ class StudentCourseModel extends Model
       ];
    }
 
-   public function addCourseForStudent($categoryId, $courseId, $email) {
+   public function addCourseForStudent($categoryId, $courseId, $email, $medium) {
 
       return $this->create([
          "category_id" => $categoryId,
          "course_id" => $courseId,
-         "student_id" => $email
+         "student_id" => $email,
+         "medium" => $medium,
+         "status" => 1
       ]);
 
    }
@@ -34,7 +36,12 @@ class StudentCourseModel extends Model
       ]);
    }
 
-   public function getActiveCourse($email) {
+   public function getStudyingCourses($email) {
+      return $this->where("student_course_tbl.student_id = '$email' AND student_course_tbl.course_id = course_tbl.id")->misc("ORDER BY course_tbl.ord")
+         ->readJoin("course_tbl, student_course_tbl", "course_tbl.*, student_course_tbl.status");
+   }
+
+   public function getActiveCourses($email) {
       return $this->where("student_course_tbl.student_id = '$email' AND student_course_tbl.status = 1 AND student_course_tbl.course_id = course_tbl.id")->misc("ORDER BY course_tbl.ord")
          ->readJoin("course_tbl, student_course_tbl", "course_tbl.*, student_course_tbl.status");
    }

@@ -11,20 +11,27 @@ class CourseModel extends Model
 
    // write wonderful model codes...
 
-   public function getCourses()
-   {
+  public function getCourses()
+  {
       return $this->where("active = true")->read("*");
-   }
+  }
+  
+  public function getFeaturedCourses()
+  {
+      return $this->where("active = true AND featured = true")->read("*");
+  }
 
-   public function addCourse($category, $course, $description, $thumbnail, $tutor, $order)
-   {
+  public function addCourse($category, $course, $description, $thumbnail, $tutor, $order, $featured, $featuredprice)
+  {
       $add = $this->create([
          'category' => $category,
          'course' => $course,
          'description' => $description,
          'thumbnail' => $thumbnail,
          'tutor' => $tutor,
-         'ord' => $order
+         'ord' => $order,
+         'featured' => $featured,
+         'featuredprice' => $featuredprice
       ]);
 
       if ($add == true) {
@@ -32,49 +39,55 @@ class CourseModel extends Model
       } else {
          return false;
       }
-   }
+  }
 
-   public function updateCourse($id, $category, $course, $description, $tutor, $order)
-   {
+  public function updateCourse($id, $category, $course, $description, $tutor, $order, $featured, $featuredprice)
+  {
       return $this->where("id = $id")->update([
          'category' => $category,
          'course' => $course,
          'description' => $description,
          'tutor' => $tutor,
-         'ord' => $order
+         'ord' => $order,
+         'featured' => $featured,
+         'featuredprice' => $featuredprice
       ]);
-   }
+  }
 
-   public function updateThumbnail($id, $thumbnail)
-   {
+  public function updateThumbnail($id, $thumbnail)
+  {
       return $this->where("id = $id")->update([
          'thumbnail' => $thumbnail
       ]);
-   }
+  }
 
-   public function getCourse(int $id)
-   {
+  public function getCourse($id)
+  {
       return $this->where("id = $id AND active = true")->read("*");
-   }
+  }
+  
+  public function getPreviousCourse($courseId, $categoryId) {
+      return $this->custom("SELECT * FROM `course_tbl` WHERE category = '$categoryId' AND active = 1 AND ord < (SELECT ord FROM course_tbl WHERE id = '$courseId') ORDER BY ord DESC LIMIT 1", true);
+  }
 
-   public function getCoursesByCategory(int $category)
-   {
+  public function getCoursesByCategory($category)
+  {
     //   return $this->where("category = $category AND active = true")->misc("ORDER BY ord")->read("*");
     // return $this->where("course_tbl.category = $category AND course_tbl.active = true AND lesson_tbl.active = true AND course_tbl.id = lesson_tbl.course")->misc("ORDER BY ord")->readJoin("course_tbl, lesson_tbl", "course_tbl.*, COUNT(lesson_tbl.course) as lessons");
-    return $this->custom("SELECT *, (SELECT COUNT(*) FROM lesson_tbl WHERE lesson_tbl.active = true AND course_tbl.id = lesson_tbl.course) as lessons FROM course_tbl WHERE category = $category AND active = true", true);
-   }
+    return $this->custom("SELECT *, (SELECT COUNT(*) FROM lesson_tbl WHERE lesson_tbl.active = true AND course_tbl.id = lesson_tbl.course) as lessons FROM course_tbl WHERE category = $category AND active = true ORDER BY ord ASC", true);
+  }
 
-   public function removeCourse(int $id)
-   {
+  public function removeCourse($id)
+  {
       // return $this->where("id = $id")->delete();
       return $this->where("id = $id")->update([
          'active' => false
       ]);
-   }
+  }
 
-   public function search($query)
-   {
-      return $this->where("course LIKE '%$query%' OR description LIKE '%$query%'")->read("*");
-   }
+  public function search($query)
+  {
+      return $this->where("course LIKE '%$query%' OR description LIKE '%$query%' AND active = '1'")->read("*");
+  }
 
 }

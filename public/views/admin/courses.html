@@ -94,7 +94,11 @@
                         <div class="col-lg-9">
                            <div class="p-3">
                               @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$beginner->date_added)));
-                              <div class="float-right"><span class="badge badge-primary"> #{{$beginner->ord}}</span><br>{{$date->day}}/{{$date->month}}/{{$date->year}}</div>
+                              <div class="float-right"><span class="badge badge-primary"> #{{$beginner->ord}}</span>
+                              @if( $beginner->featured == true )
+                                <span class="badge badge-primary">featured</span>
+                              @endif
+                              <br>{{$date->day}}/{{$date->month}}/{{$date->year}}</div>
                               
                               <div class="lead">{{$beginner->course}}</div>
                               <small>{{$beginner->tutor}}</small>
@@ -109,10 +113,11 @@
                                     <!-- <a href="@/admin/courses/{{$beginner->id}}/lesson" class="btn badge btn-sm btn-success mr-1">Lessons</a> -->
                                     <a href="@/admin/lessons/new?course={{$beginner->id}}" class="btn badge btn-sm btn-success">Add Lesson</a>
                                  </div>
-                                 <form action="@/admin/courses/delete/{{$beginner->id}}" method="post">
+                                 <form action="@/admin/courses/delete/{{$beginner->id}}" method="post" onsubmit="return confirm('Do you want to delete this course');">
                                     @csrftoken
                                     @method=DELETE
                                     <a href="@/admin/courses/edit/{{$beginner->id}}" class="btn badge btn-sm badge-dark">Edit</a>
+                                    
                                     <button class="btn badge btn-sm btn-danger" type="submit">Delete</button>
                                  </form>
                               </div>
@@ -151,7 +156,11 @@
                         <div class="col-lg-9">
                            <div class="p-3">
                               @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$amateur->date_added)));
-                              <div class="float-right"><span class="badge badge-primary"> #{{$amateur->ord}}</span><br>{{$date->day}}/{{$date->month}}/{{$date->year}}</div>
+                              <div class="float-right"><span class="badge badge-primary"> #{{$amateur->ord}}</span>
+                              @if( $amateur->featured == true )
+                                <span class="badge badge-primary">featured</span>
+                              @endif
+                              <br>{{$date->day}}/{{$date->month}}/{{$date->year}}</div>
                               
                               <div class="lead">{{$amateur->course}}</div>
                               <small>{{$amateur->tutor}}</small>
@@ -166,7 +175,7 @@
                                     <!-- <a href="@/admin/courses/{{$amateur->id}}/lesson" class="btn badge btn-sm btn-success mr-1">Lessons</a> -->
                                     <a href="@/admin/lessons/new?course={{$amateur->id}}" class="btn badge btn-sm btn-success">Add Lesson</a>
                                  </div>
-                                 <form action="@/admin/courses/delete/{{$amateur->id}}" method="post">
+                                 <form action="@/admin/courses/delete/{{$amateur->id}}" method="post" onsubmit="return confirm('Do you want to delete this course');">
                                     @csrftoken
                                     @method=DELETE
                                     <a href="@/admin/courses/edit/{{$amateur->id}}" class="btn badge btn-sm badge-dark">Edit</a>
@@ -208,7 +217,11 @@
                         <div class="col-lg-9">
                            <div class="p-3">
                               @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$intermediate->date_added)));
-                              <div class="float-right"><span class="badge badge-primary"> #{{$intermediate->ord}}</span><br>{{$date->day}}/{{$date->month}}/{{$date->year}}</div>
+                              <div class="float-right"><span class="badge badge-primary"> #{{$intermediate->ord}}</span>
+                              @if( $intermediate->featured == true )
+                                <span class="badge badge-primary">featured</span>
+                              @endif
+                              <br>{{$date->day}}/{{$date->month}}/{{$date->year}}</div>
                               
                               <div class="lead">{{$intermediate->course}}</div>
                               <small>{{$intermediate->tutor}}</small>
@@ -223,7 +236,7 @@
                                     <!-- <a href="@/admin/courses/{{$intermediate->id}}/lesson" class="btn badge btn-sm btn-success mr-1">Lessons</a> -->
                                     <a href="@/admin/lessons/new?course={{$intermediate->id}}" class="btn badge btn-sm btn-success">Add Lesson</a>
                                  </div>
-                                 <form action="@/admin/courses/delete/{{$intermediate->id}}" method="post">
+                                 <form action="@/admin/courses/delete/{{$intermediate->id}}" method="post" onsubmit="return confirm('Do you want to delete this course');">
                                     @csrftoken
                                     @method=DELETE
                                     <a href="@/admin/courses/edit/{{$intermediate->id}}" class="btn badge btn-sm badge-dark">Edit</a>
@@ -265,7 +278,11 @@
                         <div class="col-lg-9">
                            <div class="p-3">
                               @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$advanced->date_added)));
-                              <div class="float-right"><span class="badge badge-primary"> #{{$advanced->ord}}</span><br>{{$date->day}}/{{$date->month}}/{{$date->year}}</div>
+                              <div class="float-right"><span class="badge badge-primary"> #{{$advanced->ord}}</span>
+                              @if( $advanced->featured == true )
+                                <span class="badge badge-primary">featured</span>
+                              @endif
+                              <br>{{$date->day}}/{{$date->month}}/{{$date->year}}</div>
                               
                               <div class="lead">{{$advanced->course}}</div>
                               <small>{{$advanced->tutor}}</small>
@@ -280,7 +297,7 @@
                                     <!-- <a href="@/admin/courses/{{$advanced->id}}/lesson" class="btn badge btn-sm btn-success mr-1">Lessons</a> -->
                                     <a href="@/admin/lessons/new?course={{$advanced->id}}" class="btn badge btn-sm btn-success">Add Lesson</a>
                                  </div>
-                                 <form action="@/admin/courses/delete/{{$advanced->id}}" method="post">
+                                 <form action="@/admin/courses/delete/{{$advanced->id}}" method="post" onsubmit="return confirm('Do you want to delete this course');">
                                     @csrftoken
                                     @method=DELETE
                                     <a href="@/admin/courses/edit/{{$advanced->id}}" class="btn badge btn-sm badge-dark">Edit</a>
@@ -318,6 +335,11 @@
          $('#amateur').hide();
          $('#intermediate').hide();
          $('#advanced').hide();
+      }
+      
+      function confirmFormSubmit(event, message) {
+          var confirm = confirm(message);
+          if (confirm == true) Environment.Exit();
       }
    </script>
    

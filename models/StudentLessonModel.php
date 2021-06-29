@@ -17,7 +17,8 @@ class StudentLessonModel extends Model
          "course_id" => $courseId,
          "lesson_id" => $lessonId,
          "student_id" => $email,
-         "medium" => $medium
+         "medium" => $medium,
+         "status" => 1
       ]);
 
    }
@@ -31,7 +32,7 @@ class StudentLessonModel extends Model
    }
 
    public function updateLessonStatus($lessonId, $email, $status) {
-      return $this->where("lesson_id = $lessonId AND student_id = '$email' AND medium = 'NORMAL'")->update([
+      return $this->where("lesson_id = $lessonId AND student_id = '$email' AND medium = 'NORMAL' AND status = 0")->update([
          'status' => $status
       ]);
    }
@@ -41,6 +42,10 @@ class StudentLessonModel extends Model
          $this->where("student_id = '$email' AND course_id = '$course' AND status = 1 AND medium = 'NORMAL'")->read("COUNT(*) as done")[0]['done'],
          $this->where("student_id = '$email' AND course_id = '$course' AND medium = 'NORMAL'")->read("COUNT(*) as total")[0]['total']
       ];
+   }
+   
+   public function countNormalLessonsTakenByStudent($email, $course) {
+       return $this->where("student_id = '$email' AND course_id = '$course' AND medium = 'NORMAL'")->read("COUNT(*) as count")[0]['count'];
    }
 
 }

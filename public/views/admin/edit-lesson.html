@@ -80,10 +80,10 @@
                      <a style="cursor: pointer;" onclick="show('#notes');" 
                      class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Note</a>
                   </li>
-                  <li>
-                     <a style="cursor: pointer;" onclick="show('#featured');" 
-                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Featured</a>
-                  </li>
+                  <!--<li>-->
+                  <!--   <a style="cursor: pointer;" onclick="show('#featured');" -->
+                  <!--   class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Featured</a>-->
+                  <!--</li>-->
                </ul>
             </nav>
          </aside>
@@ -113,45 +113,49 @@
                   <label for="course">Select Course</label>
                   <select name="course" id="course" data-course="{{$course}}" class="form-control">
                      <optgroup label="Beginners">
-                        <b>Beginners</b>
                         @php $beginners = json_decode($beginners);
                         @foreach ($beginners as $beginner)
-                        <option value="{{$beginner->id}}">{{$beginner->course}}</option>
+                        <option {{$course == $beginner->id ? 'selected' : ''}} value="{{$beginner->id}}">{{$beginner->course}}</option>
                         @endforeach
                      </optgroup>
 
+                     <!--<option value='0' selected>Test</option>-->
                      <optgroup label="Amateur">
                         @php $amateurs = json_decode($amateurs);
                         @foreach ($amateurs as $amateur)
-                        <option value="{{$amateur->id}}">{{$amateur->course}}</option>
+                        <option {{$course == $amateur->id ? 'selected' : ''}} value="{{$amateur->id}}">{{$amateur->course}}</option>
                         @endforeach
                      </optgroup>
 
                      <optgroup label="Intermediate">
                         @php $intermediates = json_decode($intermediates);
                         @foreach ($intermediates as $intermediate)
-                        <option value="{{$intermediate->id}}">{{$intermediate->course}}</option>
+                        <option {{$course == $intermediate->id ? 'selected' : ''}} value="{{$intermediate->id}}">{{$intermediate->course}}</option>
                         @endforeach
                      </optgroup>
 
                      <optgroup label="Advanced">
                         @php $advanceds = json_decode($advanceds);
                         @foreach ($advanceds as $advanced)
-                        <option value="{{$advanced->id}}">{{$advanced->course}}</option>
+                        <option {{$course == $advanced->id ? 'selected' : ''}} value="{{$advanced->id}}">{{$advanced->course}}</option>
                         @endforeach
                      </optgroup>
                   </select>
 
 
                   <label class="mt-2" for="title">Title</label>
-                  <input type="text" name="lesson" id="title" required maxlength="20" value="{{$lesson ?? ''}}" class="form-control">
+                  <input type="text" name="lesson" id="title" required maxlength="100" value="{{$lesson ?? ''}}" class="form-control">
 
                   <label class="mt-2" for="description">Description</label>
-                  <textarea name="description" id="description" cols="30" rows="3" maxlength="100" placeholder="No Description" class="form-control">{{$description ?? ''}}</textarea>
+                  <textarea name="description" id="description" cols="30" rows="3" maxlength="500" placeholder="No Description" class="form-control">{{$description ?? ''}}</textarea>
 
                   <label class="mt-2" for="order">#Order</label>
                   <input type="number" name="order" id="order" required min="1" value="{{$order ?? ''}}" class="form-control">
-                  <small class="text-info"> <i class="fa fa-info-circle"></i> This is the order in which the course would be listed to the students.</small>
+                  <small class="text-info"> <i class="fa fa-info-circle"></i> This is the order in which the course would be listed to the students.</small><br>
+                  
+                  <label class="mt-2" for="free">Make Lesson Free</label>
+                  <input type="checkbox" {{ ($free == true) ? 'checked' : '' }} name="free" id="free">
+                  <br>
 
                   <label class="mt-2 btn border" for="thumbnail" style="cursor: pointer;">
                      <i class="fa fa-image"></i> Select Lesson Thumbnail
@@ -170,24 +174,24 @@
             <!-- Lessons -->
             <section id="lessons" style="display: none;">
 
-               <form action="@/admin/lessons/update/low-video" method="post" enctype="multipart/form-data">
+               <!--<form action="@/admin/lessons/update/low-video" method="post" enctype="multipart/form-data">-->
                   
-                  @csrftoken
-                  @method=PUT
-                  <input type="hidden" name="id" value="{{$id}}">
+                  <!--@csrftoken-->
+                  <!--@method=PUT-->
+                  <!--<input type="hidden" name="id" value="{{$id}}">-->
 
-                  <label class="mt-2 btn border" for="low_video" style="cursor: pointer;">
-                     <i class="fa fa-video-camera"></i> Add Lesson Video (Low)
-                  </label>
-                  <input type="file" name="low_video" id="low_video" accept="video/mp4" class="my-2 d-none">
+                  <!--<label class="mt-2 btn border" for="low_video" style="cursor: pointer;">-->
+                     <!--<i class="fa fa-video-camera"></i> Add Lesson Video (Low)-->
+                  <!--</label>-->
+                  <!--<input type="file" name="low_video" id="low_video" accept="video/mp4" class="my-2 d-none">-->
 
-                  <br>
-                  <video controls src="@/{{$low_video}}" id="previewLowVideo" width="100%" class="img-responsive"></video>
+                  <!--<br>-->
+                  <!--<video controls controlsList="nodownload" src="@/{{$low_video}}" id="previewLowVideo" width="100%" class="img-responsive"></video>-->
                   
-                  <br>
-                  <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
+                  <!--<br>-->
+                  <!--<input type="submit" value="Update" class="form-control my-3 btn btn-primary">-->
 
-               </form>
+               <!--</form>-->
             
                <form action="@/admin/lessons/update/high-video" method="post" enctype="multipart/form-data">
                   
@@ -201,7 +205,7 @@
                   <input type="file" name="high_video" id="high_video" accept="video/mp4" class="my-2 d-none">
 
                   <br>
-                  <video controls src="@/{{$high_video}}" id="previewHighVideo" width="100%" class="img-responsive"></video>
+                  <video controls controlsList="nodownload" src="@/{{$high_video}}" id="previewHighVideo" width="100%" class="img-responsive"></video>
 
                   <br>
                   <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
@@ -219,7 +223,7 @@
                   <input type="file" name="audio" id="audio" accept="audio/mp3" class="my-2 d-none">
 
                   <br>
-                  <audio controls src="@/{{$audio}}" id="previewAudio" width="100%" class="img-responsive"></audio>
+                  <audio controls controlsList="nodownload" src="@/{{$audio}}" id="previewAudio" width="100%" class="img-responsive"></audio>
                   
                   <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
 
@@ -270,7 +274,7 @@
                   <input type="file" name="practice" id="practice" accept="audio/mp3" class="my-2 d-none">
 
                   <br>
-                  <audio controls src="@/{{$practice}}" id="previewPractice" width="100%" class="img-responsive"></audio>
+                  <audio controls controlsList="nodownload" src="@/{{$practice}}" id="previewPractice" width="100%" class="img-responsive"></audio>
                   
                   <br>
                   <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
@@ -299,33 +303,33 @@
             </section>
 
             <!-- Featured -->
-            <section id="featured" style="display: none;">
+            <!--<section id="featured" style="display: none;">-->
 
-               <form action="@/admin/lessons/update/featured" method="post">
+               <!--<form action="@/admin/lessons/update/featured" method="post">-->
                   
-                  @csrftoken
-                  @method=PATCH
-                  <input type="hidden" name="id" value="{{$id}}">
+                  <!--@csrftoken-->
+                  <!--@method=PATCH-->
+                  <!--<input type="hidden" name="id" value="{{$id}}">-->
 
-                  <label class="mt-2" for="note">Add to Featured Lessons</label>
-                  <input onclick="toggleFeaturedFree();" type="checkbox" {{ ($status == true) ? 'checked' : '' }} name="status" id="featuredmode" >
-                  <br>
-                  <span style="font-size: small;">{{ ($status == true) ? 'This Lesson is Featured, uncheck the box to take it off' : 'This Lesson is not Featured, check the box and enter a price below to add it to featured lessons' }}</span>
-                  <br>
-                  <label class="mt-2" for="note"> (&#8358;) Price</label> <br>
-                  <input type="number" min="0" name="price" id="price" class="form-control" value="{{$price}}">
-                  <br>
-                  <label class="mt-2" for="note">Free Lesson</label>
-                  <input onclick="toggleFeaturedFree();" type="checkbox" {{ ($free == true) ? 'checked' : '' }} name="free" id="freemode">
-                  <br>
-                  <span style="font-size: small;">{{ ($free == true) ? 'This Lesson is Free' : 'This Lesson is not Free, check the box to make it Free' }}</span>
-                  <br> <br>
-                  <br>
-                  <input id="submitFeatured" type="submit" value="Update" class="form-control my-3 btn btn-primary">
+                  <!--<label class="mt-2" for="note">Add to Featured Lessons</label>-->
+                  <!--<input onclick="toggleFeaturedFree();" type="checkbox" {{ ($status == true) ? 'checked' : '' }} name="status" id="featuredmode" >-->
+                  <!--<br>-->
+                  <!--<span style="font-size: small;">{{ ($status == true) ? 'This Lesson is Featured, uncheck the box to take it off' : 'This Lesson is not Featured, check the box and enter a price below to add it to featured lessons' }}</span>-->
+                  <!--<br>-->
+                  <!--<label class="mt-2" for="note"> (&#8358;) Price</label> <br>-->
+                  <!--<input type="number" min="0" name="price" id="price" class="form-control" value="{{$price}}">-->
+                  <!--<br>-->
+                  <!--<label class="mt-2" for="freemode">Free Lesson</label>-->
+                  <!--<input onclick="toggleFeaturedFree();" type="checkbox" {{ ($free == true) ? 'checked' : '' }} name="free" id="freemode">-->
+                  <!--<br>-->
+                  <!--<span style="font-size: small;">{{ ($free == true) ? 'This Lesson is Free' : 'This Lesson is not Free, check the box to make it Free' }}</span>-->
+                  <!--<br> <br>-->
+                  <!--<br>-->
+                  <!--<input id="submitFeatured" type="submit" value="Update" class="form-control my-3 btn btn-primary">-->
 
-               </form>
+               <!--</form>-->
 
-            </section>
+            <!--</section>-->
 
          </div>
          
@@ -343,17 +347,17 @@
          $(id).show();
       }
 
-      function toggleFeaturedFree() {
-         let featured = $("#featuredmode")[0].checked;
-         let free = $("#freemode")[0].checked;
+    //   function toggleFeaturedFree() {
+    //      let featured = $("#featuredmode")[0].checked;
+    //      let free = $("#freemode")[0].checked;
 
-         if (featured && free) {
-            alert("This Lesson cannot be featured and free at the same time");
-            $('#submitFeatured')[0].disabled = 'disabled'
-         } else {
-            $('#submitFeatured')[0].disabled = '';
-         }
-      }
+    //      if (featured && free) {
+    //         alert("This Lesson cannot be featured and free at the same time");
+    //         $('#submitFeatured')[0].disabled = 'disabled'
+    //      } else {
+    //         $('#submitFeatured')[0].disabled = '';
+    //      }
+    //   }
 
       function start(section) {
          switch (section) {

@@ -4,7 +4,7 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   <title>Courses | Spicy Guitar Academy</title>
+   <title>Featured Courses | Spicy Guitar Academy</title>
    <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
 
    <!-- Jquery -->
@@ -28,10 +28,10 @@
    @import admin/header.html
 
    <nav class="container my-4 h4">
-      <a href="@/admin/lessons/featured">
+      <a href="@/admin/courses/featured">
          <div class="float-left">
             <i class="fa fa-video-camera"></i>
-            Featured Lessons
+            Featured Courses
          </div>
       </a>
 
@@ -45,10 +45,10 @@
          <!-- beginners -->
          <section class="col-lg-10 mx-auto">
 
-            @php $lessons = json_decode($lessons);
-            @if ($lessons == [])
+            @php $courses = json_decode($courses);
+            @if ($courses == [])
                <div class="alert show text-dark text-center">
-                  There are no Featured Lessons. Add some Featured Lessons.
+                  There are no Featured Courses. Add some Featured Courses.
                </div>
             @else
 
@@ -58,20 +58,20 @@
                   <thead class="bg-primary text-light">
                      <tr>
                         <td>#</td>
-                        <th>Lesson Title</th>
+                        <th>Course Title</th>
                         <th>Price (N)</th>
                         <th>Action</th>
                      </tr>
                   </thead>
 
                   @php $count = 1;
-                  @foreach ($lessons as $lesson)
+                  @foreach ($courses as $course)
                   <tr>
                      <td>{{$count}}</td>
-                     <td>{{$lesson->lesson}}</td>
-                     <td>{{$lesson->price}}</td>
+                     <td>{{$course->course}}</td>
+                     <td>{{$course->featuredprice}}</td>
                      <td>
-								<a href="@/admin/lessons/edit/{{$lesson->lesson_id}}" class="btn btn-sm btn-info" onclick=""><span class="fa fa-edit"></span> Edit</button>
+								<a href="@/admin/courses/edit/{{$course->id}}" class="btn btn-sm btn-info" onclick=""><span class="fa fa-edit"></span> Edit</button>
                      </td>
                   </tr>
                   @php $count++;

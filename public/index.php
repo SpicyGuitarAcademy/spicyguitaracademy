@@ -10,6 +10,8 @@ include_once '../vendor/autoload.php';
 // Setup Configurations
 include_once '../app/config.php';
 
+date_default_timezone_set(TIMEZONE);
+
 // Start Application 😉
 $http = new Http();
 
@@ -129,9 +131,11 @@ $http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/courses/update
 
 $http->auth('web')->guard('admin','tutor')->csrf()->delete('/admin/courses/delete/{id}', 'CourseController@delete');
 
-// Assignments
+// Assignments & Answers
 
 $http->auth('web')->guard('admin','tutor')->get('/admin/courses/{id}/assignment', 'AssignmentController@index');
+
+$http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/assignment/answer/update-rating', 'AssignmentController@updateRating');
 
 $http->auth('web')->guard('admin','tutor')->get('/admin/courses/{id}/assignment/new', 'AssignmentController@new');
 
@@ -168,12 +172,20 @@ $http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/lessons/update
 
 $http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/lessons/update/details', 'LessonController@updateDetails');
 
-$http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/lessons/update/featured', 'LessonController@updateFeatured');
+// $http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/lessons/update/featured', 'LessonController@updateFeatured');
 
-// Featured Lessons
-$http->auth('web')->guard('admin','tutor')->get('/admin/lessons/featured', 'FeaturedLessonController@index');
+// Featured Courses
+$http->auth('web')->guard('admin','tutor')->get('/admin/courses/featured', 'CourseController@getFeaturedCourses');
 
-$http->auth('web')->guard('admin','tutor')->get('/admin/lessons/free', 'FeaturedLessonController@free');
+$http->auth('web')->guard('admin','tutor')->get('/admin/lessons/free', 'LessonController@free');
+
+// students
+$http->auth('web')->guard('admin', 'tutors')->get('/admin/students', 'TutorController@students');
+
+
+$http->auth('web')->guard('admin', 'tutors')->get('/admin/student/comments', 'TutorController@studentComments');
+
+$http->auth('web')->guard('admin', 'tutors')->post('/admin/student/comments/addcomment', 'TutorController@addLessonComment');
 
 // tutors
 $http->auth('web')->guard('admin')->get('/admin/tutors', 'TutorController@index');
@@ -191,6 +203,9 @@ $http->auth('web')->guard('admin')->post('/admin/subscriptions/updateprice', 'Su
 
 $http->auth('web')->guard('admin')->post('/admin/subscriptions/updatedescription', 'SubscriptionController@updatedescription');
 
+// Transactions
+$http->auth('web')->guard('admin')->get('/admin/transactions', 'TransactionController@index');
+
 /* 
    ----------------------------------------------------------------
    API Routes
@@ -205,7 +220,7 @@ $http->group('api');
 
 // ->auth('api')
 
-$http->post('/api/register','StudentController@register');
+$http->post('/api/register_student','StudentController@register');
 
 $http->post('/api/login','AuthController@authApiLogin');
 
@@ -217,13 +232,13 @@ $http->auth('api')->guard('student')->get('/api/subscription/plans','Subscriptio
 
 $http->auth('api')->guard('student')->get('/api/subscription/status','SubscriptionController@status');
 
-// $http->auth('api')->guard('student')->get('/api/subscription/remaining','SubscriptionController@daysRemaining');
-
 $http->auth('api')->guard('student')->post('/api/subscription/initiate','SubscriptionController@initiatePayment');
+
+$http->auth('api')->guard('student')->post('/api/subscription/initiate-featured','SubscriptionController@initiateFeaturedPayment');
 
 $http->auth('api')->guard('student')->post('/api/subscription/verify/{reference}','SubscriptionController@verifyPayment');
 
-// $http->auth('api')->guard('student')->post('/api/subscription/subscribe','SubscriptionController@subscribe');
+$http->auth('api')->guard('student')->post('/api/subscription/verify-featured/{reference}','SubscriptionController@verifyFeaturedPayment');
 
 // student statistics
 $http->auth('api')->guard('student')->get('/api/student/statistics','StudentController@stats');
@@ -231,23 +246,34 @@ $http->auth('api')->guard('student')->get('/api/student/statistics','StudentCont
 // student select's a cateogry
 $http->auth('api')->guard('student')->post('/api/student/category/select','StudentController@chooseCategory');
 
-// update student lesson status
-// $http->auth('api')->guard('student')->patch('/api/student/lesson/update','StudentController@chooseCategory');
+// make course active
+$http->auth('api')->guard('student')->post('/api/student/course/activate','StudentController@activateNormalCourse');
+
+// make lesson active
+$http->auth('api')->guard('student')->post('/api/student/lesson/activate','StudentController@activateNormalLesson');
+
+// make lesson active
+$http->auth('api')->guard('student')->post('/api/student/lesson/activate-featured','StudentController@activateFeaturedLesson');
 
 // list all courses
-$http->auth('api')->guard('student')->get('/api/course/all','CourseController@getAllCourses');
-
-// list lessons in a course
-$http->auth('api')->guard('student')->get('/api/course/{course}/lessons','CourseController@getCourseLessons');
-
-// get a lesson
-$http->auth('api')->guard('student')->get('/api/lesson/{lesson}','LessonController@read');
+$http->auth('api')->guard('student')->get('/api/student/courses/all','StudentController@allCourses');
 
 // list student studying course
 $http->auth('api')->guard('student')->get('/api/student/courses/studying','StudentController@studyingCourses');
 
+// list all featured courses
+$http->auth('api')->guard('student')->get('/api/student/featuredcourses/all','StudentController@allFeaturedCourses');
+
+$http->auth('api')->guard('student')->get('/api/student/featuredcourses/bought','StudentController@boughtFeaturedCourses');
+
 // list lessons in a course
-$http->auth('api')->guard('student')->get('/api/student/course/lessons','StudentController@studyingCourses');
+$http->auth('api')->guard('student')->get('/api/course/{course}/lessons','CourseController@getCourseLessons');
+
+// get a lesson ??
+$http->auth('api')->guard('student')->get('/api/lesson/{lesson}','LessonController@read');
+
+// get course assignment
+$http->auth('api')->guard('student')->get('/api/course/{course}/assignment','StudentController@getMyCourseAssignment');
 
 // get a lesson for the student
 $http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}','StudentController@getStudentLesson');
@@ -260,18 +286,31 @@ $http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}/previous
 
 $http->auth('api')->guard('student')->post('/api/student/assignment/answer', 'StudentController@answerAssignment');
 
-$http->auth('api')->guard('student')->get('/api/courses/search', 'CourseController@search');
+// $http->auth('api')->guard('student')->get('/api/courses/search', 'CourseController@search');
 
-$http->auth('api')->guard('student')->post('/api/invite-a-friend', 'StudentController@invitefriend');
+$http->auth('api')->guard('student')->post('/api/student/invite-a-friend', 'StudentController@invitefriend');
+
+$http->auth('api')->guard('student')->post('/api/commentlesson', 'StudentController@addLessonComment');
+
+$http->auth('api')->guard('student')->get('/api/lesson/{lessonId}/comments', 'StudentController@getLessonComments');
 
 $http->auth('api')->guard('student')->post('/api/student/avatar/update','StudentController@uploadAvatar');
 
-$http->auth('api')->guard('student')->get('/api/student/quicklessons','StudentController@quickLessons');
-
-$http->auth('api')->guard('student')->get('/api/student/quicklessons/all','StudentController@allQuickLessons');
-
 $http->auth('api')->guard('student')->get('/api/student/freelessons','StudentController@freeLessons');
 
-$http->auth('api')->guard('student')->get('/api/student/quicklesson/{lesson}','StudentController@quickLesson');
+
+
+$http->auth('api')->guard('student')->post('/api/forum/message', 'StudentController@addForumMessage');
+
+$http->auth('api')->guard('student')->get('/api/forums/{categoryId}/messages', 'StudentController@getMessages');
+
+$http->post('/api/forgotpassword', 'AuthController@forgotPassword');
+
+$http->post('/api/verify', 'AuthController@verifyAccount');
+
+$http->post('/api/resetpassword', 'AuthController@resetPassword');
+
+$http->post('/api/contactus', 'StudentController@contactUs');
 
 $http->end();
+

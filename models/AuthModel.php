@@ -15,11 +15,12 @@ class AuthModel extends Model
       return $this->where("email = '$email'")->exist();
    }
 
-   public function addAuthDetails($email, $hpassword, $role) {
+   public function addAuthDetails($email, $hpassword, $role, $token = "") {
       $add = $this->create([
          'email' => $email,
          'password' => $hpassword,
-         'role' => $role
+         'role' => $role,
+         'token'=>$token
       ]);
 
       if ($add == true) {
@@ -39,5 +40,21 @@ class AuthModel extends Model
       return $this->where("email = '$email'")->update([
          "status"=>$status
       ]);
+   }
+   
+   public function updatePassword($email, $password) {
+      return $this->where("email = '$email'")->update([
+         "password"=>$password
+      ]);
+   }
+   
+    public function updateToken($email, $token) {
+      return $this->where("email = '$email'")->update([
+         "token"=>$token
+      ]);
+   }
+   
+   public function verifyEmailToken($email, $token) {
+      return $this->where("email = '$email' AND token = '$token'")->exist();
    }
 }

@@ -4,7 +4,7 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   <title>Dashboard | Spicy Guitar Academy</title>
+   <title>Edit Course | Spicy Guitar Academy</title>
    <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
 
    <!-- Jquery -->
@@ -82,7 +82,11 @@
 
             <label class="mt-2" for="order">#Order</label>
             <input type="number" name="order" id="order" required min="1" value="{{$order ?? ''}}" class="form-control">
-            <small class="text-info"> <i class="fa fa-info-circle"></i> This is the order in which the course would be listed to the students.</small>
+            <small class="text-info"> <i class="fa fa-info-circle"></i> This is the order in which the course would be listed to the students.</small><br>
+                  
+          <label class="mt-2" for="featured">Add to Featured Courses</label>
+          <input type="checkbox" {{ ($featured == true) ? 'checked' : '' }} name="featured" id="featured">
+          <input type="text" name="featuredprice" id="featuredprice" placeholder="Enter featured price" value="{{$featuredprice ?? ''}}" class="form-control"><br>
 
             <label class="mt-2 btn border" for="thumbnail" style="cursor: pointer;">
                <i class="fa fa-image"></i> Select Course Thumbnail

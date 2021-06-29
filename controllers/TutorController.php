@@ -11,6 +11,9 @@ use App\Services\User;
 use Framework\Cipher\Encrypt;
 use Models\TutorModel;
 use Models\AuthModel;
+use Models\StudentModel;
+use Models\LessonModel;
+use Models\StudentCommentsModel;
 
 class TutorController
 {
@@ -25,6 +28,85 @@ class TutorController
             'tutors'=>json_encode($tutors)
          ])
       );
+   }
+   
+   public function students(Request $req, Response $res)
+   {
+      $mdl = new StudentModel();
+      $students = $mdl->getAllStudents();
+
+      $res->send(
+         $res->render('admin/students.html', [
+            'students'=>json_encode($students)
+         ])
+      );
+   }
+   
+   public function studentComments(Request $req, Response $res) {
+      $email = User::$email;
+       $student = trim($req->query()->student);
+       
+       $mdl = new StudentCommentsModel();
+       $comments = $mdl->getAllCommentsFromStudentForMe($email, $student);
+       
+       $commentsFull = [];
+       $lessonMdl = new LessonModel();
+       $count = 0;
+      foreach ($comments as $comment) {
+          $lessondetails = $lessonMdl->getLesson($comment['lesson_id']);
+          $comments[$count]['lessondetails'] = $lessondetails;
+          $count++;
+      }
+       
+       $res->send(
+         $res->render('admin/studentcomments.html', [
+            'comments'=>json_encode($comments)
+         ])
+      );
+   }
+   
+   public function addLessonComment(Request $req, Response $res) {
+      $email = User::$email;
+      $comment = $req->body()->comment ?? '';
+      $receiver = $req->body()->receiver ?? '';
+      $lessonId = $req->body()->lessonId ?? null;
+      
+      if ($lessonId == null) {
+        $res->send(
+            $res->json(['status'=>false,'message'=>'invalid lesson id'])
+         );
+         exit;
+      }
+      
+      if ($comment == '') {
+          $res->send(
+            $res->json(['status'=>false,'message'=>'no comment'])
+         );
+         exit;
+      }
+      
+      if ($receiver == '') {
+          $res->send(
+            $res->json(['status'=>false,'message'=>'no receiver'])
+         );
+         exit;
+      }
+      
+      $commentMdl = new StudentCommentsModel();
+      $response = $commentMdl->addComment($lessonId, $comment, $email, $receiver);
+      
+      header('Location: /admin/student/comments?student=' . $receiver);
+      exit;
+      
+    //   if($response == true) {
+    //       $res->send(
+    //         $res->json(['status'=>true,'message'=>'added successfully'])
+    //      );
+    //   } else {
+    //       $res->send(
+    //         $res->json(['status'=>false,'message'=>'failed to add'])
+    //      );
+    //   }
    }
 
    public function new(Request $req, Response $res)

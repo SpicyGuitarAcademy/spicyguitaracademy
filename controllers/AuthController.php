@@ -3,9 +3,11 @@ namespace Controllers;
 use Framework\Http\Http;
 use Framework\Http\Request;
 use Framework\Http\Response;
+use Framework\Mail\Mail;
 use App\Services\Auth;
 use App\Services\User;
 use App\Services\Validate;
+use App\Services\Sanitize;
 use Models\AuthModel;
 use Models\TutorModel;
 use Models\StudentModel;
@@ -261,13 +263,7 @@ class AuthController
 
       // validate un-empty fields
       if (empty($email) || empty($password)) {
-         $res->send(
-            $res->json([
-               "email" => $email,
-               "password" => $password,
-               "errors" => "Invalid Email/Password"
-            ])
-         );
+        $res->error('Invalid Email/Password');
       }
 
       // validate email
@@ -276,13 +272,7 @@ class AuthController
       $errors = $v->errors();
 
       if ($errors) {
-         $res->send(
-            $res->json([
-               "email" => $email,
-               "password" => $password,
-               "errors" => "Invalid Email/Password"
-            ])
-         );
+         $res->error('Invalid Email/Password');
       }
       
       // get login data
@@ -290,13 +280,7 @@ class AuthController
       $details = $mdl->getLoginDetails($email);
 
       if (!$details) {
-         $res->send(
-            $res->json([
-               "email" => $email,
-               "password" => $password,
-               "errors" => "Invalid Email/Password"
-            ])
-         );
+        $res->error('Invalid Email/Password');
       }
 
       $authId = $details[0]['id'];
@@ -308,29 +292,18 @@ class AuthController
       // verify password
       // if ($email != "admin" || $dbpassword != "admin") {
       if (Encrypt::verifyPassword($password, $dbpassword) == false) {
-         $res->send(
-            $res->json([
-               "email" => $email,
-               "password" => $password,
-               "errors" => "Invalid Email/Password"
-            ])
-         );
+         $res->error('Invalid Email/Password');
       }
 
       // check status
       if ($status == 'blocked') {
-         $res->send(
-            $res->json([
-               "email" => $email,
-               "password" => $password,
-               "errors" => "Your Account has been Blocked. Contact the Administrator."
-            ])
-         );
+         $res->error('Your Account has been Blocked. Contact the Administrator');
       }
 
       // get details
       $mdl = new StudentModel();
       $student = $mdl->getStudent($email)[0];
+      $student['status'] = $status;
 
       // if ($remember) {
          $lifetime = REMEMBER_ME_LIFETIME * 60;
@@ -353,14 +326,109 @@ class AuthController
       User::$email = $email;
       User::$role = $role;
       User::$token = $token;
-
-      $res->send($res->json([
-         "success"=>"Login Successful",
+        $res->success('Login Successful', [
          "student"=>$student,
          "status"=>$status,
          "token"=>$token
-      ]));
+      ]);
 
+   }
+
+   public function forgotPassword(Request $req, Response $res)
+    {
+      $email = trim($req->body()->email);
+      
+      // validate email
+      $v = new Validate();
+      $v->email("email", $email, "Invalid Email")->min(1)->max(100);
+      $errors = $v->errors();
+
+      if ($errors) {
+         $res->error('Error', "Invalid email address");
+      }
+      
+      $token = Encrypt::token(6);
+      
+    //   update token for user and send mail to the user
+    $msg = <<<HTML
+         <div>
+            <p>Your verification token is $token.</p>
+         </div>
+HTML;
+         $send = Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $email, "Verification Token.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+      
+      // get login data
+      $mdl = new AuthModel();
+      $result = $mdl->updateToken($email, $token);
+      
+      if ($result == true) {
+          $res->success("Verification token was sent to $email");
+      } else {
+          $res->error("Verification token was not sent");
+      }
+   }
+   
+   public function verifyAccount(Request $req, Response $res)
+    {
+      $email = trim($req->body()->email);
+      $token = trim($req->body()->token);
+      
+      // validate email
+      $v = new Validate();
+      $v->email("email", $email, "Invalid Email")->min(1)->max(100);
+      $v->any("token", $token, "Invalid Token")->exact(6);
+      $errors = $v->errors();
+
+      if ($errors) {
+         $res->error('Error', $errors);
+      }
+      
+      // get login data
+      $mdl = new AuthModel();
+      $result = $mdl->verifyEmailToken($email, $token);
+      
+    $mdl->updateStatus($email, 'active');
+    $res->success("Verified account successfully");
+    
+   }
+   
+   public function resetPassword(Request $req, Response $res) {
+      
+      // create a resource
+      $email = trim($req->body()->email);
+      $password = trim($req->body()->password);
+      $cpassword = trim($req->body()->cpassword);
+      
+      $data = [];
+      
+      $v = new Validate();
+
+      // validate
+      $v->email("email", $email, "Invalid Email")->min(1)->max(100);
+      $v->ucletters("password", $password, "Password field must contain lowercase and uppercase and numbers")->lcletters("password", $password, "Password field must contain lowercase and uppercase and numbers")->alphanumeric("password", $password, "Password field must contain lowercase and uppercase and numbers")->min(8);
+      $errors = $v->errors();
+
+      // check cpassword
+      if ($cpassword !== $password) {
+         $errors['cpassword'] = "Password and Confirm Password must be the same!";
+      }
+
+      if ($errors) {
+         $res->error('Reset password failed', $errors);
+      }
+
+      // No errors, sanitize fields
+      $s = new Sanitize();
+      $email = $s->email($email);
+      
+      $amdl = new AuthModel();
+      
+      $result = $amdl->updatePassword($email, Encrypt::hashPassword($password));
+      if ($result == false) {
+          $res->error('Password was not updated. Try again!');
+      } else {
+          $res->success('Account was created.');
+      }
    }
 
 }

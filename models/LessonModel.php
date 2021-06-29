@@ -15,13 +15,18 @@ class LessonModel extends Model
    {
       return $this->where("active = true")->read("*");
    }
+   
+   public function getFreeLessons()
+   {
+      return $this->where("free = true AND active = true ORDER BY course, id DESC")->read("*");
+   }
 
    public function getLesson($id)
    {
       return $this->where("id = $id AND active = true")->read("*");
    }
 
-   public function addLesson($course, $lesson, $description, $order, $thumbnail, $tutor)
+   public function addLesson($course, $lesson, $description, $order, $thumbnail, $tutor, $free)
    {
       $add = $this->create([
          'course' => $course,
@@ -29,7 +34,8 @@ class LessonModel extends Model
          'description' => $description,
          'ord' => $order,
          'thumbnail' => $thumbnail,
-         'tutor' => $tutor
+         'tutor' => $tutor,
+         'free' => $free
       ]);
 
       if ($add == true) {
@@ -39,14 +45,15 @@ class LessonModel extends Model
       }
    }
 
-   public function updateLesson($id, $course, $lesson, $description, $order, $tutor)
+   public function updateLesson($id, $course, $lesson, $description, $order, $tutor, $free)
    {
       return $this->where("id = $id")->update([
          'course' => $course,
          'lesson' => $lesson,
          'description' => $description,
          'ord' => $order,
-         'tutor' => $tutor
+         'tutor' => $tutor,
+         'free' => $free
       ]);
    }
 

@@ -31,9 +31,6 @@ class FeaturedLessonController
       $mdl = new QuickLessonModel();
       $lessons = $mdl->getFLessons();
 
-      // echo json_encode($lessons);
-      // die();
-      
       $res->send(
          $res->render('admin/free-lessons.html', [
             "lessons" => json_encode($lessons)

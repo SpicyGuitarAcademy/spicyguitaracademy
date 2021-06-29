@@ -8,6 +8,10 @@ class StudentModel extends Model
    {
       parent::__construct('student_tbl');
    }
+   
+   public function getAllStudents() {
+       return $this->read('*');
+   }
 
    // write wonderful model codes...
    public function addStudent($firstname, $lastname, $email, $telephone, $avatar) {
@@ -22,6 +26,10 @@ class StudentModel extends Model
 
    public function getStudent($email) {
       return $this->where("email = '$email'")->read("*");
+   }
+   
+   public function getStudentById($id) {
+      return $this->where("id = '$id'")->read("*")[0] ?? null;
    }
 
    public function getStudentId($email) {

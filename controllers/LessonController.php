@@ -26,7 +26,7 @@ class LessonController
       $amateur = $mdl->getCoursesByCategory(2);
       $intermediate = $mdl->getCoursesByCategory(3);
       $advanced = $mdl->getCoursesByCategory(4);
-
+      
       $lmdl = new LessonModel();
 
       $beginnerLessons = [];
@@ -52,6 +52,8 @@ class LessonController
             'lessons' => $lessons ?? []
          ];
       }
+
+    //   exit(json_encode($amateurLessons));
 
       $intermediateLessons = [];
       foreach ($intermediate as $course) {
@@ -110,6 +112,19 @@ class LessonController
       );
    }
 
+   public function free(Request $req, Response $res)
+   {
+      // return all resources
+      $mdl = new LessonModel();
+      $lessons = $mdl->getFreeLessons();
+
+      $res->send(
+         $res->render('admin/free-lessons.html', [
+            "lessons" => json_encode($lessons)
+         ])
+      );    
+   }
+
    public function create(Request $req, Response $res)
    {
       // courses
@@ -123,6 +138,7 @@ class LessonController
       $lesson = trim($req->body()->lesson);
       $description = (trim($req->body()->description) != '') ? trim($req->body()->description) : 'No Description' ;
       $order = trim($req->body()->order);
+      $free = isset($req->body()->free) ? true : false ;
       $thumbnail = ($req->files_exists() == true && $req->files()->thumbnail->error == 0) ? $req->files()->thumbnail : null ;
       
       $data = [
@@ -133,7 +149,8 @@ class LessonController
          "advanceds" => json_encode($advanced ?? []),
          'lesson' => $lesson,
          'description' => $description,
-         'order' => $order
+         'order' => $order,
+         'free' => $free
       ];
 
       $v = new Validate();
@@ -180,14 +197,14 @@ class LessonController
       }
 
       $mdl = new LessonModel();
-      $added = $mdl->addLesson($course, $lesson, $description, $order, $path, User::$fullname ?? 'No Tutor');
+      $added = $mdl->addLesson($course, $lesson, $description, $order, $path, User::$fullname ?? 'No Tutor', $free);
 
 
       if ($added != false) {
 
-         // add the lesson to the quick lessons
-         $mdl = new QuickLessonModel();
-         $mdl->addQLesson($added);
+        //  // add the lesson to the quick lessons
+        //  $mdl = new QuickLessonModel();
+        //  $mdl->addQLesson($added);
 
          // then added is the last inserted id
          $res->route("/admin/lessons/edit/$added");
@@ -237,8 +254,8 @@ class LessonController
          if ($lesson) {
             $lesson = $lesson[0];
             // get the lesson featured status
-            $mdl = new QuickLessonModel();
-            $featured = $mdl->getQLesson($id)[0];
+            // $mdl = new QuickLessonModel();
+            // $featured = $mdl->getQLesson($id)[0];
 
             $res->send(
                $res->render('admin/edit-lesson.html', [
@@ -260,9 +277,9 @@ class LessonController
                   "tablature" => $lesson['tablature'] ?? '',
                   "practice" => $lesson['practice_audio'] ?? '',
                   "note" => $lesson['note'] ?? '',
-                  "price" => $featured['price'],
-                  "status" => $featured['status'],
-                  "free" => $featured['free']
+                //   "price" => $featured['price'],
+                //   "status" => $featured['status'],
+                  "free" => $lesson['free']
                ])
             );
          } else {
@@ -284,14 +301,10 @@ class LessonController
          $mdl = new LessonModel();
          $lesson = $mdl->getLesson($lesson)[0];
 
-         $res->send(
-            $res->json(['lesson' => $lesson])
-         );
+         $res->success('Tutorial Lesson', $lesson);
 
       } else {
-         $res->send(
-            $res->json(['error' => 'No Lesson'])
-         );
+         $res->error('No lesson');
       }
 
    }
@@ -311,8 +324,8 @@ class LessonController
       if ($lesson) {
          $lesson = $lesson[0];
          // get the lesson featured status
-         $mdl = new QuickLessonModel();
-         $featured = $mdl->getQLesson($id)[0];
+        //  $mdl = new QuickLessonModel();
+        //  $featured = $mdl->getQLesson($id)[0];
       
          return [
             "id" => $id,
@@ -332,9 +345,9 @@ class LessonController
             "tablature" => $lesson['tablature'] ?? '',
             "practice" => $lesson['practice'] ?? '',
             "note" => $lesson['note'] ?? '',
-            "price" => $featured['price'],
-            "status" => $featured['status'],
-            "free" => $featured['free']
+            // "price" => $featured['price'],
+            // "status" => $featured['status'],
+            "free" => $lesson['free']
          ];
       } else {
          return [];
@@ -562,6 +575,9 @@ class LessonController
       $v->numbers("id", $id, "Invalid Id!")->minvalue(1);
       $v->any("note", $note, "Invalid Note!")->min(1)->max(65535);
       $errors = $v->errors();
+      
+      $s = new Sanitize();
+      $note = $s->string($note);
 
       if ($errors) {
          $data = $this->editContent($id);
@@ -582,6 +598,7 @@ class LessonController
       $id = $req->body()->id ?? '';
       $course = trim($req->body()->course);
       $lesson = trim($req->body()->lesson);
+      $free = isset($req->body()->free) ? true : false ;
       $description = (trim($req->body()->description) != '') ? trim($req->body()->description) : 'No Description' ;
       $order = trim($req->body()->order);
       $thumbnail = ($req->files_exists() == true && $req->files()->thumbnail->error == 0) ? $req->files()->thumbnail : null ;
@@ -631,7 +648,7 @@ class LessonController
          }
 
          $mdl = new LessonModel();
-         $added = $mdl->updateLesson($id, $course, $lesson, $description, $order, User::$fullname ?? 'No Tutor');
+         $added = $mdl->updateLesson($id, $course, $lesson, $description, $order, User::$fullname ?? 'No Tutor', $free);
 
          $res->route("/admin/lessons/edit/$id");
       }
@@ -651,6 +668,10 @@ class LessonController
 
       $mdl = new QuickLessonModel();
       // $mdl->updateFree($free);
+      
+      if ($free == true) {
+          
+      }
       
       if (($errors || is_null($price)) && $free == false) {
          $data = $this->editContent($id);

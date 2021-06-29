@@ -1,5 +1,7 @@
 <?php
+
 namespace Controllers;
+
 use Framework\Http\Http;
 use Framework\Http\Request;
 use Framework\Http\Response;
@@ -22,12 +24,16 @@ use Models\LessonModel;
 use Models\AssignmentModel;
 use Models\StudentSubscriptionModel;
 use Models\QuickLessonModel;
+use Models\StudentCommentsModel;
+use Models\ForumsModel;
 
 class StudentController
 {
-   
-   public function register(Request $req, Response $res) {
-      
+
+   public function register(Request $req, Response $res)
+   {
+      //   $res->error('Failed Register');
+
       // create a resource
       $firstname = trim($req->body()->firstname);
       $lastname = trim($req->body()->lastname);
@@ -35,9 +41,9 @@ class StudentController
       $telephone = trim($req->body()->telephone);
       $password = trim($req->body()->password);
       $cpassword = trim($req->body()->cpassword);
-      
+
       $data = [];
-      
+
       $v = new Validate();
 
       // validate
@@ -45,6 +51,7 @@ class StudentController
       $v->letters("lastname", $lastname, "Invalid Lastname")->max(20);
       $v->email("email", $email, "Invalid Email")->min(1)->max(100);
       $v->telephone("telephone", $telephone, "Invalid Telephone")->max(20);
+
       $v->ucletters("password", $password, "Password field must contain lowercase and uppercase and numbers")->lcletters("password", $password, "Password field must contain lowercase and uppercase and numbers")->alphanumeric("password", $password, "Password field must contain lowercase and uppercase and numbers")->min(8);
       $errors = $v->errors();
 
@@ -54,10 +61,7 @@ class StudentController
       }
 
       if ($errors) {
-         $data['errors'] = $errors;
-         $res->send(
-            $res->json($data)
-         );
+         $res->error('Registeration failed', $errors);
       }
 
       // No errors, sanitize fields
@@ -71,36 +75,42 @@ class StudentController
       $mdl = new StudentModel();
 
       if ($amdl->emailExists($email) == true) {
-         $data['errors'] = ['Email already exists. Try another email!'];
-         $res->send(
-            $res->json($data)
-         );
+         $res->error('Email already exists. Try another email!');
       }
 
       $role = "student";
-      $add = $amdl->addAuthDetails($email, Encrypt::hashPassword($password), $role);
+      $token = Encrypt::token(6);
+      $add = $amdl->addAuthDetails($email, Encrypt::hashPassword($password), $role, $token);
       if ($add == false) {
-         $data['errors'] = ['Account was not created. Try again!'];
-         $res->send(
-            $res->json($data)
-         );
+         $res->error('Account was not created. Try again!');
       }
-      
+
       if ($mdl->addStudent($firstname, $lastname, $email, $telephone, STORAGE_PATH . 'avatars/default.png') == true) {
-         $data['success'] = 'Account was created.';
-         $res->send(
-            $res->json($data)
-         );
+
+         $msg = <<<HTML
+         <div>
+            <h3>Hi, $firstname</h3>
+            <p>Welcome to Spicy Guitar Academy,</p>
+            <p>Spicy Guitar Academy is aimed at guiding beginners to fulfill their dreams of becoming professional guitar players.</p>
+                
+            <p>We have the best qualified tutors who are dedicated to help you develop from start to finish to make your dreams come true.
+            </p>
+
+            <p>Use this token $token to verify your account.</p>
+
+         </div>
+HTML;
+         $send = Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $email, "Welcome to Spicy Guitar Academy.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+
+         $res->success('Account was created.');
       } else {
-         $data['errors'] = ['Account was not created. Try again!'];
-         $res->send(
-            $res->json($data)
-         );
+         $res->error('Account was not created. Try again!');
       }
    }
 
-   public function chooseCategory(Request $req, Response $res) {
-      
+   public function chooseCategory(Request $req, Response $res)
+   {
+
       $email = User::$email;
       $category = $req->body()->category ?? null;
 
@@ -117,61 +127,77 @@ class StudentController
          $mdl = new StudentCategoryModel();
          $mdl->addStudentCategory($email, $category);
 
-         // add all courses for this category for the user
-         $mdl = new CourseModel();
-         $courses = $mdl->getCoursesByCategory($category);
-
-         // die(json_encode($courses));
-
-         if (count($courses) > 0)  {
-             $mdl = new StudentCourseModel();
-             foreach ($courses as $course) {
-                $id = $course['id'];
-                $mdl->addCourseForStudent($category, $id, $email);
-             }
-             
-             // make the first course active
-             $first = $courses[0]['id'];
-             $this->makeCourseActive($first, $email);
-         }
-
-         $res->send(
-            $res->json([
-                "status"=> true,
-               "message" => "Student Category is Selected"
-            ])
-         );
-
+         $res->success('Student Category is selected');
       } else {
-         $res->send(
-            $res->json([
-                "status"=> true,
-               "message" => $v->errors()
-            ])
-         );
+         $res->error('Student category not selected', $v->errors());
       }
-      
    }
 
-   private function makeCourseActive($id, $email) {
+   public function activateNormalCourse(Request $req, Response $res)
+   {
+      $email = User::$email;
+      $courseId = $req->body()->course ?? null;
 
-      $mdl = new StudentCourseModel();
-      $mdl->updateCourseStatus($id, $email, 1);
-
-      // add all lessons in this course to the studentlesson tbl
-      $mdl = new LessonModel();
-      $lessons = $mdl->getLessonsByCourse($id);
-
-      $mdl = new StudentLessonModel();
-      foreach ($lessons as $lesson) {
-         $lid = $lesson['id'];
-         $mdl->addLessonForStudent($lid, $email, "NORMAL", $id);
+      if (is_null($courseId)) {
+         $res->error('Invalid course');
       }
 
+      // get previously accessed course
+      $courseMdl = new CourseModel();
+      $studentCourseMdl = new StudentCourseModel();
+      $category = $courseMdl->getCourse($courseId)[0]['category'] ?? 0;
+      $previousCourseId = $courseMdl->getPreviousCourse($courseId, $category)[0]['id'] ?? null;
+
+      if (!is_null($previousCourseId)) {
+         // make sure all lessons in the previous course have been taken
+         $lessonMdl = new LessonModel();
+         $lessonsFromPreviousCourse = $lessonMdl->getLessonsByCourse($previousCourseId);
+
+         $studentLessonMdl = new StudentLessonModel();
+         foreach ($lessonsFromPreviousCourse as $lesson) {
+            $lessonId = $lesson['id'];
+            if ($studentLessonMdl->where("lesson_id = '$lessonId' AND medium = 'NORMAL' AND student_id = '$email'")->exist() == false) {
+               $res->error('Complete lessons for the previous course');
+            }
+         }
+
+         // make sure assignment for the previous course have been answered
+         $sAMdl = new StudentAssignmentModel();
+         $assignment = $sAMdl->getAvailableAssignment($email, $previousCourseId)[0] ?? null;
+
+         if (!is_null($assignment) && $assignment['status'] == '0') {
+            $res->error('Complete assignment for the previous course');
+         }
+
+         if ($studentCourseMdl->where("medium = 'NORMAL' AND student_id = '$email' AND course_id = '$courseId'")->exist() == false) {
+            $this->makeCourseActive($courseId, $email);
+            $res->success('Course activated');
+         } else {
+            $res->error('Course already activated');
+         }
+      } else {
+         if ($studentCourseMdl->where("medium = 'NORMAL' AND student_id = '$email' AND course_id = '$courseId'")->exist() == false) {
+            $this->makeCourseActive($courseId, $email);
+            $res->success('Course activated');
+         } else {
+            $res->error('Course already activated');
+         }
+      }
+   }
+
+   private function makeCourseActive($courseId, $email)
+   {
+      // to make course active, add the course to the student course tbl
+      // so that when the student takes the lessons, they are added to the student lesson tbl
+
+      $courseMdl = new CourseModel();
+      $category = $courseMdl->getCourse($courseId)[0]['category'] ?? 0;
+      $studentCourseMdl = new StudentCourseModel();
+      $studentCourseMdl->addCourseForStudent($category, $courseId, $email, "NORMAL");
+
       // if there is an assignment for this course, add it to the studentassignment tbl
-      $mdl = new AssignmentModel();
-      $assignment = $mdl->getAssignment($id);
-      // die(json_encode($assignment));
+      $assignmentMdl = new AssignmentModel();
+      $assignment = $assignmentMdl->getAssignment($courseId);
       if ($assignment != []) {
          $ass = $assignment[0];
 
@@ -179,36 +205,208 @@ class StudentController
          $tutor = $ass['tutor_id'];
          $course = $ass['course_id'];
 
-         $mdl = new StudentAssignmentModel();
-         $mdl->addAssignmentForStudent($email, $course, $id, $tutor);
+         $studentAssignmentMdl = new StudentAssignmentModel();
+         $studentAssignmentMdl->addAssignmentForStudent($email, $course, $id, $tutor);
       }
-
    }
 
-   public function studyingCourses(Request $req, Response $res) {
+   public function getMyCourseAssignment(Request $req, Response $res)
+   {
+      $email = User::$email;
+      $course = $req->params()->course ?? null;
+
+      if (is_null($course)) {
+         $res->error('Invalid course');
+      }
+
+      $s = new Sanitize();
+      $course = $s->numbers($course);
+
+      //  $mdl = new AssignmentModel();
+      //  $assignment = $mdl->getAssignment($course)['0'] ?? null;
+      $sAMdl = new StudentAssignmentModel();
+      $assignment = $sAMdl->getAvailableAssignment($email, $course)['0'] ?? null;
+
+      if (is_null($assignment)) {
+         $res->error('No assignment');
+      } else {
+         $res->success('Course assignment', $assignment);
+      }
+   }
+
+   public function activateNormalLesson(Request $req, Response $res)
+   {
+      $email = User::$email;
+      $lessonId = $req->body()->lesson ?? null;
+
+      $lessonMdl = new LessonModel();
+      $studentLessonMdl = new StudentLessonModel();
+      $course = $lessonMdl->getLesson($lessonId)[0]['course'] ?? 0;
+      if ($studentLessonMdl->where("medium = 'NORMAL' AND student_id = '$email' AND course_id = '$course' AND lesson_id = '$lessonId'")->exist() == false) {
+         $studentLessonMdl->addLessonForStudent($lessonId, $email, "NORMAL", $course);
+         $res->success('Lesson activated');
+      } else {
+         $res->error('Lesson already activated');
+      }
+   }
+
+   public function activateFeaturedLesson(Request $req, Response $res)
+   {
+      $email = User::$email;
+      $lessonId = $req->body()->lesson ?? null;
+
+      $lessonMdl = new LessonModel();
+      $studentLessonMdl = new StudentLessonModel();
+      $course = $lessonMdl->getLesson($lessonId)[0]['course'] ?? 0;
+      if ($studentLessonMdl->where("medium = 'FEATURED' AND student_id = '$email' AND course_id = '$course' AND lesson_id = '$lessonId'")->exist() == false) {
+         $studentLessonMdl->addLessonForStudent($lessonId, $email, "FEATURED", $course);
+         $res->success('Lesson activated');
+      } else {
+         $res->error('Lesson already activated');
+      }
+   }
+
+   public function allCourses(Request $req, Response $res)
+   {
+      // temporary
+      $email = User::$email;
+      $mdl = new CourseModel();
+
+      $beginners = $mdl->getCoursesByCategory(1);
+      $amateur = $mdl->getCoursesByCategory(2);
+      $intermediate = $mdl->getCoursesByCategory(3);
+      $advanced = $mdl->getCoursesByCategory(4);
+
+
+      // get total accessible lessons and total accessed lessons
+      $studentLessonMdl = new StudentLessonModel();
+      $lessonMdl = new LessonModel();
+      $nbeginners = [];
+      $namateur = [];
+      $nintermediate = [];
+      $nadvanced = [];
+
+      foreach ($beginners as $course) {
+         $id = $course['id'];
+         $course['done'] = "" . $studentLessonMdl->countNormalLessonsTakenByStudent($email, $id) . "";
+         $course['total'] = "" . count($lessonMdl->getLessonsByCourse($id)) . "" ?? "0";
+         $nbeginners[] = $course;
+      }
+
+      foreach ($amateur as $course) {
+         $id = $course['id'];
+         $course['done'] = "" . $studentLessonMdl->countNormalLessonsTakenByStudent($email, $id) . "";
+         $course['total'] = "" . count($lessonMdl->getLessonsByCourse($id)) . "" ?? "0";
+         $namateur[] = $course;
+      }
+
+      foreach ($intermediate as $course) {
+         $id = $course['id'];
+         $course['done'] = "" . $studentLessonMdl->countNormalLessonsTakenByStudent($email, $id) . "";
+         $course['total'] = "" . count($lessonMdl->getLessonsByCourse($id)) . "" ?? "0";
+         $nintermediate[] = $course;
+      }
+
+      foreach ($advanced as $course) {
+         $id = $course['id'];
+         $course['done'] = "" . $studentLessonMdl->countNormalLessonsTakenByStudent($email, $id) . "";
+         $course['total'] = "" . count($lessonMdl->getLessonsByCourse($id)) . "" ?? "0";
+         $nadvanced[] = $course;
+      }
+
+      $res->success('All courses', [
+         "beginners" => $nbeginners,
+         "amateurs" => $namateur,
+         "intermediates" => $nintermediate,
+         "advanceds" => $nadvanced
+      ]);
+   }
+
+   public function studyingCourses(Request $req, Response $res)
+   {
       // temporary
       $email = User::$email;
 
-      $mdl = new StudentCourseModel();
-      $courses = $mdl->getActiveCourse($email);
+      // get the active category
+      $mdl = new StudentCategoryModel();
+      $categoryId = $mdl->getActiveCategory($email)[0]['category_id'] ?? null;
 
-      // get total accessible lessons and total accessed lessons
-      $mdl = new StudentLessonModel();
-      $new = [];
-      foreach ($courses as $course) {
-         $id = $course['id'];
-         $stats = $mdl->getStats($email, $id);
-         $course['done'] = $stats[0];
-         $course['total'] = $stats[1];
-         $new[] = $course;
+      if ($categoryId == null) {
+         $res->error('No active category');
       }
 
-      $res->send(
-         $res->json(['courses' => $new])
-      );
+      $courseMdl = new CourseModel();
+      $lessonMdl = new LessonModel();
+      $studentCourseMdl = new StudentCourseModel();
+      $studentLessonMdl = new StudentLessonModel();
+
+      $courses = $courseMdl->getCoursesByCategory($categoryId);
+      $ncourse = [];
+      foreach ($courses as $course) {
+         $id = $course['id'];
+         $course['status'] = $studentCourseMdl->where("course_id = '$id' AND student_id = '$email' AND medium = 'NORMAL'")->exist();
+         $course['done'] = "" . $studentLessonMdl->countNormalLessonsTakenByStudent($email, $id) . "";
+         $course['total'] = "" . count($lessonMdl->getLessonsByCourse($id)) . "" ?? "0";
+         //  $course['total'] = $stats[1];
+         $ncourse[] = $course;
+      }
+
+      $res->success('Studying courses', $ncourse);
    }
 
-   public function stats(Request $req, Response $res) {
+   public function allFeaturedCourses(Request $req, Response $res)
+   {
+      $email = User::$email;
+
+      $courseMdl = new CourseModel();
+      $lessonMdl = new LessonModel();
+      $studentCourseMdl = new StudentCourseModel();
+      $studentLessonMdl = new StudentLessonModel();
+
+      $courses = $courseMdl->getFeaturedCourses();
+
+      if (count($courses) > 0) {
+         $ncourses = [];
+         foreach ($courses as $course) {
+            $id = $course['id'];
+            $course['status'] = $studentCourseMdl->where("course_id = '$id' AND student_id = '$email' AND medium = 'FEATURED'")->exist();
+            $course['total'] = "" . count($lessonMdl->getLessonsByCourse($id)) . "" ?? "0";
+            $ncourses[] = $course;
+         }
+
+         $res->success('Featured courses', $ncourses);
+      } else {
+         $res->error('No featured courses');
+      }
+   }
+
+   public function boughtFeaturedCourses(Request $req, Response $res)
+   {
+      $email = User::$email;
+
+      $courseMdl = new CourseModel();
+      $lessonMdl = new LessonModel();
+      $studentCourseMdl = new StudentCourseModel();
+      $studentLessonMdl = new StudentLessonModel();
+      $courses = $studentCourseMdl->custom("SELECT course_tbl.* FROM course_tbl, student_course_tbl WHERE student_course_tbl.medium = 'FEATURED' AND student_course_tbl.student_id = '$email' AND student_course_tbl.course_id = course_tbl.id", true);
+
+      if (count($courses) > 0) {
+         $ncourses = [];
+         foreach ($courses as $course) {
+            $id = $course['id'];
+            $course['status'] = true;
+            $course['done'] = "" . count($studentLessonMdl->where("student_id = '$email' AND medium = 'FEATURED' AND course_id = '$id'")->read("*")) . "";
+            $course['total'] = "" . count($lessonMdl->getLessonsByCourse($id)) . "" ?? "0";
+            $ncourses[] = $course;
+         }
+         $res->success('Featured courses', $ncourses);
+      } else {
+         $res->error('No featured courses');
+      }
+   }
+
+   public function stats(Request $req, Response $res)
+   {
       // temporary
       $email = User::$email;
 
@@ -217,58 +415,43 @@ class StudentController
       $categoryId = $mdl->getActiveCategory($email)[0]['category_id'] ?? null;
 
       if (!is_null($categoryId)) {
-         
-         // get completed courses and total courses
-         $mdl = new StudentCourseModel();
-         list($done, $total) = $mdl->getStats($email, $categoryId);
 
-         $countCoursesDone = count($done);
-         $countCoursesTotal = count($total);
+         // takenCourses: count all courses in the student course tbl with the current category id
+         // allCourses: count all courses in the course tbl with the current category id
+         // takenLessons: count all lessons in the student lesson tbl with their course id as one of the takenCourses
+         // allLessons: count all lessons in the lesson tbl with their course id as one of the allCourses
 
-         // get completed lessons and total lessons
-         $mdl = new LessonModel();
-         $smdl = new StudentLessonModel();
+         $studentCourseMdl = new StudentCourseModel();
+         $courseMdl = new CourseModel();
+         $studentLessonMdl = new StudentLessonModel();
+         $lessonMdl = new LessonModel();
 
-        // exit(json_encode($smdl->getStats($email, 2)));
+         $countCoursesDone = count($studentCourseMdl->where("student_id = '$email' AND category_id = '$categoryId'")->read("*") ?? []);
 
-         $ldone = $ltotal = 0;
-         foreach ($total as $course) {
-            list($_1, $_2) = $smdl->getStats($email, $course['course_id']);
-            // $_2 = $mdl->getLessonsByCourse($course['course_id']);
+         $countCoursesTotal = count($courseMdl->where("category = '$categoryId' AND active = 1")->read("*") ?? []);
 
-            $ldone += $_1;
-            $ltotal += $_2;
-         }
+         $countLessonsDone = count($studentLessonMdl->custom("SELECT * FROM student_lesson_tbl WHERE course_id IN (SELECT course_id FROM student_course_tbl WHERE student_id = '$email' AND category_id = '$categoryId')", true) ?? []);
 
-         $countLessonsDone = $ldone;
-         $countLessonsTotal = $ltotal;
+         $countLessonsTotal = count($lessonMdl->custom("SELECT * FROM lesson_tbl WHERE course IN (SELECT id FROM course_tbl WHERE category = '$categoryId' AND active = 1)", true) ?? []);
 
-         $res->send(
-            $res->json([
-               "stats" => [
-                  "takenCourses"=>$countCoursesDone,
-                  "allCourses"=>$countCoursesTotal,
-                  "takenLessons"=>$countLessonsDone,
-                  "allLessons"=>$countLessonsTotal
-               ],
-               "status" => true,
-               "category" => $categoryId
-            ])
-         );
-         
+         $res->success('Student statistics', [
+            "takenCourses" => $countCoursesDone,
+            "allCourses" => $countCoursesTotal,
+            "takenLessons" => $countLessonsDone,
+            "allLessons" => $countLessonsTotal,
+            "category" => intval($categoryId)
+         ]);
       } else {
-         $res->send(
-            $res->json(['status' => false,'error' => 'No Courses or Lessons taken'])
-         );
+         $res->error('No Courses or Lessons taken');
       }
-
    }
 
-   public function getStudentLesson(Request $req, Response $res) {
+   public function getStudentLesson(Request $req, Response $res)
+   {
       // temporary
       $email = User::$email;
       $lessonId = $req->params()->lesson ?? null;
-      
+
       if (!is_null($lessonId)) {
 
          $s = new Sanitize();
@@ -282,24 +465,19 @@ class StudentController
          $mdl = new StudentLessonModel();
          $mdl->updateLessonStatus($lessonId, $email, 1);
 
-         $res->send(
-            $res->json(['lesson' => $lesson])
-         );
-
+         $res->success('success', $lesson);
       } else {
-         $res->send(
-            $res->json(['error' => 'No Lesson'])
-         );
+         $res->error('No lesson');
       }
-
    }
 
-   public function nextLesson(Request $req, Response $res) {
+   public function nextLesson(Request $req, Response $res)
+   {
       // temporary
       $email = User::$email;
       $currentlesson = $req->params()->lesson ?? null;
       $currentcourse = $req->query()->course ?? null;
-      
+
       if (!is_null($currentlesson) && !is_null($currentcourse)) {
 
          $s = new Sanitize();
@@ -320,10 +498,7 @@ class StudentController
             $mdl = new StudentLessonModel();
             $mdl->updateLessonStatus($lessonId, $email, 1);
 
-            $res->send(
-               $res->json(['lesson' => $lesson])
-            );
-
+            $res->success('success', $lesson);
          } else {
             // last lesson in the course
 
@@ -341,26 +516,21 @@ class StudentController
                   $res->json(["assignment" => $assignment])
                );
             } else {
-               $res->send(
-                  $res->json(['error'=>'No more lessons for this course.'])
-               );
+               $res->error('No more lessons for this course');
             }
          }
-
       } else {
-         $res->send(
-            $res->json(['error' => 'No Course'])
-         );
+         $res->error('No course');
       }
-
    }
 
-   public function previousLesson(Request $req, Response $res) {
+   public function previousLesson(Request $req, Response $res)
+   {
       // temporary
       $email = User::$email;
       $currentlesson = $req->params()->lesson ?? null;
       $currentcourse = $req->query()->course ?? null;
-      
+
       if (!is_null($currentlesson) && !is_null($currentcourse)) {
 
          $s = new Sanitize();
@@ -381,36 +551,28 @@ class StudentController
             $mdl = new StudentLessonModel();
             $mdl->updateLessonStatus($lessonId, $email, 1);
 
-            $res->send(
-               $res->json(['lesson' => $lesson])
-            );
-
+            $res->success('success', $lesson);
          } else {
             // last lesson in the course
-            $res->send(
-               $res->json(['error'=>'No more previous lessons for this course.'])
-            );
+
+            $res->error('No more previous lessons for this course');
          }
-
       } else {
-         $res->send(
-            $res->json(['error' => 'No Course'])
-         );
+         $res->error('No course');
       }
-
    }
 
-   public function answerAssignment(Request $req, Response $res) {
+   public function answerAssignment(Request $req, Response $res)
+   {
       // temporary
       $email = User::$email;
       $assignment = $req->body()->assignment ?? null;
+      $answerId = $req->body()->answerId ?? null;
       $note = $req->body()->note ?? null;
       $video = $req->files()->video ?? null;
 
-      if (is_null($assignment)) {
-         $res->send(
-            $res->json(['error'=>'Invalid Assignment'])
-         );
+      if (is_null($assignment) || is_null($answerId)) {
+         $res->error('Invalid Assignment');
       }
 
       $v = new Validate();
@@ -418,11 +580,9 @@ class StudentController
       $errors = $v->errors();
 
       if ($errors) {
-         $res->send(
-            $res->json(['error'=>'Invalid Assignment'])
-         );
+         $res->error('Invalid Assignment');
       }
-      
+
       if (!is_null($video)) {
          // if video is sent, upload video and update the database
          $up = new Upload();
@@ -431,51 +591,40 @@ class StudentController
 
          $errors = $up->errors();
          if ($errors) {
-            $res->send(
-               $res->json(['error'=>$errors['video']])
-            );
+            $res->error('Upload failed', [$errors['video']]);
          }
          $path = $up->uri('video');
 
          $mdl = new StudentAssignmentModel();
-         $mdl->answerAsVideo($email, $assignment, $path);
+         $mdl->answerAsVideo($email, $assignment, $answerId, $path);
 
          // notify the tutor
          // send a mail to the tutor
          // add to notification table
-
-         $res->send(
-            $res->json(['success'=>'Answer is submitted.'])
-         );
-
+         $res->success('Answer is submitted', ['path' => $path]);
       } elseif (!is_null($note)) {
 
          $s = new Sanitize();
          $note = $s->string($note);
 
          $mdl = new StudentAssignmentModel();
-         $mdl->answerAsNote($email, $assignment, $note);
+         $mdl->answerAsNote($email, $assignment, $answerId, $note);
 
          // notify the tutor
          // send a mail to the tutor
          // add to notification table
 
-         $res->send(
-            $res->json(['success'=>'Answer is submitted.'])
-         );
-
+         $res->success('Answer is submitted');
       } else {
-         $res->send(
-            $res->json(['error'=>'Invalid Answer.'])
-         );
+         $res->error('Invalid Answer');
       }
-      
    }
 
-   public function invitefriend(Request $req, Response $res) {
+   public function invitefriend(Request $req, Response $res)
+   {
       // temporary
       $email = User::$email;
-      
+
       $friend = $req->body()->friend ?? null;
 
       $v = new Validate();
@@ -497,23 +646,17 @@ HTML;
          $send = Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $friend, "Your Friend Invites You.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
 
          if ($send == true) {
-            $res->send(
-               $res->json(['status'=>true,'message'=>'Invitation has been sent.'])
-            );
+            $res->success('Invitation has been sent');
          } else {
-            $res->send(
-               $res->json(['status'=>false,'message'=>"Invitation was not sent. Please try again."])
-            );
+            $res->error('Invitation was not sent. Please try again.');
          }
-
       } else {
-         $res->send(
-            $res->json(['status'=>false,'message'=>$error['friend']])
-         );
+         $res->error('Invitation was not sent. Please try again.', $error['friend']);
       }
    }
 
-   public function uploadAvatar(Request $req, Response $res) {
+   public function uploadAvatar(Request $req, Response $res)
+   {
       // temporary
       $email = User::$email;
       $avatar = $req->files()->avatar ?? null;
@@ -526,123 +669,206 @@ HTML;
 
          $errors = $up->errors();
          if ($errors) {
-            $res->send(
-               $res->json(['error'=>$errors['avatar']])
-            );
+            $res->error('Image was not uploaded');
          }
          $path = $up->uri('avatar');
 
          $mdl = new StudentModel();
          $mdl->updateAvatar($email, $path);
 
-         $res->send(
-            $res->json(['success'=>'Image was uploaded.'])
-         );
+         $res->success('Image was uploaded', ['path' => $path]);
       } else {
-         $res->send(
-            $res->json(['error'=>'Invalid Image.'])
-         );
+         $res->error('Invalid image');
       }
-
    }
-   
-   public function quickLessons(Request $req, Response $res) {
-      // temporary
-      $email = User::$email;
-
-      $mdl = new StudentSubscriptionModel();
-      $lessons = $mdl->getSubscribedQuickLessons($email);
-
-      
-     $res->send(
-        $res->json([
-           "lessons" => $lessons
-        ])
-     );
-
-   }
-   
-   public function allQuickLessons(Request $req, Response $res) {
-       $mdl = new QuickLessonModel();
-       $lessons = $mdl->getQLessons();
-       $lmdl = new LessonModel();
-      
-      $all = [];
-      foreach ($lessons as $lesson) {
-          $old = ['price'=>$lesson['price'],'free'=>$lesson['free']];
-          $new = $lmdl->getLesson($lesson['lesson_id'])[0];
-          
-          $all[] = array_merge($old,$new);
-      }
-
-      $res->send(
-         $res->json([
-            "lessons" => $all
-         ])
-      );
-       
-   }
-
-   public function quickLesson(Request $req, Response $res) {
-      // temporary
-      $email = User::$email;
-
-      $lesson = $req->params()->lesson;
-      $v = new Validate();
-
-      $v->numbers('lesson', $lesson, "Invalid lesson");
-      $error = $v->errors();
-
-      if (!$error) {
-         $mdl = new StudentSubscriptionModel();
-         $lesson = $mdl->getSubscribedQuickLesson($email, $lesson);
-
-         if ($lesson == []) {
-            $res->send(
-               $res->json(['error'=>'Student need to subscribe for this lesson'])
-            );
-         } else {
-            $res->send(
-               $res->json([
-                  "lesson" => $lesson
-               ])
-            );
-         }
-      } else {
-         $res->send(
-            $res->json(['error'=>'Invalid lesson'])
-         );
-      }
-
-   }
-
 
    public function freeLessons(Request $req, Response $res)
    {
       // return all resources
-      $mdl = new QuickLessonModel();
-      $lmdl = new LessonModel();
-      $lessons = $mdl->getFLessons();
+      $mdl = new LessonModel();
+      $lessons = $mdl->getFreeLessons();
 
-      $free = [];
-      foreach ($lessons as $lesson) {
-        // get the lesson and check if the lesson is null
-          $l = $lmdl->getLesson($lesson['lesson_id'])[0];
-          if (!is_null($l))
-          $free[] = $l;
+      if (count($lessons) > 0) {
+         $res->success('Free lessons', $lessons);
+      } else {
+         $res->error('No free lesson');
+      }
+   }
+
+   public function addLessonComment(Request $req, Response $res)
+   {
+      $email = User::$email;
+      $comment = $req->body()->comment ?? '';
+      $receiver = $req->body()->receiver ?? '';
+      $lessonId = $req->body()->lessonId ?? null;
+
+      if ($lessonId == null) {
+         $res->error('Invalid lesson id');
+         exit;
       }
 
-      $res->send(
-         $res->json([
-            "lessons" => $free
-         ])
-      );
+      if ($comment == '') {
+         $res->error('No comment');
+         exit;
+      }
+
+      if ($receiver == '') {
+         $res->error('No receiver');
+         exit;
+      }
+
+      $commentMdl = new StudentCommentsModel();
+      $response = $commentMdl->addComment($lessonId, $comment, $email, $receiver);
+
+      if ($response == true) {
+         $res->success('Added successfully');
+      } else {
+         $res->error('Failed to add');
+      }
    }
 
-   public function func(Request $req, Response $res) {
+   public function getLessonComments(Request $req, Response $res)
+   {
+      $email = User::$email;
+      $lessonId = $req->params()->lessonId ?? null;
+
+      if ($lessonId == null) {
+         $res->error('Invalid lesson id');
+         exit;
+      }
+
+      $commentMdl = new StudentCommentsModel();
+      $comments = $commentMdl->getComments($lessonId, $email);
+
+      if ($comments == []) {
+         $res->error('No comments');
+      } else {
+         $tutor = [];
+         $tMdl = new TutorModel();
+         $count = 0;
+         foreach ($comments as $comment) {
+            if ($comment['sender'] != $email) {
+               // this is a tutor
+               $tutorDetails = $tMdl->getTutor($comment['sender']);
+               $tutor['name'] = $tutorDetails[0]['firstname'] . ' ' . $tutorDetails[0]['lastname'];
+               $tutor['avatar'] = $tutorDetails[0]['avatar'];
+               $comments[$count]['tutor'] = $tutor;
+            }
+            $count++;
+         }
+         $res->success('Lesson comments', $comments);
+      }
+   }
+
+   public function addForumMessage(Request $req, Response $res)
+   {
+      $email = User::$email;
+      $comment = $req->body()->comment ?? '';
+      $categoryId = $req->body()->categoryId ?? '';
+      $replyId = $req->body()->replyId ?? null;
+
+      if ($categoryId == null) {
+         $res->error('Invalid category id');
+         exit;
+      }
+
+      if ($replyId == null) {
+         $res->error('Invalid reply id');
+         exit;
+      }
+
+      if ($comment == '') {
+         $res->error('No comment');
+         exit;
+      }
+
+      $commentMdl = new ForumsModel();
+      $response = $commentMdl->addMessage($categoryId, $comment, $email, $replyId);
+
+      if ($response == true) {
+         $res->success('Added successfully');
+      } else {
+         $res->error('Failed to add');
+      }
+   }
+
+   public function getMessages(Request $req, Response $res)
+   {
+      $email = User::$email;
+      $categoryId = $req->params()->categoryId ?? null;
+
+      if ($categoryId == null) {
+         $res->error('Invalid category id');
+         exit;
+      }
+
+      $commentMdl = new ForumsModel();
+      $comments = $commentMdl->getMessages($categoryId);
+
+      if ($comments == []) {
+         $res->error('No comments');
+      } else {
+         $tutor = [];
+         $student = [];
+         $tMdl = new TutorModel();
+         $sMdl = new StudentModel();
+         $count = 0;
+         foreach ($comments as $comment) {
+            if ($comment['sender'] != $email) {
+               if ($comment['is_admin'] == true) {
+                  // is admin
+                  $tutorDetails = $tMdl->getTutor($comment['sender']);
+                  $tutor['name'] = $tutorDetails[0]['firstname'] . ' ' . $tutorDetails[0]['lastname'];
+                  $tutor['avatar'] = $tutorDetails[0]['avatar'];
+                  $comments[$count]['tutor'] = $tutor;
+               } else {
+                  // this is another student
+                  $studentDetails = $sMdl->getStudent($comment['sender']);
+                  $student['name'] = $studentDetails[0]['firstname'] . ' ' . $studentDetails[0]['lastname'];
+                  $student['avatar'] = $studentDetails[0]['avatar'];
+                  $comments[$count]['student'] = $student;
+               }
+            }
+            $count++;
+         }
+         $res->success('Lesson comments', $comments);
+      }
+   }
+
+   public function contactUs(Request $req, Response $res)
+   {
+      $email = trim($req->body()->email);
+      $subject = trim($req->body()->subject);
+      $message = trim($req->body()->message);
+
+      // validate email
+      $v = new Validate();
+      $v->email("email", $email, "Invalid Email")->min(1)->max(100);
+      $errors = $v->errors();
+
+      if ($errors) {
+         $res->error("Invalid email address");
+      }
+
+      //   update token for user and send mail to the user
+      $msg = <<<HTML
+         <div>
+            <p>Hi Admin, here is a message from a student ($email)</p>
+            <p>$message</p>
+         </div>
+HTML;
+      $send = Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy Student", "info@spicyguitaracademy.com", "Contact Us ($subject)", '$email');
+
+      if ($send == true) {
+         $res->success("Message sent successfully, We will reply you shortly.");
+      } else {
+         $res->error("Message was not sent, please try again");
+      }
+   }
+
+   public function func(Request $req, Response $res)
+   {
       // temporary
       $email = User::$email;
-
    }
-
 }

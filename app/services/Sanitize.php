@@ -1,13 +1,18 @@
 <?php
 namespace App\Services;
 
+use Framework\Database\Database;
+
 class Sanitize
 {
    // string
    public function string(string $value)
    {
-      return filter_var($value, FILTER_SANITIZE_STRING, [FILTER_FLAG_STRIP_HIGH]);
-   }
+      return filter_var($value, FILTER_SANITIZE_STRING);
+    
+        // $value = str_replace('\\', '\\\\', $value);
+        // return htmlentities($value, ENT_QUOTES);
+  }
 
    // email
    public function email(string $value)

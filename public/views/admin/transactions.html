@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Students | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+
+<body class="bg-light">
+
+   @vars
+
+   @import admin/header.html
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/transactions">
+         <div class="float-left">
+            <i class="fa fa-dollar"></i>
+            Transactions
+         </div>
+      </a>
+
+      <div class="clearfix"></div>
+   </nav>
+
+   <main class="container my-5">
+
+      @if (isset($_GET['msg']))
+      <div class="alert alert-info show text-dark text-center">
+         {{$_GET['msg']}}
+      </div>
+      @endif
+
+      @php $transactions = json_decode($transactions);
+      @if ($transactions == [])
+      <div class="alert show text-dark text-center alert-dismissible">
+         There are no transactions.
+      </div>
+      @else
+
+      <div class="table-responsive">
+
+         <table class="table table-striped table-hover text-center border border-primary">
+            <thead class="bg-primary text-light">
+               <tr>
+                  <td></td>
+                  <td>Email</td>
+                  <td>Transaction&nbsp;Reference</td>
+                  <td>Service</td>
+                  <td>Amount&nbsp;Paid</td>
+                  <td>Date&nbsp;Paid</td>
+                  <td>Time&nbsp;Paid</td>
+                  <td>Status</td>
+               </tr>
+            </thead>
+
+            <tbody>
+
+               @php $count = 1;
+               @foreach ($transactions as $transaction)
+
+               <tr>
+                  <td class="align-middle">
+                     {{$count}}
+                  </td>
+
+                  <td class="align-middle">
+                     {{$transaction->student_id}}
+                  </td>
+
+                  <td class="align-middle">
+                     {{$transaction->txnref}}
+                  </td>
+
+                  <td class="align-middle">
+                     @php $list = ['1','3', '6', '12']
+                     @php $extract = substr("{$transaction->txnref}", 4, 2); $service = "";
+                     @if ($extract[0] == "N")
+                        @php $service = "Paid for {$list[$extract[1]]} months subscription plan";
+                     @endif
+                     @if ($extract[0] == "Q")
+                        @php $service = "Bought a featured course with ID: {$extract[1]}";
+                     @endif
+                     {{$service}}
+                  </td>
+
+                  <td class="align-middle">
+                     {{$transaction->amount}}&nbsp;NGN
+                  </td>
+
+                  <td class="align-middle">
+                     {{$transaction->date}}
+                  </td>
+                  <td>
+                     {{$transaction->time}}
+                  </td>
+                  <td>
+                     {{$transaction->status}}
+                  </td>
+
+               </tr>
+
+               @php $count++;
+               @endforeach
+
+            </tbody>
+
+         </table>
+
+      </div>
+
+      @endif
+
+   </main>
+
+   @import admin/footer.html
+
+</body>
+
+</html>
