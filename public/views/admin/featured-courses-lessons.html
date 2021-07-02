@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Featured Courses | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+
+<body class="bg-light">
+
+   @vars
+
+   @import admin/header.html
+
+   <nav class="container my-4 h4 d-flex justify-content-between">
+      <div>
+         <a href="@/admin/courses/featured">
+            <span>
+               <i class="fa fa-video-camera"></i>
+               Featured Courses
+            </span>
+         </a>
+         <span class="h5">&nbsp;/&nbsp;Lessons</span>
+      </div>
+
+      <a href="@/admin/courses/featured/select?course={{$course}}" class="btn btn-primary">
+         Select Lessons
+      </a>
+   </nav>
+
+   <main class="container my-5">
+
+      <div class="row no-gutters">
+
+         <!-- beginners -->
+         <section class="col-lg-10 mx-auto">
+
+            @php $lessons = json_decode($lessons);
+            @if ($lessons == [])
+            <div class="alert show text-dark text-center">
+               There are no lessons for this featured course. Add some lessons.
+            </div>
+            @else
+            <div>
+               <h4 class="mb-4 font-weight-bold">
+                  {{$featuredCourse}}
+                  <hr>
+               </h4>
+
+               <form action="@/admin/courses/featured/lessons/update" method="post" enctype="multipart/form-data">
+                  <input type="hidden" name="course" value="{{$course}}">
+                  @php $order = 1;
+                  @foreach ($lessons as $lesson)
+                  <div class="mb-3" id="lesson{{$order}}">
+                     <input type="hidden" name="lesson[]" value="{{$lesson->id}}">
+                     <p class="mb-3">
+                        <b class="d-block">{{$lesson->title}}</b>
+                        <small>{{$lesson->course}}</small>
+                     </p>
+                     <p>{{$lesson->description}}</p>
+                     <div class="d-flex justify-content-end">
+                        <div class="btn-group">
+                           <label for="order{{$order}}"
+                              class="form-control font-weight-bold bg-dark text-light w-auto border-right-0">#Order:</label>
+                           <input type="number" name="order[]" id="order{{$order}}" value="{{$order}}"
+                              class="input-group-append border-left-0 form-control">
+                           <button type="button" class="form-control btn btn-danger w-auto"
+                              onclick="deleteLesson('lesson{{$order}}')"><i class="fa fa-trash"></i></button>
+                        </div>
+                     </div>
+                  </div>
+                  @php $order++;
+                  @endforeach
+
+                  <div class="d-flex justify-content-end">
+                     <button type="submit" class="btn btn-lg btn-primary">Submit</button>
+                  </div>
+
+               </form>
+            </div>
+            @endif
+
+            <div class=""></div>
+
+         </section>
+
+      </div>
+
+
+   </main>
+
+   <script>
+      function deleteLesson(id) {
+         if (confirm('Are you sure you want to remove this lesson?') == true) {
+            var lesson = document.getElementById(`${id}`);
+            console.log(lesson);
+            lesson.remove();
+         }
+      }
+   </script>
+
+</body>
+
+</html>

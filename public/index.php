@@ -185,6 +185,10 @@ $http->auth('web')->guard('admin','tutor')->get('/admin/courses/featured/select'
 
 $http->auth('web')->guard('admin','tutor')->post('/admin/courses/featured/select/submit', 'CourseController@AddLessonsForFeaturedCourse');
 
+$http->auth('web')->guard('admin','tutor')->get('/admin/courses/featured/lessons', 'CourseController@getFeaturedCoursesLessons');
+
+$http->auth('web')->guard('admin','tutor')->post('/admin/courses/featured/lessons/update', 'CourseController@updateLessonsForFeaturedCourse');
+
 $http->auth('web')->guard('admin','tutor')->get('/admin/courses/featured/edit/{id}', 'CourseController@editFeaturedCourse');
 
 $http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/courses/featured/update', 'CourseController@updateFeaturedCourse');

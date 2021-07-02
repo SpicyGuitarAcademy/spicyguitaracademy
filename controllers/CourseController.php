@@ -732,6 +732,94 @@ class CourseController
       $res->route('/admin/courses/featured');
    }
 
+   public function getFeaturedCoursesLessons(Request $req, Response $res)
+   {
+      $featuredCourse = $req->query()->course ?? '';
+
+      // get lessons in this featured course
+
+      $mdl = new CourseModel();
+      $lmdl = new LessonModel();
+      $courseDetails = $mdl->getFeaturedCourseLessons($featuredCourse)[0];
+      $lessons = $courseDetails['featured_lessons'];
+
+      // echo "$featuredCourse\n";
+      // var_dump($courseDetails);
+      // echo json_encode($courseDetails['course']);
+
+      if ($lessons == "") $lessons = [];
+      else {
+         // convert to array
+         $lessons = explode(" ", $lessons);
+
+         $count = 0;
+         // get lesson title and course title for each lesson
+         foreach ($lessons as $lesson) {
+            $lessonDetails = $lmdl->getLesson($lesson)[0];
+            $lessons[$count] = [
+               'id' => $lesson,
+               'title' => $lessonDetails['lesson'],
+               'description' => $lessonDetails['description'],
+               'course' => $mdl->getCourse($lessonDetails['course'])[0]['course']
+            ];
+            $count++;
+         }
+      }
+
+      $res->send(
+         $res->render('admin/featured-courses-lessons.html', [
+            'lessons' => json_encode($lessons),
+            'course' => $featuredCourse,
+            'featuredCourse' => $courseDetails['course']
+         ])
+      );
+   }
+
+   public function updateLessonsForFeaturedCourse(Request $req, Response $res)
+   {
+      $course = trim($req->body()->course);
+      $order = $_POST['order'];
+      $rawLessons = $_POST['lesson'];
+
+      // create a map of order and lesson
+      $objs = [];
+      $count = 0;
+      foreach ($rawLessons as $lesson) {
+         $objs[$count] = [
+            'order' => $order[$count],
+            'lesson' => $lesson
+         ];
+         $count++;
+      }
+
+      // sort lessons according to their order
+      for ($i = 0; $i < count($objs); $i++) {
+         for ($j = $i + 1; $j < count($objs); $j++) {
+            if ($objs[$i]['order'] > $objs[$j]['order']) {
+               $temp = $objs[$i];
+               $objs[$i] = $objs[$j];
+               $objs[$j] = $temp;
+            }
+         }
+      }
+
+      // extract lessons
+      $lessons = [];
+      foreach ($objs as $obj) {
+         $lessons[] = $obj['lesson'];
+      }
+
+      $lessons = join(" ", $lessons);
+      $mdl = new CourseModel();
+      $update = $mdl->updateFeaturedCourseLessons($course, $lessons);
+
+      if ($update == true) {
+         $res->redirect(SERVER . '/admin/courses/featured');
+      } else {
+         $res->redirect($req->referer() ?? '/admin/dashboard');
+      }
+   }
+
    public function getCourseLessons(Request $req, Response $res)
    {
       $course = $req->params()->course ?? null;

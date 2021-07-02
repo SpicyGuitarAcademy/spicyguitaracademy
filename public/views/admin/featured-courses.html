@@ -54,14 +54,14 @@
             </div>
             @else
 
-            <div class="card-body w-100 mx-auto table-responsive">
+            <div class="card-bo dy w-100 mx-auto table-responsive">
 
                <table class="table table-striped table-hover text-center border border-primary">
                   <thead class="bg-primary text-light">
                      <tr>
                         <td>#</td>
                         <th>Course Title</th>
-                        <th>Price (N)</th>
+                        <th>Price&nbsp;(N)</th>
                         <th>Action</th>
                      </tr>
                   </thead>
@@ -74,14 +74,16 @@
                      <td>{{$course->featuredprice}}</td>
                      <td>
                         <a href="@/admin/courses/featured/edit/{{$course->id}}"
-                           class="btn btn-sm btn-muted text-primary" onclick="">
-                           <span class="fa fa-edit"></span>
-                           Edit
+                           class="btn btn-sm btn-muted text-primary">
+                           <span><i class="fa fa-edit"></i>&nbsp;Edit</span>
                         </a>
                         <a href="@/admin/courses/featured/select?course={{$course->id}}"
-                           class="btn btn-sm btn-muted text-primary" onclick="">
-                           <span class="fa fa-edit"></span>
-                           Lessons
+                           class="btn btn-sm btn-muted text-primary">
+                           <span><i class="fa fa-edit"></i>&nbsp;Select</span>
+                        </a>
+                        <a href="@/admin/courses/featured/lessons?course={{$course->id}}"
+                           class="btn btn-sm btn-muted text-primary">
+                           <span><i class="fa fa-list"></i>&nbsp;Lessons</span>
                         </a>
                      </td>
                   </tr>

@@ -52,7 +52,7 @@ class CourseModel extends Model
 
     public function getFeaturedCourseLessons($id)
     {
-        return $this->where("id = $id")->read('featured_lessons');
+        return $this->where("id = $id")->read('featured_lessons, course');
     }
 
     public function updateCourse($id, $category, $course, $description, $tutor, $order, $featured, $featuredprice)
