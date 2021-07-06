@@ -834,10 +834,6 @@ class CourseController
       $courseDetails = $mdl->getFeaturedCourseLessons($featuredCourse)[0];
       $lessons = $courseDetails['featured_lessons'];
 
-      // echo "$featuredCourse\n";
-      // var_dump($courseDetails);
-      // echo json_encode($courseDetails['course']);
-
       if ($lessons == "") $lessons = [];
       else {
          // convert to array
@@ -935,6 +931,42 @@ class CourseController
          //  $res->send(
          //     $res->json(['error' => 'No Course'])
          //  );
+         $res->error('Invalid course');
+      }
+   }
+
+   public function getApiFeaturedCourseLessons(Request $req, Response $res)
+   {
+      $course = $req->params()->course ?? null;
+
+      if (!is_null($course)) {
+
+         $s = new Sanitize();
+         $course = $s->numbers($course);
+
+         $mdl = new CourseModel();
+         $courseDetails = $mdl->getFeaturedCourseLessons($course)[0];
+         $lessonIds = $courseDetails['featured_lessons'];
+   
+         // convert to array
+         if ($lessonIds == "") $lessonIds = [];
+         else {
+            $lessonIds = explode(" ", $lessonIds);
+         }
+
+         $mdl = new LessonModel();
+         $lessons = []; //$mdl->getLessonsByCourse($course);
+
+         foreach ($lessonIds as $lesson) {
+            $lessons[] = $mdl->getLesson($lesson)[0];
+         }
+
+         if (count($lessons) > 0) {
+            $res->success('Course lessons', $lessons);
+         } else {
+            $res->error('No lessons');
+         }
+      } else {
          $res->error('Invalid course');
       }
    }

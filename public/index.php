@@ -288,7 +288,7 @@ $http->auth('api')->guard('student')->get('/api/course/{course}/lessons','Course
 
 // TODO
 // list lessons in a featured course
-$http->auth('api')->guard('student')->get('/api/course/{course}/lessons','CourseController@getFeaturedCourseLessons');
+$http->auth('api')->guard('student')->get('/api/course/featured/{course}/lessons','CourseController@getApiFeaturedCourseLessons');
 
 // get a lesson ??
 $http->auth('api')->guard('student')->get('/api/lesson/{lesson}','LessonController@read');
