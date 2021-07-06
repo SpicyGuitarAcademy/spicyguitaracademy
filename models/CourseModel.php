@@ -68,10 +68,29 @@ class CourseModel extends Model
         ]);
     }
 
+    public function updateFeaturedCourse($id, $course, $description, $tutor, $order, $featured, $featuredprice)
+    {
+        return $this->where("id = $id")->update([
+            'course' => $course,
+            'description' => $description,
+            'tutor' => $tutor,
+            'ord' => $order,
+            'featured' => $featured,
+            'featuredprice' => $featuredprice
+        ]);
+    }
+
     public function updateThumbnail($id, $thumbnail)
     {
         return $this->where("id = $id")->update([
             'thumbnail' => $thumbnail
+        ]);
+    }
+
+    public function updateFeaturePreviewVideo($id, $video)
+    {
+        return $this->where("id = $id")->update([
+            'featured_preview_video' => $video
         ]);
     }
 
@@ -94,9 +113,10 @@ class CourseModel extends Model
 
     public function removeCourse($id)
     {
+        // echo $id;
         // return $this->where("id = $id")->delete();
         return $this->where("id = $id")->update([
-            'active' => false
+            'active' => 0
         ]);
     }
 

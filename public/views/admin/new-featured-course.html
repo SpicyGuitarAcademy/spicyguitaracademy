@@ -99,6 +99,16 @@
             <br>
             <img src="" id="previewImage" width="100%" class="img img-responsive">
 
+            <br>
+            <label class="mt-2 btn border" for="featured_video" style="cursor: pointer;">
+               <i class="fa fa-video-camera"></i> Add Featured Preview Video
+            </label>
+            <small class="d-block">Add a video to sumarize the course for students.</small>
+            <input type="file" name="featured_video" id="featured_video" accept="video/mp4" class="my-2 d-none">
+
+            <br>
+            <video controls controlsList="nodownload" src="@/{{$featured_preview_video}}" id="previewFeaturedVideo" width="100%" class="img-responsive"></video>
+
             <input type="submit" value="Add" class="form-control my-3 btn btn-primary">
 
          </form>
@@ -111,6 +121,10 @@
    <script>
       $("#thumbnail").on('change', function () {
          previewFile(this, "previewImage");
+      });
+
+      $("#featured_video").on('change', function () {
+         previewFile(this, "previewFeaturedVideo");
       });
 
       function previewFile(input, dest) {

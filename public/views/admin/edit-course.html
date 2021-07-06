@@ -68,7 +68,7 @@
                @php $categories = json_decode($categories);
 
                @foreach ($categories as $category)
-               <option value="{{$category->id}}">{{$category->category}}</option>
+               <option value="{{$category->id}}" {{$category->id == 5 ? 'disabled' : ''}}>{{$category->category}}</option>
                @endforeach
 
                @endif

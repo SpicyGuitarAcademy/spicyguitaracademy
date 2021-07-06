@@ -85,6 +85,16 @@
                            class="btn btn-sm btn-muted text-primary">
                            <span><i class="fa fa-list"></i>&nbsp;Lessons</span>
                         </a>
+                        <form action="@/admin/courses/featured/delete/{{$course->id}}"
+                           onsubmit="return confirm('Are you sure you want to delete this featured course?')"
+                           method="post" class="d-inline">
+                           @method=DELETE
+                           @csrftoken
+                           <button {{$course->category == 5 ? '' : 'disabled'}} type="submit" class="btn btn-sm
+                              btn-muted text-danger">
+                              <span><i class="fa fa-trash"></i>&nbsp;Remove</span>
+                           </button>
+                        </form>
                      </td>
                   </tr>
                   @php $count++;

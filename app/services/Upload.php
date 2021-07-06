@@ -264,7 +264,7 @@ class Upload
          } else {
             $this->errors[$this->field] = $this->errmsg;
             $this->status = false;
-            throw new IException("$dir is not a directory!");
+            throw new IException("$path is not a directory!");
          }
       } catch (IException $ex) {
          $ex->handle();

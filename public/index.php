@@ -181,6 +181,8 @@ $http->auth('web')->guard('admin','tutor')->get('/admin/courses/featured/new', '
 
 $http->auth('web')->guard('admin','tutor')->post('/admin/courses/featured/create', 'CourseController@createFeaturedCourse');
 
+$http->auth('web')->guard('admin','tutor')->csrf()->delete('/admin/courses/featured/delete/{id}', 'CourseController@deleteFeaturedCourse');
+
 $http->auth('web')->guard('admin','tutor')->get('/admin/courses/featured/select', 'CourseController@selectFeaturedCourses');
 
 $http->auth('web')->guard('admin','tutor')->post('/admin/courses/featured/select/submit', 'CourseController@AddLessonsForFeaturedCourse');

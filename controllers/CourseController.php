@@ -53,7 +53,6 @@ class CourseController
 
    public function create(Request $req, Response $res)
    {
-
       // categories
       $categories = (new CategoryModel)->getCategories();
 
@@ -343,6 +342,31 @@ class CourseController
       );
    }
 
+   public function deleteFeaturedCourse(Request $req, Response $res)
+   {
+      if ($req->params_exists()) {
+         $id = $req->params()->id;
+
+         // validate
+         $v = new Validate();
+         $v->numbers("id", $id, "Invalid Id!")->minvalue(1);
+         $errors = $v->errors();
+
+         if ($errors) {
+            $res->redirect($req->referer() ?? '/admin/dashboard');
+         }
+
+         // Sanitize
+         $s = new Sanitize();
+         $id = $s->numbers($id);
+
+         (new CourseModel)->removeCourse($id);
+         $res->route('/admin/courses/featured');
+      } else {
+         $res->redirect($req->referer() ?? '/admin/dashboard');
+      }
+   }
+
    public function createFeaturedCourse(Request $req, Response $res)
    {
       $category = trim($req->body()->category);
@@ -417,14 +441,29 @@ class CourseController
 
       $mdl = new CourseModel();
       $added = $mdl->addCourse($category, $course, $description, $path, User::$fullname ?? 'No Tutor', $order, $featured, $featuredprice);
+
       if ($added != false) {
 
-         // then added is the last inserted id
-         $res->route('/admin/courses/featured/select?course=' . $added);
-      } else {
-         // unlink uploaded file
-         if ($thumbnail != null) unlink(STORAGE_DIR . $path);
+         if (($req->files_exists() == true && $req->files()->featured_video->error == 0)) {
+            $uploadFeaturedVideo = $this->uploadFeaturedVideo($req, $res);
+            $path = "";
 
+            if ($uploadFeaturedVideo['status'] == true) {
+               // update path
+               $path = $uploadFeaturedVideo['path'];
+               $mdl->updateFeaturePreviewVideo($added, $path);
+               // then added is the last inserted id
+               $res->route('/admin/courses/featured/select?course=' . $added);
+            } else {
+               $data['errors'] = json_encode([$uploadFeaturedVideo['error']]);
+               $res->send(
+                  $res->render('admin/new-featured-course.html', $data)
+               );
+            }
+         } else {
+            $res->route('/admin/courses/featured/select?course=' . $added);
+         }
+      } else {
          $data['errors'] = json_encode(["Course was not added!"]);
          $res->send(
             $res->render('admin/new-featured-course.html', $data)
@@ -643,6 +682,7 @@ class CourseController
                   "thumbnail" => $course['thumbnail'] ?? '',
                   "featured" => $course['featured'] ?? false,
                   "featuredprice" => $course['featuredprice'] ?? 0,
+                  "featured_preview_video" => $course['featured_preview_video'] ?? '',
                ])
             );
          } else {
@@ -667,22 +707,26 @@ class CourseController
       $featuredprice = isset($featured) ? $req->body()->featuredprice : 0;
       $thumbnail = ($req->files_exists() == true && $req->files()->thumbnail->error == 0) ? $req->files()->thumbnail : null;
 
+      $mdl = new CourseModel();
+      // $course = $mdl->getCourse($id)[0];
+
       $data = [
          'id' => $id,
+         'categories' => json_encode($categories ?? []),
          'category' => $category,
          'course' => $course,
          'description' => $description,
          'order' => $order,
          'featured' => $featured,
          'featuredprice' => $featuredprice,
-         'categories' => json_encode($categories ?? [])
+         // "featured_preview_video" => $course['featured_preview_video'] ?? '',
       ];
 
       $v = new Validate();
 
       // validate
       $v->numbers("id", $id, "Incalid Id!")->minvalue(1);
-      $v->numbers("category", $category, "Invalid Category")->minvalue(1);
+      // $v->numbers("category", $category, "Invalid Category")->minvalue(1);
       $v->alphanumeric("course", $course, "Invalid Title")->max(100);
       $v->any("description", $description, "Invalid Description")->max(500);
       if ($featured == true) {
@@ -700,12 +744,11 @@ class CourseController
       // Sanitize
       $s = new Sanitize();
       $id = $s->numbers($id);
-      $category = $s->numbers($category);
+      // $category = $s->numbers($category);
       $course = $s->string($course);
       $description = $s->string($description);
       $order = $s->numbers($order);
 
-      $mdl = new CourseModel();
       if ($thumbnail != null) {
          // upload thumbnail
          $up = new Upload();
@@ -724,12 +767,60 @@ class CourseController
          $path = $up->uri('thumbnail');
       }
 
-      $mdl->updateCourse($id, $category, $course, $description, User::$fullname ?? 'No Tutor', $order, $featured, $featuredprice);
+      $mdl->updateFeaturedCourse($id, $course, $description, User::$fullname ?? 'No Tutor', $order, $featured, $featuredprice);
 
       if ($thumbnail != null) $mdl->updateThumbnail($id, $path);
 
-      // then added is the last inserted id
-      $res->route('/admin/courses/featured');
+      if (($req->files_exists() == true && $req->files()->featured_video->error == 0)) {
+         $uploadFeaturedVideo = $this->uploadFeaturedVideo($req, $res);
+
+         if ($uploadFeaturedVideo['status'] == true) {
+            // update path
+            $path = $uploadFeaturedVideo['path'];
+            $mdl->updateFeaturePreviewVideo($id, $path);
+            // then added is the last inserted id
+            $res->route('/admin/courses/featured');
+         } else {
+            $data['errors'] = json_encode([$uploadFeaturedVideo['error']]);
+            $res->send(
+               $res->render('admin/edit-featured-course.html', $data)
+            );
+         }
+      } else {
+         $res->route('/admin/courses/featured');
+      }
+   }
+
+   public function uploadFeaturedVideo(Request $req, Response $res)
+   {
+      // ALTER TABLE `course_tbl` ADD `featured_preview_video` VARCHAR(100) NULL COMMENT 'a preview video to display to students before they decide to buy the course' AFTER `featuredprice`;
+      $featured_video = ($req->files_exists() == true && $req->files()->featured_video->error == 0) ? $req->files()->featured_video : null;
+
+      if ($featured_video == null) {
+         return [
+            "status" => false,
+            "error" => "Featured Video was not uploaded!"
+         ];
+      } else {
+         $up = new Upload();
+
+         $up->video('featured_video', $featured_video, "Featured Video was not uploaded", ["video/mp4"]);
+         $up->upload("tutorials/videos/", Encrypt::hash());
+
+         $errors = $up->errors();
+         if ($errors) {
+            return [
+               "status" => false,
+               "error" => "Featured Video was not uploaded!"
+            ];
+         }
+         $path = $up->uri('featured_video');
+
+         return [
+            "status" => true,
+            "path" => $path
+         ];
+      }
    }
 
    public function getFeaturedCoursesLessons(Request $req, Response $res)

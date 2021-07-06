@@ -65,10 +65,12 @@
             <input type="hidden" name="id" value="{{$id}}">
 
             <label for="category">Select Category</label>
-            <select name="category" id="category" class="form-control" data-category="{{$category}}"
+            <!-- {{$categories}} -->
+            <select name="category" id="category" disabled class="form-control" data-category="{{$category}}"
                value="{{$category}}">
                @if ($categories != [])
                @php $categories = json_decode($categories);
+
 
                @foreach ($categories as $category)
                <option value="{{$category->id}}">{{$category->category}}</option>
@@ -84,7 +86,7 @@
             <label class="mt-2" for="description">Description</label>
             <textarea name="description" id="description" cols="30" rows="3" maxlength="100"
                placeholder="No Description" class="form-control">{{$description ?? ''}}</textarea>
-<!-- 
+            <!-- 
             <label class="mt-2" for="order">#Order</label>
             <input type="number" name="order" id="order" required min="1" value="{{$order ?? ''}}" class="form-control">
             <small class="text-info"> <i class="fa fa-info-circle"></i> This is the order in which the course would be
@@ -103,6 +105,16 @@
             <br>
             <img src="@/{{$thumbnail ?? ''}}" id="previewImage" width="100%" class="img img-responsive">
 
+            <br>
+            <label class="mt-2 btn border" for="featured_video" style="cursor: pointer;">
+               <i class="fa fa-video-camera"></i> Add Featured Preview Video
+            </label>
+            <small class="d-block">Add a video to sumarize the course for students.</small>
+            <input type="file" name="featured_video" id="featured_video" accept="video/mp4" class="my-2 d-none">
+            <br>
+            <video controls controlsList="nodownload" src="@/{{$featured_preview_video}}" id="previewFeaturedVideo"
+               width="100%" class="img-responsive"></video>
+
             <input type="submit" value="Update" class="form-control my-3 btn btn-primary">
 
          </form>
@@ -120,6 +132,10 @@
 
       $("#thumbnail").on('change', function () {
          previewFile(this, "previewImage");
+      });
+
+      $("#featured_video").on('change', function () {
+         previewFile(this, "previewFeaturedVideo");
       });
 
       function previewFile(input, dest) {
