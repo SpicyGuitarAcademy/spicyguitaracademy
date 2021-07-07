@@ -1,5 +1,7 @@
 <?php
+
 namespace Controllers;
+
 use Framework\Http\Http;
 use Framework\Http\Request;
 use Framework\Http\Response;
@@ -21,7 +23,7 @@ class AuthController
    {
       $email = trim($req->body()->email);
       $password = trim($req->body()->password);
-      $remember = isset($req->body()->remember) ? true : false ;
+      $remember = isset($req->body()->remember) ? true : false;
       // redirect
       $redirect = isset($req->body()->redirect) ? $req->body()->redirect : null;
 
@@ -50,7 +52,7 @@ class AuthController
             ])
          );
       }
-      
+
       // get login data
       $mdl = new AuthModel();
       $details = $mdl->getLoginDetails($email);
@@ -128,19 +130,18 @@ class AuthController
 
       // consider redirect to previous working page
       if ($redirect != null) {
-         $res->route($redirect);   
+         $res->route($redirect);
       } else {
          // redirect to dashboard
          $res->route('/admin/dashboard');
       }
-
    }
 
    public function authStudentLogin(Request $req, Response $res)
    {
       $email = trim($req->body()->email);
       $password = trim($req->body()->password);
-      $remember = isset($req->body()->remember) ? true : false ;
+      $remember = isset($req->body()->remember) ? true : false;
       // redirect
       $redirect = isset($req->body()->redirect) ? $req->body()->redirect : null;
 
@@ -169,7 +170,7 @@ class AuthController
             ])
          );
       }
-      
+
       // get login data
       $mdl = new AuthModel();
       $details = $mdl->getLoginDetails($email);
@@ -245,12 +246,11 @@ class AuthController
 
       // consider redirect to previous working page
       if ($redirect != null) {
-         $res->route($redirect);   
+         $res->route($redirect);
       } else {
          // redirect to dashboard
          $res->route('/dashboard');
       }
-
    }
 
    public function authApiLogin(Request $req, Response $res)
@@ -263,7 +263,7 @@ class AuthController
 
       // validate un-empty fields
       if (empty($email) || empty($password)) {
-        $res->error('Invalid Email/Password');
+         $res->error('Invalid Email/Password');
       }
 
       // validate email
@@ -274,13 +274,13 @@ class AuthController
       if ($errors) {
          $res->error('Invalid Email/Password');
       }
-      
+
       // get login data
       $mdl = new AuthModel();
       $details = $mdl->getLoginDetails($email);
 
       if (!$details) {
-        $res->error('Invalid Email/Password');
+         $res->error('Invalid Email/Password');
       }
 
       $authId = $details[0]['id'];
@@ -306,19 +306,23 @@ class AuthController
       $student['status'] = $status;
 
       // if ($remember) {
-         $lifetime = REMEMBER_ME_LIFETIME * 60;
+      $lifetime = REMEMBER_ME_LIFETIME * 60;
       // } else {
       //    $lifetime = 60;
       // }
       $exp = strtotime("$lifetime minutes");
-      
+
       // create a token
       $payloadArray = array();
       $payloadArray['email'] = $email;
       $payloadArray['role'] = $role;
       $payloadArray['fullname'] = $student[0]['firstname'] . " " . $student[0]['lastname'];
-      if (isset($nbf)) {$payloadArray['nbf'] = $nbf;}
-      if (isset($exp)) {$payloadArray['exp'] = $exp;}
+      if (isset($nbf)) {
+         $payloadArray['nbf'] = $nbf;
+      }
+      if (isset($exp)) {
+         $payloadArray['exp'] = $exp;
+      }
       $token = JWT::encode($payloadArray, SECRET_KEY);
 
       // set the users details
@@ -326,53 +330,52 @@ class AuthController
       User::$email = $email;
       User::$role = $role;
       User::$token = $token;
-        $res->success('Login Successful', [
-         "student"=>$student,
-         "status"=>$status,
-         "token"=>$token
+      $res->success('Login Successful', [
+         "student" => $student,
+         "status" => $status,
+         "token" => $token
       ]);
-
    }
 
    public function forgotPassword(Request $req, Response $res)
-    {
+   {
       $email = trim($req->body()->email);
-      
+
       // validate email
       $v = new Validate();
       $v->email("email", $email, "Invalid Email")->min(1)->max(100);
       $errors = $v->errors();
 
       if ($errors) {
-         $res->error('Error', "Invalid email address");
+         $res->error("Invalid email address");
       }
-      
+
       $token = Encrypt::token(6);
-      
-    //   update token for user and send mail to the user
-    $msg = <<<HTML
+
+      //   update token for user and send mail to the user
+      $msg = <<<HTML
          <div>
             <p>Your verification token is $token.</p>
          </div>
 HTML;
-         $send = Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $email, "Verification Token.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
-      
+      $send = Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $email, "Verification Token.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+
       // get login data
       $mdl = new AuthModel();
       $result = $mdl->updateToken($email, $token);
-      
+
       if ($result == true) {
-          $res->success("Verification token was sent to $email");
+         $res->success("Verification token was sent to $email");
       } else {
-          $res->error("Verification token was not sent");
+         $res->error("Verification token was not sent");
       }
    }
-   
+
    public function verifyAccount(Request $req, Response $res)
-    {
+   {
       $email = trim($req->body()->email);
       $token = trim($req->body()->token);
-      
+
       // validate email
       $v = new Validate();
       $v->email("email", $email, "Invalid Email")->min(1)->max(100);
@@ -382,25 +385,25 @@ HTML;
       if ($errors) {
          $res->error('Error', $errors);
       }
-      
+
       // get login data
       $mdl = new AuthModel();
       $result = $mdl->verifyEmailToken($email, $token);
-      
-    $mdl->updateStatus($email, 'active');
-    $res->success("Verified account successfully");
-    
+
+      $mdl->updateStatus($email, 'active');
+      $res->success("Verified account successfully");
    }
-   
-   public function resetPassword(Request $req, Response $res) {
-      
+
+   public function resetPassword(Request $req, Response $res)
+   {
+
       // create a resource
       $email = trim($req->body()->email);
       $password = trim($req->body()->password);
       $cpassword = trim($req->body()->cpassword);
-      
+
       $data = [];
-      
+
       $v = new Validate();
 
       // validate
@@ -420,15 +423,92 @@ HTML;
       // No errors, sanitize fields
       $s = new Sanitize();
       $email = $s->email($email);
-      
+
       $amdl = new AuthModel();
-      
+
       $result = $amdl->updatePassword($email, Encrypt::hashPassword($password));
       if ($result == false) {
-          $res->error('Password was not updated. Try again!');
+         $res->error('Password was not updated. Try again!');
       } else {
-          $res->success('Account was created.');
+         $res->success('Password was updated.');
       }
    }
 
+   public function updateprofile(Request $req, Response $res)
+   {
+      $firstname = trim($req->body()->firstname);
+      $lastname = trim($req->body()->lastname);
+      $telephone = trim($req->body()->telephone);
+
+      $v = new Validate();
+
+      // validate
+      $v->letters("firstname", $firstname, "Invalid Firstname")->max(20);
+      $v->letters("lastname", $lastname, "Invalid Lastname")->max(20);
+      $v->telephone("telephone", $telephone, "Invalid Telephone")->max(20);
+      $errors = $v->errors();
+
+      if ($errors) {
+         $res->error('Profile not updated', $errors);
+      }
+
+      // No errors, sanitize fields
+      $s = new Sanitize();
+      $firstname = $s->string($firstname);
+      $lastname = $s->string($lastname);
+      $telephone = $s->string($telephone);
+
+      $Student = new StudentModel();
+
+      $email = User::$email;
+      if ($Student->where("email = '$email'")->update([
+         'firstname' => $firstname,
+         'lastname' => $lastname,
+         'telephone' => $telephone
+      ])) {
+         $res->success('Profile updated');
+      } else {
+         $res->error('Profile not updated');
+      }
+   }
+
+   public function updatepassword(Request $req, Response $res)
+   {
+      $opassword = trim($req->body()->opassword);
+      $npassword = trim($req->body()->npassword);
+      $cpassword = trim($req->body()->cpassword);
+
+      $v = new Validate();
+
+      // validate
+      $v->ucletters("password", $npassword, "New Password field must contain lowercase and uppercase and numbers")->lcletters("password", $npassword, "New Password field must contain lowercase and uppercase and numbers")->alphanumeric("password", $npassword, "New Password field must contain lowercase and uppercase and numbers")->min(8);
+      $errors = $v->errors();
+
+      // check cpassword
+      if ($cpassword !== $npassword) {
+         $errors['cpassword'] = "New Password and Confirm Password must be the same!";
+      }
+
+      if ($errors) {
+         $res->error('Update password failed', $errors);
+      }
+
+      $email = User::$email;
+      $amdl = new AuthModel();
+      $details = $amdl->getLoginDetails($email);
+      $dbpassword = $details[0]['password'];
+
+      // verify password
+      // if ($email != "admin" || $dbpassword != "admin") {
+      if (Encrypt::verifyPassword($opassword, $dbpassword) == false) {
+         $res->error('Invalid Old Password');
+      }
+
+      $result = $amdl->updatePassword($email, Encrypt::hashPassword($npassword));
+      if ($result == false) {
+         $res->error('Password was not updated. Try again!');
+      } else {
+         $res->success('Password was updated.');
+      }
+   }
 }

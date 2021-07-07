@@ -242,7 +242,7 @@ $http->post('/api/register_student','StudentController@register');
 $http->post('/api/login','AuthController@authApiLogin');
 
 $http->get('/api/paystack/key', function(Request $req, Response $res) {
-
+   $res->success('Paystack key', ['key' => PAYSTACK_PUBLIC_KEY]);
 });
 
 $http->auth('api')->guard('student')->get('/api/subscription/plans','SubscriptionController@plans');
@@ -330,6 +330,10 @@ $http->post('/api/forgotpassword', 'AuthController@forgotPassword');
 $http->post('/api/verify', 'AuthController@verifyAccount');
 
 $http->post('/api/resetpassword', 'AuthController@resetPassword');
+
+$http->auth('api')->guard('student')->post('/api/account/updateprofile', 'AuthController@updateprofile');
+
+$http->auth('api')->guard('student')->post('/api/account/updatepassword', 'AuthController@updatepassword');
 
 $http->post('/api/contactus', 'StudentController@contactUs');
 

@@ -33,7 +33,7 @@ class Paystack
 				]
 			]),
 			CURLOPT_HTTPHEADER => [
-				"authorization: Bearer " . PAYSTACK_PUBLIC_KEY, //replace this with your own test key
+				"authorization: Bearer " . PAYSTACK_SECRET_KEY, //replace this with your own test key
 				"content-type: application/json",
 				"cache-control: no-cache"
 			],
@@ -91,7 +91,7 @@ class Paystack
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt(
 		$ch, CURLOPT_HTTPHEADER, [
-			'Authorization: Bearer ' . PAYSTACK_PUBLIC_KEY]
+			'Authorization: Bearer ' . PAYSTACK_SECRET_KEY]
 		);
 		$request = curl_exec($ch);
 		curl_close($ch);

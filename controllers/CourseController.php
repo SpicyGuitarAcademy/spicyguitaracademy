@@ -827,8 +827,6 @@ class CourseController
    {
       $featuredCourse = $req->query()->course ?? '';
 
-      // get lessons in this featured course
-
       $mdl = new CourseModel();
       $lmdl = new LessonModel();
       $courseDetails = $mdl->getFeaturedCourseLessons($featuredCourse)[0];

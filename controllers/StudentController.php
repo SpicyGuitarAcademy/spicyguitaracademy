@@ -359,9 +359,7 @@ HTML;
       $email = User::$email;
 
       $courseMdl = new CourseModel();
-      $lessonMdl = new LessonModel();
       $studentCourseMdl = new StudentCourseModel();
-      $studentLessonMdl = new StudentLessonModel();
 
       $courses = $courseMdl->getFeaturedCourses();
 
@@ -369,8 +367,11 @@ HTML;
          $ncourses = [];
          foreach ($courses as $course) {
             $id = $course['id'];
+            $courseDetails = $courseMdl->getFeaturedCourseLessons($id)[0];
+            $lessons = $courseDetails['featured_lessons'];
+            $lessonCount = $lessons == "" ? 0 : count(explode(" ", $lessons));
             $course['status'] = $studentCourseMdl->where("course_id = '$id' AND student_id = '$email' AND medium = 'FEATURED'")->exist();
-            $course['total'] = "" . count($lessonMdl->getLessonsByCourse($id)) . "" ?? "0";
+            $course['total'] = "$lessonCount";
             $ncourses[] = $course;
          }
 
@@ -394,9 +395,12 @@ HTML;
          $ncourses = [];
          foreach ($courses as $course) {
             $id = $course['id'];
+            $courseDetails = $courseMdl->getFeaturedCourseLessons($id)[0];
+            $lessons = $courseDetails['featured_lessons'];
+            $lessonCount = $lessons == "" ? 0 : count(explode(" ", $lessons));
             $course['status'] = true;
             $course['done'] = "" . count($studentLessonMdl->where("student_id = '$email' AND medium = 'FEATURED' AND course_id = '$id'")->read("*")) . "";
-            $course['total'] = "" . count($lessonMdl->getLessonsByCourse($id)) . "" ?? "0";
+            $course['total'] = "$lessonCount";
             $ncourses[] = $course;
          }
          $res->success('Featured courses', $ncourses);
