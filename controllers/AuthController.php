@@ -390,8 +390,12 @@ HTML;
       $mdl = new AuthModel();
       $result = $mdl->verifyEmailToken($email, $token);
 
-      $mdl->updateStatus($email, 'active');
-      $res->success("Verified account successfully");
+      if ($result == true) {
+         $mdl->updateStatus($email, 'active');
+         $res->success("Verified account successfully");
+      } else {
+         $res->success("Account verification failed");
+      }
    }
 
    public function resetPassword(Request $req, Response $res)
