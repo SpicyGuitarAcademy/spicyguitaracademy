@@ -61,8 +61,10 @@ class CourseController
       // NOTE: this is adding '' to description on empty field passed
       $description = (trim($req->body()->description) != '') ? trim($req->body()->description) : 'No Description';
       $order = trim($req->body()->order);
-      $featured = isset($req->body()->featured) ? true : false;
-      $featuredprice = isset($req->body()->featured) ? $req->body()->featuredprice : 0;
+      // $featured = isset($req->body()->featured) ? true : false;
+      // $featuredprice = isset($req->body()->featured) ? $req->body()->featuredprice : 0;
+      $featured = 0;
+      $featuredprice = 0;
       $thumbnail = ($req->files_exists() == true && $req->files()->thumbnail->error == 0) ? $req->files()->thumbnail : null;
 
       $data = [
@@ -199,8 +201,10 @@ class CourseController
       $course = trim($req->body()->course);
       $description = (trim($req->body()->description) != '') ? trim($req->body()->description) : 'No Description';
       $order = trim($req->body()->order);
-      $featured = isset($req->body()->featured) ? true : false;
-      $featuredprice = isset($req->body()->featured) ? $req->body()->featuredprice : 0;
+      // $featured = isset($req->body()->featured) ? true : false;
+      // $featuredprice = isset($req->body()->featured) ? $req->body()->featuredprice : 0;
+      $featured = 0;
+      $featuredprice = 0;
       $thumbnail = ($req->files_exists() == true && $req->files()->thumbnail->error == 0) ? $req->files()->thumbnail : null;
 
       $data = [
