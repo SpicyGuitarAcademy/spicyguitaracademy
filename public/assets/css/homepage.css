@@ -1,0 +1,362 @@
+/* 
+  
+  Bootstrap removes all the extra margins and paddings 
+  in every element so there would be no eed to do that.
+  
+*/
+
+* {
+  /* padding: 0px !important;
+  margin: 0px !important; */
+}
+
+:root {
+  --brown: #6B2B14;
+  --orange: #E89222;
+  --cream: #F5D1A3;
+  --grey: #ADADAD;
+  --white: #FFFFFF;
+  --text-xs: 16px;
+  --text-sm: 20px;
+  --text-md: 25.9px;
+  --text-lg: 41px;
+  --text-xl: 67px;
+}
+
+/* #region Colors */
+
+.bg-brown {
+  background-color: var(--brown);
+}
+
+.bg-orange {
+  background-color: var(--orange);
+}
+
+.bg-cream {
+  background-color: var(--cream);
+}
+
+.bg-grey {
+  background-color: var(--grey);
+}
+
+.bg-white {
+  background-color: var(--white);
+}
+
+.fg-brown {
+  color: var(--brown);
+}
+
+.fg-orange {
+  color: var(--orange);
+}
+
+.fg-cream {
+  color: var(--cream);
+}
+
+.fg-grey {
+  color: var(--grey);
+}
+
+.fg-white {
+  color: var(--white);
+}
+
+/* #endregion */
+
+/* #region TextSizes */
+
+.header-text {
+  font-family: 'Lobster', cursive;
+}
+
+.subheader-text {
+  font-family: 'Poppins', sans-serif;
+}
+
+.body-text {
+  font-family: 'Poppins', sans-serif;
+}
+
+@media (min-width: 0px) {
+  .header-text {
+    font-size: var(--text-md)
+  }
+  .subheader-text {
+    font-size: var(--text-sm)
+  }
+  .body-text {
+    font-size: var(--text-xs);
+  }
+}
+
+@media (min-width: 480px) {
+  .header-text {
+    font-size: var(--text-lg)
+  }
+  .subheader-text {
+    font-size: var(--text-md)
+  }
+  .body-text {
+    font-size: var(--text-sm);
+  }
+}
+
+@media (min-width: 768px) {
+  .header-text {
+    font-size: var(--text-xl)
+  }
+  .subheader-text {
+    font-size: var(--text-lg)
+  }
+  .body-text {
+    font-size: var(--text-md);
+  }
+}
+
+/* #endregion */
+
+/* #region Nav */
+
+@media (min-width: 0px) {
+  header {
+    height: 700px;
+  }
+  header>nav#nav {
+    height: 70px;
+    width: 100% !important;
+    background-color: var(--orange);
+  }
+  div.brand-logo>img {
+    width: 40px;
+  }
+  nav#nav>div.container {
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  nav#nav>div.container>div.brand-logo {
+    height: 100%;
+    width: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  nav#nav>div.container>div.navlist {
+    display: none;
+  }
+  /* #region show navlist if class contains show */
+  nav#nav>div.container>div.navlist.show {
+    display: block;
+    position: absolute;
+    top: 70px;
+    left: 0px;
+    width: 100%;
+    background-color: var(--orange);
+  }
+  nav#nav>div.container>div.navlist.show>ul {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    font-weight: bold;
+  }
+  nav#nav>div.container>div.navlist.show>ul>li {
+    font-size: var(--text-md);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 50%;
+  }
+  nav#nav>div.container>div.navlist.show>ul>li>a {
+    text-align: start;
+    width: 100%;
+  }
+  div.navlist.show>ul>li>a:hover,
+  div.navlist>ul>li>a:hover {
+    padding-bottom: 10px;
+    border-bottom: var(--white) solid 5px;
+  }
+  div.navlist.show>ul>li>a.active,
+  div.navlist>ul>li>a.active {
+    padding-bottom: 10px;
+    border-bottom: var(--white) solid 5px;
+  }
+  /* #endregion */
+  nav#nav>div.container>div.menu {
+    display: block;
+  }
+  nav#nav>div.container>div.menu>button>img {
+    width: 30px;
+    height: 30px;
+  }
+  nav#nav>div.container>div.menu>button {
+    background-color: transparent;
+    border: none;
+  }
+  nav#nav>div.container>div.menu>button:focus {
+    border: none;
+  }
+}
+
+@media (min-width: 480px) {
+  nav#nav>div.container>div.menu {
+    display: none;
+  }
+  /* reset */
+  nav#nav>div.container>div.navlist,
+  nav#nav>div.container>div.navlist.show {
+    position: unset;
+    display: block;
+    width: 50%;
+  }
+  nav#nav>div.container>div.navlist>ul,
+  nav#nav>div.container>div.navlist.show>ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    font-weight: bold;
+  }
+  nav#nav>div.container>div.navlist.show>ul>li {
+    font-size: var(--text-md);
+    padding-top: unset;
+    padding-bottom: unset;
+    width: unset;
+  }
+  nav#nav>div.container>div.navlist.show>ul>li>a {
+    text-align: unset;
+    width: unset;
+  }
+}
+
+@media (min-width: 768px) {
+  header {
+    height: 900px;
+  }
+  header>nav#nav {
+    height: 100px;
+  }
+  div.brand-logo>img {
+    width: 70px;
+  }
+  nav#nav>div.container>div.navlist {
+    width: 50%;
+  }
+}
+
+/* #endregion */
+
+/* #region Hero */
+
+@media (min-width: 0px) {
+  header>section#hero {
+    height: calc(700px - 70px);
+    width: 100% !important;
+    background-color: var(--brown);
+  }
+}
+
+@media (min-width: 480px) {}
+
+@media (min-width: 768px) {
+  header>section#hero {
+    height: 800px;
+    width: 100% !important;
+    background-color: var(--brown);
+  }
+}
+
+@media (min-width: 1200px) {}
+
+/* #endregion */
+
+/* #region Features */
+
+@media (min-width: 0px) {}
+
+@media (min-width: 480px) {}
+
+@media (min-width: 768px) {
+  section#features>div#subtitle {
+    height: 100px;
+    width: 100% !important;
+    background-color: var(--white);
+  }
+  section#features>div#section-one {
+    height: 600px;
+    width: 100% !important;
+    background-color: var(--white);
+  }
+  section#features>div#section-two {
+    height: 600px;
+    width: 100% !important;
+    background-color: var(--cream);
+  }
+}
+
+/* #endregion */
+
+/* #region Download */
+
+@media (min-width: 0px) {}
+
+@media (min-width: 480px) {}
+
+@media (min-width: 768px) {
+  section#download {
+    height: 300px;
+    width: 100% !important;
+    background-color: var(--brown);
+  }
+}
+
+/* #endregion */
+
+/* #region Stories */
+
+@media (min-width: 0px) {}
+
+@media (min-width: 480px) {}
+
+@media (min-width: 768px) {
+  section#stories>div#subtitle {
+    height: 100px;
+    width: 100% !important;
+    background-color: var(--white);
+  }
+  section#stories>div#contents {
+    height: 600px;
+    width: 100% !important;
+    background-color: var(--white);
+  }
+}
+
+/* #endregion */
+
+/* #region Footer */
+
+@media (min-width: 0px) {}
+
+@media (min-width: 480px) {}
+
+@media (min-width: 768px) {
+  footer#footer {
+    height: 300px;
+    width: 100% !important;
+    background-color: var(--brown);
+  }
+}
+
+/* #endregion */

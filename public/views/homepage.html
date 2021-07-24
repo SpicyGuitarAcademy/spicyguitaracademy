@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Spicy Guitar Academy</title>
+   <meta name="description"
+      content="Spicy Guitar Academy is aimed at guiding beginners to fulfill their dream of becoming professional guitar players.">
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link
+      href="https://fonts.googleapis.com/css2?family=Lobster&family=Poppins:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+      rel="stylesheet">
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+   <link rel="stylesheet" href="@assets/css/homepage.css">
+</head>
+
+<body>
+
+   <header>
+
+      <nav id="nav">
+         <div class="container">
+            <div class="brand-logo">
+               <img src="@assets/imgs/spicy_logo.png" alt="Spicy Guitar Academy">
+            </div>
+
+            <div class="navlist">
+               <ul>
+                  <li><a class="text-decoration-none body-text active" href="@/">Home</a></li>
+                  <li><a class="text-decoration-none body-text" href="@/#features">Features</a></li>
+                  <li><a class="text-decoration-none body-text" href="@/terms">Terms</a></li>
+               </ul>
+            </div>
+            <div class="menu">
+               <button onclick="toggleMenu();">
+                  <img class="show" src="@assets/imgs/public/menubar.svg" alt="menubar">
+                  <img class="hide d-none" src="@assets/imgs/public/close.svg" alt="menubar">
+               </button>
+               <script>
+                  function toggleMenu() {
+                     let navlist = document.querySelectorAll("nav#nav>div.container>div.navlist")[0];
+                     navlist.classList.contains('show') == true ? navlist.classList.remove('show') : navlist.classList.add('show');
+                     let imgshow = document.querySelectorAll("nav#nav>div.container>div.menu>button>img.show")[0];
+                     let imghide = document.querySelectorAll("nav#nav>div.container>div.menu>button>img.hide")[0];
+                     navlist.classList.contains('show') == true ? imghide.classList.remove('d-none') : imghide.classList.add('d-none');
+                     navlist.classList.contains('show') == true ? imgshow.classList.add('d-none') : imgshow.classList.remove('d-none');
+                  }
+               </script>
+            </div>
+         </div>
+      </nav>
+
+      <section id="hero">
+         <div class="container ">
+            <!-- <div class="row no-gutters">
+               <div class="col-lg-7 col-md-8 col-9">
+                  <h1 class="header-text">
+                     <span class="fg-orange">Learn Guitar With</span><br>
+                     <span class="fg-white">Spicy Guitar Academy</span>
+                  </h1>
+                  <p class="fg-orange body-text">Spicy Guitar Academy is Aimed At Guiding Beginners To Fulfill Their
+                     Dream Of
+                     Becoming Professional
+                     Guitar Player.</p>
+               </div>
+               <div class="col-lg-5 col-md-4 col-3">
+                  <div class="d-flex justify-content-center">
+                     <img src="@assets/imgs/public/mobileapp.png" alt="">
+                  </div>
+               </div>
+
+            </div> -->
+         </div>
+      </section>
+
+      <!-- <section>
+         <div class="w-100 bg-brown">
+            <div class="container ">
+               <div class="row no-gutters">
+
+                  <div class="col-lg-7">
+                     <h1 class="header-text">
+                        <span class="fg-orange">Learn Guitar With</span><br>
+                        <span class="fg-white">Spicy Guitar Academy</span>
+                     </h1>
+                     <p class="fg-orange body-text">Spicy Guitar Academy is Aimed At Guiding Beginners To Fulfill Their
+                        Dream Of
+                        Becoming Professional
+                        Guitar Player.</p>
+                  </div>
+                  <div class="col-lg-5">
+                     <div class="d-flex justify-content-center">
+                        <img src="@assets/imgs/public/mobileapp.png" alt="">
+                     </div>
+                  </div>
+
+               </div>
+            </div>
+         </div>
+      </section> -->
+
+   </header>
+
+   <section id="features">
+
+      <div id="subtitle"></div>
+
+      <div id="section-one"></div>
+
+      <div id="section-two"></div>
+
+   </section>
+
+   <section id="download">
+
+   </section>
+
+   <section id="stories">
+
+      <div id="subtitle"></div>
+
+      <div id="contents"></div>
+
+   </section>
+
+   <footer id="footer">
+
+   </footer>
+
+</body>
+
+</html>

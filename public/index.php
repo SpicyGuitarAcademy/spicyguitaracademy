@@ -20,37 +20,20 @@ $http = new Http();
 
 
 $http->group('guest');
-/* 
-   ----------------------------------------------------------------
-   Guest Routes
-   ----------------------------------------------------------------
 
-   All public routes for guest users
-
-   ----------------------------------------------------------------
-*/
-
-$http->get('/', function(Request $req, Response $res) {
-   $res->redirect('admin');
+$http->get('/', function (Request $req, Response $res) {
+   $res->send(
+      $res->render('homepage.html'), 200
+   );
 });
 
-
-
+$http->get('/terms', function (Request $req, Response $res) {
+   die('Terms and Condition');
+});
 
 $http->group('user');
-/* 
-   ----------------------------------------------------------------
-   User Routes
-   ----------------------------------------------------------------
 
-   All routes for authenticated users
-
-   ----------------------------------------------------------------
-*/
-
-$http->auth('web')->get('/dashboard', function (Request $req, Response $res) {
-   die('In');
-});
+// All routes for authenticated users
 
 $http->auth('web')->get('/logout', function (Request $req, Response $res) {
    \App\Services\Auth::session_logout( $req, $res );
