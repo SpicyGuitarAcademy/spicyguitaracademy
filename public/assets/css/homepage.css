@@ -436,15 +436,36 @@ p, a {
 
 @media (min-width: 0px) {
   section#download {
+    height: 150px;
+    width: 100% !important;
+    background-color: var(--brown);
+  }
+  section#download>div.container>div.googleplay>a>img {
+    width: 150px;
+  }
+}
+
+@media (min-width: 480px) {
+  section#download {
+    height: 150px;
+    width: 100% !important;
+    background-color: var(--brown);
+  }
+  section#download>div.container>div.googleplay>a>img {
+    width: 250px;
+  }
+}
+
+@media (min-width: 768px) {
+  section#download {
     height: 300px;
     width: 100% !important;
     background-color: var(--brown);
   }
+  section#download>div.container>div.googleplay>a>img {
+    width: 250px;
+  }
 }
-
-@media (min-width: 480px) {}
-
-@media (min-width: 768px) {}
 
 /* #endregion */
 
