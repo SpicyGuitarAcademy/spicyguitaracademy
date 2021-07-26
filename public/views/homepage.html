@@ -50,7 +50,7 @@
             </div>
             <div class="menu">
                <button onclick="toggleMenu();">
-                  <img class="show" src="@assets/imgs/public/menubar.svg" alt="menubar">
+                  <img class="show" src="@assets/imgs/public/menu.svg" alt="menubar">
                   <img class="hide d-none" src="@assets/imgs/public/close.svg" alt="menubar">
                </button>
                <script>
@@ -89,7 +89,7 @@
 
                      <div class="googleplay">
                         <a href="https://play.google.com/store/apps/details?id=com.spicyguitaracademy" target="_blank">
-                           <img src="@assets/imgs/public/playstore.png" alt="Download on Google Play">
+                           <img src="@assets/imgs/public/googleplay.png" alt="Download on Google Play">
                         </a>
                      </div>
 
@@ -158,7 +158,7 @@
                      <img src="@assets/imgs/public/lessons.png" alt="Courses in Spicy Guitar Academy">
                   </div>
                   <div class="feature-description inverse col-lg-8 col-md-7 col-8 body-text fg-grey order-md-1">
-                     <p>Hundreds Of Lessons <br>From Beginners To Advance.</p>
+                     <p>Hundreds Of Lessons <br>From Beginners To <br>Advance.</p>
                   </div>
                </div>
             </div>
@@ -169,7 +169,7 @@
                      <img src="@assets/imgs/public/tutorialaudio.png" alt="Categories in Spicy Guitar Academy">
                   </div>
                   <div class="feature-description col-lg-8 col-md-8 col-8 body-text fg-grey">
-                     <p>Backing Track With <br>Adjustable Tempo Features.</p>
+                     <p>Backing Track With <br>Adjustable Tempo <br>Features.</p>
                   </div>
                </div>
             </div>
@@ -197,7 +197,7 @@
          </h3>
          <div class="googleplay">
             <a href="https://play.google.com/store/apps/details?id=com.spicyguitaracademy" target="_blank">
-               <img src="@assets/imgs/public/playstore.png" alt="Download on Google Play">
+               <img src="@assets/imgs/public/googleplay.png" alt="Download on Google Play">
             </a>
          </div>
       </div>
@@ -206,9 +206,88 @@
 
    <section id="stories">
 
-      <div id="subtitle"></div>
+      <div id="subtitle" class="container">
+         <h2 class="subheader-text">
+            Student Stories
+         </h2>
+      </div>
 
-      <div id="contents"></div>
+      <div id="contents">
+         <div class="navbutton">
+            <button onclick="previousComment();">
+               <img src="@assets/imgs/public/leftbtn.svg">
+            </button>
+         </div>
+         <div class="container">
+
+            <div class="studentcomment">
+               <div class="avatar mb-3 mb-md-0">
+                  <img src="@assets/imgs/public/picture.png">
+                  <h3 class="avatar-student-name ml-3 font-weight-bold fg-brown subheader-text">
+                     Abiodun A.
+                  </h3>
+               </div>
+               <div class="comment">
+                  <h3 class="student-name mb-lg-5 font-weight-bold fg-brown subheader-text">
+                     Abiodun A.
+                  </h3>
+                  <p class="student-comment fg-grey body-text">
+                     Spicy Guitar Academy Is A Great Learning Hub For Any Guitarist That Want To Get On Top Of His/Her
+                     Craft. Whether You're A Beginner, Amateur Or Advance Guitar Player, The Academy Will Teach To Grow
+                     From Any Of These Categories To A More Advanced Level.
+                  </p>
+               </div>
+            </div>
+         </div>
+         <div class="navbutton">
+            <button onclick="nextComment();">
+               <img src="@assets/imgs/public/rightbtn.svg">
+            </button>
+         </div>
+      </div>
+
+
+      <script>
+         const studentComments = [
+            { name: 'Abiodun Abey', comment: "Spicy Guitar Academy Is A Great Learning Hub For Any Guitarist That Want To Get On Top Of His/Her Craft. Whether You're A Beginner, Amateur Or Advance Guitar Player, The Academy Will Teach To Grow From Any Of These Categories To A More Advanced Level.", avatar: 'picture.png' },
+            { name: 'Abiodun B.', comment: "Spicy Guitar Academy Is A Great Learning Hub For Any Guitarist That Want To Get On Top Of His/Her Craft. Whether You're A Beginner, Amateur Or Advance Guitar Player, The Academy Will Teach To Grow From Any Of These Categories To A More Advanced Level.", avatar: 'picture.png' },
+            { name: 'Abiodun C.', comment: "Spicy Guitar Academy Is A Great Learning Hub For Any Guitarist That Want To Get On Top Of His/Her Craft. Whether You're A Beginner, Amateur Or Advance Guitar Player, The Academy Will Teach To Grow From Any Of These Categories To A More Advanced Level.", avatar: 'picture.png' },
+            { name: 'Abiodun D.', comment: "Spicy Guitar Academy Is A Great Learning Hub For Any Guitarist That Want To Get On Top Of His/Her Craft. Whether You're A Beginner, Amateur Or Advance Guitar Player, The Academy Will Teach To Grow From Any Of These Categories To A More Advanced Level.", avatar: 'picture.png' }
+         ]
+
+         var commentIndex = 0;
+         var base = '{{SERVER}}/public/assets/imgs/public/';
+         showComment();
+         
+         function showComment() {
+            document.querySelectorAll('.student-comment')[0].innerText = studentComments[commentIndex].comment;
+            document.querySelectorAll('.avatar-student-name')[0].innerText = studentComments[commentIndex].name;
+            document.querySelectorAll('.student-name')[0].innerText = studentComments[commentIndex].name;
+            document.querySelectorAll('.avatar>img')[0].src = base + studentComments[commentIndex].avatar;
+         }
+
+         function nextComment() {
+            commentIndex = commentIndex == studentComments.length - 1 ? 0 : ++commentIndex;
+            const comment = document.querySelectorAll('.studentcomment')[0];
+            comment.style.opacity = "0%";
+            setTimeout(() => {
+               showComment();
+               comment.style.opacity = "100%";
+            }, 500);
+         }
+
+         function previousComment() {
+            commentIndex = commentIndex == 0 ? studentComments.length - 1 : --commentIndex;
+            const comment = document.querySelectorAll('.studentcomment')[0];
+            comment.style.opacity = "0%";
+            setTimeout(() => {
+               showComment();
+               comment.style.opacity = "100%";
+            }, 500);
+         }
+
+      </script>
+
 
    </section>
 

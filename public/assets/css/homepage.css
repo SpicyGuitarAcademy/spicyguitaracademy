@@ -14,8 +14,8 @@ p, a {
   --brown: #6B2B14;
   --orange: #E89222;
   --cream: #F5D1A3;
-  --grey: #ADADAD;
-  --white: #FFFFFF;
+  --grey: #000000B3;
+  --white: #ffffff;
   --text-xs: 16px;
   --text-sm: 20px;
   --text-md: 25.9px;
@@ -195,8 +195,9 @@ p, a {
     display: block;
   }
   nav#nav>div.container>div.menu>button>img {
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
+    color: var(--brown);
   }
   nav#nav>div.container>div.menu>button {
     background-color: transparent;
@@ -473,20 +474,121 @@ p, a {
 
 @media (min-width: 0px) {
   section#stories>div#subtitle {
-    height: 100px;
+    height: 70px;
     width: 100% !important;
     background-color: var(--white);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  div#subtitle>h2 {
+    padding: 0px;
+    margin: 0px;
+    color: var(--brown);
+    font-weight: bold;
   }
   section#stories>div#contents {
-    height: 600px;
-    width: 100% !important;
+    min-height: 450px;
     background-color: var(--white);
+    margin-left: 0px;
+    margin-right: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  section#stories>div#contents>div.container>div.studentcomment {
+    margin-top: auto;
+    margin-bottom: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  div#contents>div.navbutton {
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  div#contents>div.navbutton>button {
+    background-color: transparent;
+    border: none;
+  }
+  div#contents>div.navbutton>button:focus {
+    border: none;
+  }
+  div#contents>div.container>div.studentcomment {
+    transition-duration: 0.5s;
+    transition-timing-function: ease-in-out;
+  }
+  div#contents>div.container>div.studentcomment>div.avatar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  div#contents>div.container>div.studentcomment>div.avatar>img {
+    width: 100px;
+  }
+  div#contents>div.container>div.studentcomment>div.avatar>h3.avatar-student-name {
+    display: inline-block;
+  }
+  div#contents>div.container>div.studentcomment>div.comment>h3.student-name {
+    display: none;
+  }
+  div#contents>div.navbutton>button>img {
+    width: 15px;
   }
 }
 
-@media (min-width: 480px) {}
+@media (min-width: 480px) {
+  section#stories>div#subtitle {
+    height: 70px;
+  }
+  div#contents>div.container>div.studentcomment>div.avatar>h3.avatar-student-name {
+    display: inline-block;
+  }
+  div#contents>div.container>div.studentcomment>div.comment>h3.student-name {
+    display: none;
+  }
+}
 
-@media (min-width: 768px) {}
+@media (min-width: 768px) {
+  section#stories>div#subtitle {
+    height: 100px;
+  }
+  section#stories>div#contents {
+    min-height: 600px;
+  }
+  section#stories>div#contents>div.container>div.studentcomment {
+    margin-top: auto;
+    margin-bottom: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  div#contents>div.container>div.studentcomment>div.avatar, div#contents>div.container>div.studentcomment>div.avatar>img {
+    width: 250px;
+  }
+  div#contents>div.container>div.studentcomment>div.avatar>h3.avatar-student-name {
+    display: none;
+  }
+  div#contents>div.container>div.studentcomment>div.comment>h3.student-name {
+    display: inline-block;
+  }
+  div#contents>div.container>div.studentcomment>div.comment {
+    margin-left: 30px;
+    width: 70%;
+  }
+  div#contents>div.navbutton {
+    width: 15%;
+  }
+  div#contents>div.navbutton>button>img {
+    width: 25px;
+  }
+}
 
 /* #endregion */
 
@@ -494,7 +596,7 @@ p, a {
 
 @media (min-width: 0px) {
   footer#footer {
-    height: 300px;
+    height: 100px;
     width: 100% !important;
     background-color: var(--brown);
   }
