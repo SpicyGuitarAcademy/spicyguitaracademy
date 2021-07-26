@@ -37,7 +37,7 @@
 
       <nav id="nav">
          <div class="container">
-            <div class="brand-logo">
+            <div class="brand-logo" ondblclick="openAdmin()">
                <img src="@assets/imgs/spicy_logo.png" alt="Spicy Guitar Academy">
             </div>
 
@@ -54,6 +54,9 @@
                   <img class="hide d-none" src="@assets/imgs/public/close.svg" alt="menubar">
                </button>
                <script>
+                  function openAdmin() {
+                     location.href = "@/admin";
+                  }
                   function toggleMenu() {
                      let navlist = document.querySelectorAll("nav#nav>div.container>div.navlist")[0];
                      navlist.classList.contains('show') == true ? navlist.classList.remove('show') : navlist.classList.add('show');
@@ -258,7 +261,7 @@
          var commentIndex = 0;
          var base = '{{SERVER}}/public/assets/imgs/public/';
          showComment();
-         
+
          function showComment() {
             document.querySelectorAll('.student-comment')[0].innerText = studentComments[commentIndex].comment;
             document.querySelectorAll('.avatar-student-name')[0].innerText = studentComments[commentIndex].name;
@@ -292,7 +295,25 @@
    </section>
 
    <footer id="footer">
-
+      <div class="container fg-white body-text h-100 d-flex justify-content-between align-items-center">
+         <div>
+            &copy;&nbsp;{{date('Y')}}&nbsp;SPICY GUITAR ACADEMY
+         </div>
+         <div class="socialicons h-100 d-flex justify-content-between align-items-center">
+            <a href="https://facebook.com/oc.spicyjazzy" target="_blank">
+               <img src="@assets/imgs/public/facebook.svg">
+            </a>
+            <a href="https://twitter.com" target="_blank">
+               <img src="@assets/imgs/public/twitter.svg">
+            </a>
+            <a href="https://instagram.com/oc_spicyjazzy" target="_blank">
+               <img src="@assets/imgs/public/instagram.svg">
+            </a>
+            <a href="https://youtube.com/channel/UCPiHCDyWuEljRENTrp5w" target="_blank">
+               <img src="@assets/imgs/public/youtube.svg">
+            </a>
+         </div>
+      </div>
    </footer>
 
 </body>

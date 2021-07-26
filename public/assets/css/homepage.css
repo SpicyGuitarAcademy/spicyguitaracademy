@@ -131,6 +131,9 @@ p, a {
     background-color: var(--orange);
     z-index: 1500;
   }
+  div.brand-logo {
+    cursor: pointer;
+  }
   div.brand-logo>img {
     width: 40px;
   }
@@ -195,8 +198,8 @@ p, a {
     display: block;
   }
   nav#nav>div.container>div.menu>button>img {
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     color: var(--brown);
   }
   nav#nav>div.container>div.menu>button {
@@ -600,10 +603,30 @@ p, a {
     width: 100% !important;
     background-color: var(--brown);
   }
+  footer#footer>div.container>div.socialicons {
+    width: 50%;
+  }
+  footer#footer>div.container>div.socialicons>a>img {
+    width: 20px;
+  }
 }
 
-@media (min-width: 480px) {}
+@media (min-width: 480px) {
+  footer#footer>div.container>div.socialicons {
+    width: 20%;
+  }
+  footer#footer>div.container>div.socialicons>a>img {
+    width: 20px;
+  }
+}
 
-@media (min-width: 768px) {}
+@media (min-width: 768px) {
+  footer#footer>div.container>div.socialicons {
+    width: 20%;
+  }
+  footer#footer>div.container>div.socialicons>a>img {
+    width: 25px;
+  }
+}
 
 /* #endregion */
