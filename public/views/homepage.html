@@ -220,10 +220,19 @@
 
       <script>
          const studentComments = [
-            { name: 'Abiodun Abey', comment: "Spicy Guitar Academy Is A Great Learning Hub For Any Guitarist That Want To Get On Top Of His/Her Craft. Whether You're A Beginner, Amateur Or Advance Guitar Player, The Academy Will Teach To Grow From Any Of These Categories To A More Advanced Level.", avatar: 'picture.png' },
-            { name: 'Abiodun B.', comment: "Spicy Guitar Academy Is A Great Learning Hub For Any Guitarist That Want To Get On Top Of His/Her Craft. Whether You're A Beginner, Amateur Or Advance Guitar Player, The Academy Will Teach To Grow From Any Of These Categories To A More Advanced Level.", avatar: 'picture.png' },
-            { name: 'Abiodun C.', comment: "Spicy Guitar Academy Is A Great Learning Hub For Any Guitarist That Want To Get On Top Of His/Her Craft. Whether You're A Beginner, Amateur Or Advance Guitar Player, The Academy Will Teach To Grow From Any Of These Categories To A More Advanced Level.", avatar: 'picture.png' },
-            { name: 'Abiodun D.', comment: "Spicy Guitar Academy Is A Great Learning Hub For Any Guitarist That Want To Get On Top Of His/Her Craft. Whether You're A Beginner, Amateur Or Advance Guitar Player, The Academy Will Teach To Grow From Any Of These Categories To A More Advanced Level.", avatar: 'picture.png' }
+            { name: 'Ifiok Isaiah', comment: "Spicy Guitar Academy Took Me Back To The Fundamentals, Opened My Eyes To Guitar Foundational Basic Stuff. I Learnt Things I Couldn't Find Online. Spicy Guitar Academy Will Teach, Train and Guide You On That Amazing Journey.", avatar: 'isaiah.png', flag: '🇳🇬' },
+            { name: 'Taiwo Ayinde', comment: "Spicy Guitar Academy Is A The Best Learning Platform For You To Bring Out Your Creativity. Since I Joined This Academy, I Am Able To Bring Out The Unique Me And The Tutor Breaks Down The Lessons In Simple Ways For Understanding. Spicy Guitar Academy Is Just The Best. 💯💯", avatar: 'ayinde.png', flag: '🇳🇬' },
+            { name: 'Kalpana Dalavi', comment: "As A Complete Beginner, I Was Able To Play Nice After Free Classes. I Am Proud To Recommend Spicy Guitar Academy Because Lessons Are Simplified Even To A Music Novice. The Tutor Is An Amazing Guitar Teacher And Guitarist. I Would Like To Have Lessons Again!", avatar: 'dalavi.png', flag: '🇮🇳' },
+            { name: 'Adeyemi Oluwaseyi', comment: "Spicy Guitar Academy Has Made My Journey So Easy With Less Difficulties. The Collections Of Step By Step In-Depth Lessons Has Propelled Me From A Beginner To An Intermediate And Hoping To Gain Mastery Along The Course. I Gladly Recommend Spicy Guitar Academy", avatar: 'oluwaseyi.png', flag: '🇳🇬' },
+            { name: 'Josephine Abung', comment: "I Learnt Alot Within A Short Time After Joining Spicy Guitar Academy. Miraculously, I Was Able To Hold Barred Chords. Now I Can Play Around The Frets And I Now Sound Sweet On The Guitar. Spicy Guitar Academy Is Like A Family Where You CAn Share Your Struggles With The Tutor And He Listens And Understands You.", avatar: 'josephine.png', flag: '🇳🇬' },
+            {
+               name: 'Adeyemi Taiwo', comment: "I Have Meet Some UnProfessional, Proud And Selfish Guitar Teachers. When I Came Across Spicy Guitar Academy, My First Two Lessons Made Me  Fall In Love More With The Guitar. The Tutor(OC Omofuma) Understands The Struggle Of The Students.I See Lots Of Improvement In My Playing Since I Joined Spicy Guitar Academy.", avatar: 'taiwo.png', flag: '🇳🇬' },
+            { name: 'Sholafunmi', comment: "I Had Been Playing For Years, But Since I Joined Spicy Guitar Academy, My Playing Moved To A New Level Within Few Months The Tutor Is Very Good At Teaching And Playing Also. You Can't Regret Choosing Spicy Guitar Academy, The Knowledge You Will Acquire Is Priceless Oc Omofuma (The Tutor) Is A 'Father Of Many Nations'.", avatar: 'sholafunmi.png', flag: '🇳🇬' },
+            { name: 'KOD', comment: "Learning From Spicy Guitar Academy Made Me Learn Things I Thought I Could Never Do In Years To Come. The Teachings Had A Constructive Pattern That Made Each Topic Connect To Each Other So It’s Easy To Understand. Spicy Guitar Academy Is A Really Good Place To Learn, Try It Out. 😉", avatar: 'kod.png', flag: '🇳🇬' },
+            { name: 'Sammy Larbi Adipah', comment: "When I Joined Spicy Guitar Academy, I Acquired More Knowledge, More Secrets About Music And Guitar Ministry. The Lessons Are So Easy To understand, Unique. For Guitar Breakdown And Coaching, Spicy Guitar Academy The Best. 🔥🔥🔥🔥🎸🎸🎸🎸🎸🎸🎸🎸🎸", avatar: 'sammy.png', flag: '🇬🇭' },
+            { name: 'Abiodun Aladeokin', comment: "Spicy Guitar Academy Is The Best Place To Learn Guitar At Any Level. My Current Position Today As A Guitarist Is A Result Of The Knowledge I Acquired There. Spicy Guitar Academy Will Groom You With All Necessary Guitar Ethics To Be A Guitarist That Stands Out.", avatar: 'abiodun.png', flag: '🇳🇬' },
+            { name: 'Jeremiah Stephen', comment: "One Thing Is Certain, Am Damn Sure I Wasn't The Same Lonely Beginner I Was Back Then Coming Into Spicy Guitar Academy, My Whole Journey Changed For The Better, OC Omofuma (The Tutor) What An Extraordinary Teacher Indeed. If You Feel Stuck And Wish To Improve, Spicy Guitar Academy Got You Covered.", avatar: 'jeremiah.png', flag: '🇳🇬' },
+            { name: 'Olujobi Charles', comment: "I Want To Use This Opportunity To Appreciate Spicy Guitar Academy For Impacting My Life Musically. The Tutor Is Good At What He Does And There's No Question You Ask That They Won't Answer In Time. I Was A Novice When I Joined, But Now, I'm The Main Guitarist In My Church. As For Me And Spicy Guitar Academy, Till Death Do Us Path.", avatar: 'charles.png', flag: '🇳🇬' },
          ]
 
          var commentIndex = 0;
@@ -232,8 +241,8 @@
 
          function showComment() {
             document.querySelectorAll('.student-comment')[0].innerText = studentComments[commentIndex].comment;
-            document.querySelectorAll('.avatar-student-name')[0].innerText = studentComments[commentIndex].name;
-            document.querySelectorAll('.student-name')[0].innerText = studentComments[commentIndex].name;
+            document.querySelectorAll('.avatar-student-name')[0].innerText = `${studentComments[commentIndex].name} ${studentComments[commentIndex].flag}`;
+            document.querySelectorAll('.student-name')[0].innerText = `${studentComments[commentIndex].name} ${studentComments[commentIndex].flag}`;
             document.querySelectorAll('.avatar>img')[0].src = base + studentComments[commentIndex].avatar;
          }
 
