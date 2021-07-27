@@ -35,40 +35,8 @@
 
    <header>
 
-      <nav id="nav">
-         <div class="container">
-            <div class="brand-logo" ondblclick="openAdmin()">
-               <img src="@assets/imgs/spicy_logo.png" alt="Spicy Guitar Academy">
-            </div>
-
-            <div class="navlist">
-               <ul>
-                  <li><a class="text-decoration-none body-text active" href="@/">Home</a></li>
-                  <li><a class="text-decoration-none body-text" href="@/#features">Features</a></li>
-                  <li><a class="text-decoration-none body-text" href="@/terms">Terms</a></li>
-               </ul>
-            </div>
-            <div class="menu">
-               <button onclick="toggleMenu();">
-                  <img class="show" src="@assets/imgs/public/menu.svg" alt="menubar">
-                  <img class="hide d-none" src="@assets/imgs/public/close.svg" alt="menubar">
-               </button>
-               <script>
-                  function openAdmin() {
-                     location.href = "@/admin";
-                  }
-                  function toggleMenu() {
-                     let navlist = document.querySelectorAll("nav#nav>div.container>div.navlist")[0];
-                     navlist.classList.contains('show') == true ? navlist.classList.remove('show') : navlist.classList.add('show');
-                     let imgshow = document.querySelectorAll("nav#nav>div.container>div.menu>button>img.show")[0];
-                     let imghide = document.querySelectorAll("nav#nav>div.container>div.menu>button>img.hide")[0];
-                     navlist.classList.contains('show') == true ? imghide.classList.remove('d-none') : imghide.classList.add('d-none');
-                     navlist.classList.contains('show') == true ? imgshow.classList.add('d-none') : imgshow.classList.remove('d-none');
-                  }
-               </script>
-            </div>
-         </div>
-      </nav>
+      @php $page = 'home';
+      @import nav.html
 
       <section id="hero">
          <div class="container ">
@@ -294,27 +262,7 @@
 
    </section>
 
-   <footer id="footer">
-      <div class="container fg-white body-text h-100 d-flex justify-content-between align-items-center">
-         <div>
-            &copy;&nbsp;{{date('Y')}}&nbsp;SPICY GUITAR ACADEMY
-         </div>
-         <div class="socialicons h-100 d-flex justify-content-between align-items-center">
-            <a href="https://facebook.com/oc.spicyjazzy" target="_blank">
-               <img src="@assets/imgs/public/facebook.svg">
-            </a>
-            <a href="https://twitter.com" target="_blank">
-               <img src="@assets/imgs/public/twitter.svg">
-            </a>
-            <a href="https://instagram.com/oc_spicyjazzy" target="_blank">
-               <img src="@assets/imgs/public/instagram.svg">
-            </a>
-            <a href="https://youtube.com/channel/UCPiHCDyWuEljRENTrp5w" target="_blank">
-               <img src="@assets/imgs/public/youtube.svg">
-            </a>
-         </div>
-      </div>
-   </footer>
+   @import footer.html
 
 </body>
 

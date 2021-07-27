@@ -22,45 +22,21 @@ $http = new Http();
 $http->group('guest');
 
 $http->get('/', function (Request $req, Response $res) {
-
-   $comments = [
-      [
-         'name' => 'Abiodun A.',
-         'comment' => "Spicy Guitar Academy Is A Great Learning Hub For Any Guitarist That Want To Get On Top Of His/Her Craft. Whether You're A Beginner, Amateur Or Advance Guitar Player, The Academy Will Teach To Grow From Any Of These Categories To A More Advanced Level.",
-         'avatar' => 'picture.png'
-      ],
-      [
-         'name' => 'Abiodun B.',
-         'comment' => "Spicy Guitar Academy Is A Great Learning Hub For Any Guitarist That Want To Get On Top Of His/Her Craft. Whether You're A Beginner, Amateur Or Advance Guitar Player, The Academy Will Teach To Grow From Any Of These Categories To A More Advanced Level.",
-         'avatar' => 'picture.png'
-      ],
-      [
-         'name' => 'Abiodun C.',
-         'comment' => "Spicy Guitar Academy Is A Great Learning Hub For Any Guitarist That Want To Get On Top Of His/Her Craft. Whether You're A Beginner, Amateur Or Advance Guitar Player, The Academy Will Teach To Grow From Any Of These Categories To A More Advanced Level.",
-         'avatar' => 'picture.png'
-      ],
-      [
-         'name' => 'Abiodun D.',
-         'comment' => "Spicy Guitar Academy Is A Great Learning Hub For Any Guitarist That Want To Get On Top Of His/Her Craft. Whether You're A Beginner, Amateur Or Advance Guitar Player, The Academy Will Teach To Grow From Any Of These Categories To A More Advanced Level.",
-         'avatar' => 'picture.png'
-      ]
-   ];
    $res->send(
-      $res->render('homepage.html'),
-      // $res->render('homepage.html'
-      // , [
-      //    "studentcomments" => "Hi",
-      //    "studentcomments" => $comments,
-      //    // "studentcomments" => json_encode($comments)
-      // ]),
-      200
+      $res->render('homepage.html')
    );
-
-   // ,['stories' => json_encode($comments)]
 });
 
 $http->get('/terms', function (Request $req, Response $res) {
-   die('Terms and Condition');
+   $res->send(
+      $res->render('terms.html')
+   );
+});
+
+$http->get('/privacy', function (Request $req, Response $res) {
+   $res->send(
+      $res->render('privacy.html')
+   );
 });
 
 $http->group('user');

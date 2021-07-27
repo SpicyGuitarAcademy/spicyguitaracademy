@@ -1,0 +1,35 @@
+<nav id="nav">
+   <div class="container">
+      <div class="brand-logo" ondblclick="openAdmin()">
+         <img src="@assets/imgs/spicy_logo.png" alt="Spicy Guitar Academy">
+      </div>
+
+      <div class="navlist">
+         <ul>
+            <li><a class="text-decoration-none body-text {{$page == 'home' ? 'active' : ''}}" href="@/">Home</a></li>
+            <li><a class="text-decoration-none body-text" href="@/#features">Features</a></li>
+            <li><a class="text-decoration-none body-text {{$page == 'terms' ? 'active' : ''}}" href="@/terms">Terms</a></li>
+            <li><a class="text-decoration-none body-text {{$page == 'privacy' ? 'active' : ''}}" href="@/privacy">Privacy</a></li>
+         </ul>
+      </div>
+      <div class="menu">
+         <button onclick="toggleMenu();">
+            <img class="show" src="@assets/imgs/public/menu.svg" alt="menubar">
+            <img class="hide d-none" src="@assets/imgs/public/close.svg" alt="menubar">
+         </button>
+         <script>
+            function openAdmin() {
+               location.href = "@/admin";
+            }
+            function toggleMenu() {
+               let navlist = document.querySelectorAll("nav#nav>div.container>div.navlist")[0];
+               navlist.classList.contains('show') == true ? navlist.classList.remove('show') : navlist.classList.add('show');
+               let imgshow = document.querySelectorAll("nav#nav>div.container>div.menu>button>img.show")[0];
+               let imghide = document.querySelectorAll("nav#nav>div.container>div.menu>button>img.hide")[0];
+               navlist.classList.contains('show') == true ? imghide.classList.remove('d-none') : imghide.classList.add('d-none');
+               navlist.classList.contains('show') == true ? imgshow.classList.add('d-none') : imgshow.classList.remove('d-none');
+            }
+         </script>
+      </div>
+   </div>
+</nav>
