@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,14 +16,15 @@
    <script src="@assets/js/bootstrap.min.js"></script>
    <link rel="stylesheet" href="@assets/css/bootstrap.css">
    <!-- Font Awesome -->
-	<link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
    <!-- Custom -->
    <script src="@assets/js/main.js"></script>
    <link rel="stylesheet" href="@assets/css/main.css">
 
 </head>
+
 <body class="bg-light">
-   
+
    @vars
 
    @import admin/header.html
@@ -45,8 +47,9 @@
          </div>
       </a>
       @else
-      
-      <form action="@/admin/courses/{{$courseId}}/assignment/delete" method="post" class="float-right" onsubmit="return confirm('Do you want to delete this assignment');">
+
+      <form action="@/admin/courses/{{$courseId}}/assignment/delete" method="post" class="float-right"
+         onsubmit="return confirm('Do you want to delete this assignment');">
          @method=DELETE
          @csrftoken
          <div class="float-right mx-1">
@@ -73,12 +76,12 @@
             <nav class="nav">
                <ul type="none" class="">
                   <li>
-                     <a style="cursor: pointer;" onclick="show('#assignment');" 
-                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Assignment</a>
+                     <a style="cursor: pointer;" onclick="show('#assignment');"
+                        class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Assignment</a>
                   </li>
                   <li>
-                     <a style="cursor: pointer;" onclick="show('#answers');" 
-                     class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Answers</a>
+                     <a style="cursor: pointer;" onclick="show('#answers');"
+                        class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Answers</a>
                   </li>
                </ul>
             </nav>
@@ -88,23 +91,23 @@
          <section id="assignment" class="col-lg-8 mx-auto">
 
             @if ($assignment == [])
-               <div class="alert show text-dark text-center">
-                  There is no assignment for this course. Add an Assignment.
-               </div>
+            <div class="alert show text-dark text-center">
+               There is no assignment for this course. Add an Assignment.
+            </div>
             @else
-               <div class="my-3 card border border-primary text-dark">
+            <div class="my-3 card border border-primary text-dark">
 
-                  <div class="card-header h4">Assignment</div>
-                  
-                  <div class="card-body">
-                     <center>
-                        <video controls src="@/{{$assignment->video}}" width="100%" class="img-responsive"></video>
-                     </center>
-                     <hr>
-                     {{$assignment->note}}
-                  </div>
+               <div class="card-header h4">Assignment</div>
 
+               <div class="card-body">
+                  <center>
+                     <video controls src="@/{{$assignment->video}}" width="100%" class="img-responsive"></video>
+                  </center>
+                  <hr>
+                  {{$assignment->note}}
                </div>
+
+            </div>
             @endif
 
          </section>
@@ -113,52 +116,54 @@
          <section id="answers" class="col-lg-8 mx-auto" style="display: none;">
 
             @if ($answers == [])
-               <div class="alert show text-dark text-center">
-                  There are no answers yet.
-               </div>
+            <div class="alert show text-dark text-center">
+               There are no answers yet.
+            </div>
             @else
-            
-               @php $count = 0;
-               @foreach ($answers as $answer)
 
-                  <div class="my-3 card border border-primary text-dark">
+            @php $count = 0;
+            @foreach ($answers as $answer)
 
-                      <div class="card-header h4">
-                          {{$answer->student_id}}
-                      </div>
-                      
-                      <div class="card-body">
-                          <center>
-                            @if (is_null($answer->video))
-                                <span>No Video Answer</span>
-                            @else
-                                <video controls src="@/{{$answer->video}}" width="100%" class="img-responsive"></video>
-                            @endif
-                         </center>
-                          <br>
-                         {{$answer->note ?: 'No Note Answer'}}
-                          
-                         <hr>
-                          
-                         <form action="@/admin/assignment/answer/update-rating" method="post" enctype="multipart/form-data">
-                              @csrftoken
-                              @method=PATCH
-                              
-                              <input type="hidden" name="answerId" value="{{$answer->id}}">
-                              
-                              <span><b>Review &amp; Rating:</b></span>
-                               <!--<br>-->
-                              <textarea type='text' name='review' class='form-control text-sm border-round' value='{{$answer->review}}'></textarea> 
-                              <br>
-                              
-                              <input type='number' name='rating' max='5' min='0' class='text-sm border-none' value='{{$answer->rating}}'/>
-                              <input type="submit" value="Submit" class="btn btn-sm btn-primary">
-                          </form>
-                      </div>
-                      
-                   </div>
+            <div class="my-3 card border border-primary text-dark">
 
-               @endforeach
+               <div class="card-header h4">
+                  {{$answer->student_id}}
+               </div>
+
+               <div class="card-body">
+                  <center>
+                     @if (is_null($answer->video))
+                     <span>No Video Answer</span>
+                     @else
+                     <video controls src="@/{{$answer->video}}" width="100%" class="img-responsive"></video>
+                     @endif
+                  </center>
+                  <br>
+                  {{$answer->note ?: 'No Note Answer'}}
+
+                  <hr>
+
+                  <form action="@/admin/assignment/answer/update-rating" method="post" enctype="multipart/form-data">
+                     @csrftoken
+                     @method=PATCH
+
+                     <input type="hidden" name="answerId" value="{{$answer->id}}">
+                     <input type="hidden" name="studentId" value="{{$answer->student_id}}">
+
+                     <span><b>Review &amp; Rating:</b></span>
+                     <textarea type='text' name='review' class='form-control text-sm border-round'
+                        value='{{$answer->review}}'></textarea>
+                     <br>
+
+                     <input type='number' name='rating' max='5' min='0' class='text-sm border-none'
+                        value='{{$answer->rating}}' />
+                     <input type="submit" value="Submit" class="btn btn-sm btn-primary">
+                  </form>
+               </div>
+
+            </div>
+
+            @endforeach
 
             @endif
 
@@ -180,12 +185,13 @@
          $('#assignment').hide();
          $('#answers').hide();
       }
-      
+
       function updateAnswerRating(answerId, ratingId) {
-          fetch('/admin/assignment/answer/update-rating')
+         fetch('/admin/assignment/answer/update-rating')
       }
-      
+
    </script>
-   
+
 </body>
+
 </html>

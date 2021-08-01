@@ -10,6 +10,7 @@ use App\Services\Validate;
 use App\Services\Sanitize;
 use App\Services\Upload;
 use App\Services\User;
+use DateTime;
 use Framework\Cipher\Encrypt;
 use Models\CategoryModel;
 use Models\CourseModel;
@@ -19,6 +20,7 @@ use Models\AssignmentModel;
 class CourseController
 {
 
+   // ALTER TABLE `course_tbl` ADD `featured_order` INT(11) NULL DEFAULT '0' AFTER `featured`;
    public function index(Request $req, Response $res)
    {
       // return all resources
@@ -329,6 +331,16 @@ class CourseController
             "courses" => json_encode($courses)
          ])
       );
+   }
+
+   public function updateFeaturedCourseOrder(Request $req, Response $res)
+   {
+      $course = trim($req->body()->course);
+      $order = trim($req->body()->order);
+      $mdl = new CourseModel();
+      $mdl->updateFeaturedCourseOrder($course, $order);
+
+      $res->redirect(SERVER . '/admin/courses/featured');
    }
 
    public function newFeaturedCourses(Request $req, Response $res)
@@ -949,7 +961,7 @@ class CourseController
          $mdl = new CourseModel();
          $courseDetails = $mdl->getFeaturedCourseLessons($course)[0];
          $lessonIds = $courseDetails['featured_lessons'];
-   
+
          // convert to array
          if ($lessonIds == "") $lessonIds = [];
          else {

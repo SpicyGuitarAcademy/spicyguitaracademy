@@ -20,6 +20,12 @@ class StudentSubscriptionModel extends Model
          'status' => 'EXPIRED'
       ]);
    }
+
+   public function listStudentSubscriptionHistory($email)
+   {
+      return $this->where("student_id = '$email'")->read("*, DATE_FORMAT(sub_date,'%d/%m/%y %l:%i %p') as sub_date, DATE_FORMAT(sub_expire,'%d/%m/%y %l:%i %p') as sub_expire");
+   }
+
  
    public function getSubscribedQuickLessons($email) {
       return $this->where("student_id = '$email' AND plan = 0")->read("*");

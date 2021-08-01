@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Tutor Privileges | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+
+<body class="bg-light">
+
+   @vars
+
+   @import admin/header.html
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/tutors">
+         <i class="fa fa-group"></i>
+         Tutors
+      </a>
+      <span class="h5">&nbsp;/&nbsp;Privileges</span>
+   </nav>
+
+   <main class="container my-5">
+
+
+      <div class="w-100 font-weight-bold">
+         {{$tutorName}}
+      </div>
+      <hr class="my-2">
+
+      <div>
+         @php $privileges = json_decode($privileges);
+         @php $privilegeList = json_decode($privilegeList);
+         <form action="@/admin/tutors/privilege/update/{{$tutor}}" method="post">
+            @method=PATCH
+            @csrftoken
+
+            <div class="d-flex flex-wrap align-items-center">
+               @foreach ($privilegeList as $item)
+
+               <div class="m-3">
+                  <input class="cursor-pointer" type="checkbox" id="{{$item}}" name="privilege[]" value="{{$item}}" {{ in_array($item, $privileges) ? 'checked' : '' }}>
+                  <label class="cursor-pointer" for="{{$item}}">{{$item}}</label>
+               </div>
+
+               @endforeach
+            </div>
+
+            <br>
+            <button class="btn btn-sm btn-primary" type="submit">Update Privileges</button>
+         </form>
+      </div>
+
+      <script>
+         goToBottom();
+
+         function scrollMsgToView(id) {
+            var msg = document.querySelectorAll('#' + id)[0];
+            msg != null && msg.scrollIntoView();
+         }
+
+      </script>
+
+   </main>
+
+</body>
+
+</html>

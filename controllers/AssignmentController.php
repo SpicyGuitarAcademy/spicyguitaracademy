@@ -1,5 +1,7 @@
 <?php
+
 namespace Controllers;
+
 use Framework\Http\Http;
 use Framework\Http\Request;
 use Framework\Http\Response;
@@ -9,8 +11,10 @@ use App\Services\Sanitize;
 use App\Services\Upload;
 use App\Services\User;
 use Framework\Cipher\Encrypt;
+use Framework\Mail\Mail;
 use Models\TutorModel;
 use Models\AssignmentModel;
+use Models\NotificationsModel;
 use Models\StudentAssignmentModel;
 
 class AssignmentController
@@ -46,35 +50,46 @@ class AssignmentController
                "answers" => json_encode($answers)
             ])
          );
-
       }
    }
-   
-   public function updateRating(Request $req, Response $res) {
-       $answerId = $req->body()->answerId ?? null;
-       $rating = $req->body()->rating ?? null;
-       $review = $req->body()->review ?? null;
-       
-       if (is_null($answerId) || is_null($rating)) {
-           $res->redirect($req->referer() ?? '/admin/dashboard');
-       }
-       
-       // Sanitize
-       $s = new Sanitize();
-       $rating = $s->numbers($rating);
-       $review = $s->string($review);
-       
-       $amdl = new StudentAssignmentModel();
-       $amdl->updateRating($answerId, $review, $rating);
-       
-       $res->redirect($req->referer() ?? '/admin/dashboard');
+
+   public function updateRating(Request $req, Response $res)
+   {
+      $answerId = $req->body()->answerId ?? null;
+      $studentId = $req->body()->studentId ?? null;
+      $rating = $req->body()->rating ?? null;
+      $review = $req->body()->review ?? null;
+
+      if (is_null($answerId) || is_null($rating)) {
+         $res->redirect($req->referer() ?? '/admin/dashboard');
+      }
+
+      // Sanitize
+      $s = new Sanitize();
+      $rating = $s->numbers($rating);
+      $review = $s->string($review);
+
+      $amdl = new StudentAssignmentModel();
+      $amdl->updateRating($answerId, $review, $rating);
+
+      (new NotificationsModel())->addNotification($studentId, "Assignment Review -- $review");
+
+      $msg = <<<HTML
+            <div>
+               <h3>You have a reply</h3>
+               <p>$review</p>
+            </div>
+      HTML;
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $studentId, 'Assignment Review', 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+
+      $res->redirect($req->referer() ?? '/admin/dashboard');
    }
 
    public function new(Request $req, Response $res)
    {
       if ($req->params_exists()) {
          $id = $req->params()->id;
-         
+
          // validate
          $v = new Validate();
          $v->numbers("id", $id, "Invalid Id!")->minvalue(1);
@@ -89,7 +104,7 @@ class AssignmentController
          $id = $s->numbers($id);
 
          $res->send(
-            $res->render('admin/new-assignment.html',[
+            $res->render('admin/new-assignment.html', [
                'courseId' => $id
             ])
          );
@@ -103,8 +118,8 @@ class AssignmentController
          $courseId = $req->params()->id;
 
          $note = trim($req->body()->note);
-         $video = ($req->files_exists() == true && $req->files()->video->error == 0) ? $req->files()->video : null ;
-         
+         $video = ($req->files_exists() == true && $req->files()->video->error == 0) ? $req->files()->video : null;
+
          $data = [
             'note' => $note,
          ];
@@ -142,7 +157,7 @@ class AssignmentController
                   $res->render('admin/new-assignment.html', $data)
                );
             }
-         
+
             $path = $up->uri('video');
          }
 
@@ -153,10 +168,9 @@ class AssignmentController
          if ($added != false) {
             // then added is the last inserted id
             $res->route("/admin/courses/$courseId/assignment");
-
          } else {
             // unlink uploaded file
-            if ($video != null) unlink(STORAGE_DIR . $path) ;
+            if ($video != null) unlink(STORAGE_DIR . $path);
 
             $data['errors'] = json_encode(["Assignment was not added!"]);
             $res->send(
@@ -170,7 +184,7 @@ class AssignmentController
    {
       if ($req->params_exists()) {
          $id = $req->params()->id;
-         
+
          // validate
          $v = new Validate();
          $v->numbers("id", $id, "Invalid Id!")->minvalue(1);
@@ -188,7 +202,7 @@ class AssignmentController
          $assignment = $mdl->getAssignment($id);
 
          $res->send(
-            $res->render('admin/edit-assignment.html',[
+            $res->render('admin/edit-assignment.html', [
                'courseId' => $id,
                'assignment' => json_encode($assignment[0])
             ])
@@ -208,8 +222,8 @@ class AssignmentController
          $courseId = $req->params()->id;
 
          $note = trim($req->body()->note);
-         $video = ($req->files_exists() == true && $req->files()->video->error == 0) ? $req->files()->video : null ;
-         
+         $video = ($req->files_exists() == true && $req->files()->video->error == 0) ? $req->files()->video : null;
+
          $data = [
             'note' => $note,
          ];
@@ -249,14 +263,14 @@ class AssignmentController
                   $res->render('admin/edit-assignment.html', $data)
                );
             }
-         
+
             $path = $up->uri('video');
 
-            $added = $mdl->updateAssignmentVideo($courseId,$path);
-            if ($added == false)  unlink(STORAGE_DIR . $path) ;
+            $added = $mdl->updateAssignmentVideo($courseId, $path);
+            if ($added == false)  unlink(STORAGE_DIR . $path);
          }
 
-         
+
          $added = $mdl->updateAssignmentNote($courseId, $note);
          $res->route("/admin/courses/$courseId/assignment");
       }
@@ -274,5 +288,4 @@ class AssignmentController
          $res->route("/admin/courses/$courseId/assignment");
       }
    }
-
 }

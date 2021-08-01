@@ -1,38 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   <title>Students | Spicy Guitar Academy</title>
-   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Students | Spicy Guitar Academy</title>
+    <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
 
-   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-   
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-   
-   <!-- Jquery -->
-   <script src="@assets/js/jquery.min.js"></script>
-   <!-- Popper -->
-   <script src="@assets/js/popper.min.js"></script>
-   <!-- Bootstrap -->
-   <script src="@assets/js/bootstrap.min.js"></script>
-   <link rel="stylesheet" href="@assets/css/bootstrap.css">
-   <!-- Font Awesome -->
-	<link rel="stylesheet" href="@assets/css/fontawesome.css">
-   <!-- Custom -->
-   <script src="@assets/js/main.js"></script>
-   <link rel="stylesheet" href="@assets/css/main.css">
-   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+
+    <!-- Jquery -->
+    <script src="@assets/js/jquery.min.js"></script>
+    <!-- Popper -->
+    <script src="@assets/js/popper.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="@assets/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="@assets/css/bootstrap.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="@assets/css/fontawesome.css">
+    <!-- Custom -->
+    <script src="@assets/js/main.js"></script>
+    <link rel="stylesheet" href="@assets/css/main.css">
+
 </head>
+
 <body class="bg-light">
-   
-   @vars
 
-   @import admin/header.html
+    @vars
 
-   <nav class="container my-4 h4">
-       <div class="float-left">
+    @import admin/header.html
+
+    <nav class="container my-4 h4">
+        <div class="float-left">
             <a href="@/admin/students">
                 <i class="fa fa-graduation-cap"></i>
                 Students
@@ -43,75 +48,78 @@
             {{$_GET['student']}}
         </div>
         <div class="clearfix"></div>
-   </nav>
+    </nav>
 
-   <main class="container my-5">
+    <main class="container my-5">
 
-   @if (isset($_GET['msg']))
-   <div class="alert alert-info show text-dark text-center">
-      {{$_GET['msg']}}
-   </div>
-   @endif
+        @if (isset($_GET['msg']))
+        <div class="alert alert-info show text-dark text-center">
+            {{$_GET['msg']}}
+        </div>
+        @endif
 
-      <!--{{$comments}}-->
-      @php $comments = json_decode($comments, true);
-      @if ($comments == [])
-         <div class="alert show text-dark text-center alert-dismissible">
+        <!--{{$comments}}-->
+        @php $comments = json_decode($comments, true);
+        @if ($comments == [])
+        <div class="alert show text-dark text-center alert-dismissible">
             There are no comments from this student.
-         </div>
-      @else
-          @php $currentLesson = 0; $count = 0;
-          @foreach ($comments as $comment)
-            @if ($currentLesson != $comment['lesson_id'])
-            
-                <div type="button" data-bs-toggle="collapse" data-bs-target=".collapse_{{$comment['lesson_id']}}" aria-expanded="false">
-                    <h4>{{ $comment['lessondetails'][0]['lesson'] }}</h4>
-                    <p>{{ $comment['lessondetails'][0]['description'] }}</p>
-                </div>
-                @php $currentLesson = $comment['lesson_id'];
-                
-            @endif
-            
-            <div class="collapse collapse_{{$comment['lesson_id']}}">
-                <div class="d-flex justify-content-between text-sm">
-                    <span>{{$comment['sender']}}</span>
-                    <span>{{$comment['date_added']}}</span>
-                </div>
-                <p>{{$comment['comment']}}</p>
-                <hr class='my-1'>
+        </div>
+        @else
+        @php $currentLesson = 0; $count = 0;
+        @foreach ($comments as $comment)
+        @if ($currentLesson != $comment['lesson_id'])
+
+        <div type="button" data-bs-toggle="collapse" data-bs-target=".collapse_{{$comment['lesson_id']}}"
+            aria-expanded="false">
+            <h4>{{ $comment['lessondetails'][0]['lesson'] }}</h4>
+            <p>{{ $comment['lessondetails'][0]['description'] }}</p>
+        </div>
+        @php $currentLesson = $comment['lesson_id'];
+
+        @endif
+
+        <div class="collapse collapse_{{$comment['lesson_id']}}">
+            <div class="d-flex justify-content-between text-sm">
+                <span>{{$comment['sender']}}</span>
+                <span>{{$comment['date_added']}}</span>
             </div>
-            
-            @php $next = $count + 1;
-            @if ($currentLesson != $comments[$next]['lesson_id'])
-                
-                <div class="collapse collapse_{{$comment['lesson_id']}}">
-                    <form method='post' action='@/admin/student/comments/addcomment'>
-                        <input type='hidden' name='receiver' value="{{$_GET['student']}}">
-                        <input type='hidden' name='lessonId' value="{{$comment['lesson_id']}}">
-                        <textarea maxlength='250' class='form-control my-1' name='comment' id="comment_{{$comment['lesson_id']}}"></textarea>
-                        <button role='submit' class='btn btn-sm btn-primary float-right'>Send</button>
-                        <div class='clearfix'></div>
-                    </form>
-                </div>
-            @endif
-            
-            
-            @php $count++;
-          @endforeach
-          
-          <script>
+            <p>{{$comment['comment']}}</p>
+            <hr class='my-1'>
+        </div>
+
+        @php $next = $count + 1;
+        @if ($currentLesson != $comments[$next]['lesson_id'])
+
+        <div class="collapse collapse_{{$comment['lesson_id']}}">
+            <form method='post' action='@/admin/student/comments/addcomment'>
+                <input type='hidden' name='receiver' value="{{$_GET['student']}}">
+                <input type='hidden' name='lessonId' value="{{$comment['lesson_id']}}">
+                <textarea maxlength='250' class='form-control my-1' name='comment'
+                    id="comment_{{$comment['lesson_id']}}"></textarea>
+                <button role='submit' class='btn btn-sm btn-primary float-right'>Send</button>
+                <div class='clearfix'></div>
+            </form>
+        </div>
+        @endif
+
+
+        @php $count++;
+        @endforeach
+
+        <script>
             //   comment_{{$comment['lesson_id']}}
             //   function sendComment(id) {
                 //   comment_
             //   }
-          </script>
+        </script>
 
 
-      @endif
+        @endif
 
-   </main>
+    </main>
 
-   @import admin/footer.html
+    @import admin/footer.html
 
 </body>
+
 </html>

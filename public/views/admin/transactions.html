@@ -5,7 +5,7 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   <title>Students | Spicy Guitar Academy</title>
+   <title>Transactions | Spicy Guitar Academy</title>
    <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
 
    <!-- Jquery -->
@@ -90,7 +90,7 @@
                   </td>
 
                   <td class="align-middle">
-                     @php $list = ['1','3', '6', '12']
+                     @php $list = ['','1','3', '6', '12']
                      @php $extract = substr("{$transaction->txnref}", 4, 2); $service = "";
                      @if ($extract[0] == "N")
                         @php $service = "Paid for {$list[$extract[1]]} months subscription plan";

@@ -62,6 +62,7 @@
                         <td>#</td>
                         <th>Course Title</th>
                         <th>Price&nbsp;(N)</th>
+                        <th width='150px'>Order</th>
                         <th>Action</th>
                      </tr>
                   </thead>
@@ -69,9 +70,24 @@
                   @php $count = 1;
                   @foreach ($courses as $course)
                   <tr>
-                     <td>{{$count}}</td>
+                     <td>
+                        {{$count}}
+                     </td>
                      <td>{{$course->course}}</td>
                      <td>{{$course->featuredprice}}</td>
+                     <td class="d-flex justify-content-center align-items-center">
+                        <form action="@/admin/courses/featured/update/order" method="post">
+                           @method=PATCH
+                           @csrftoken
+                           <input type="hidden" name="course" value="{{$course->id}}">
+                           <div class="d-flex justify-content-center align-items-center">
+                              <input type="text" name="order" value="{{$course->featured_order}}" placeholder="order"
+                                 style="width: 50px;" class="form- control">
+                              <button type="submit" class="btn btn-sm btn-primary"><i
+                                    class="fa fa-arrow-right"></i></button>
+                           </div>
+                        </form>
+                     </td>
                      <td>
                         <a href="@/admin/courses/featured/edit/{{$course->id}}"
                            class="btn btn-sm btn-muted text-primary">

@@ -1,5 +1,7 @@
 <?php
+
 namespace Models;
+
 use Framework\Database\Model;
 
 class AuthModel extends Model
@@ -11,16 +13,18 @@ class AuthModel extends Model
 
    // write wonderful model codes...
 
-   public function emailExists($email) {
+   public function emailExists($email)
+   {
       return $this->where("email = '$email'")->exist();
    }
 
-   public function addAuthDetails($email, $hpassword, $role, $token = "") {
+   public function addAuthDetails($email, $hpassword, $role, $token = "")
+   {
       $add = $this->create([
          'email' => $email,
          'password' => $hpassword,
          'role' => $role,
-         'token'=>$token
+         'token' => $token
       ]);
 
       if ($add == true) {
@@ -30,31 +34,57 @@ class AuthModel extends Model
       }
    }
 
-   public function getLoginDetails(string $email) {
+   public function getAuthStatus(string $email)
+   {
       return $this->where("email = '$email'")
-      ->misc("LIMIT 1")
-      ->read("id, email, password, role, status");
+         ->misc("LIMIT 1")
+         ->read("status");
    }
 
-   public function updateStatus($email, $status) {
+   public function getAuthPrivileges(string $email)
+   {
+      return $this->where("email = '$email'")
+         ->misc("LIMIT 1")
+         ->read("privileges");
+   }
+
+   public function updatePrivileges($email, $privileges)
+   {
       return $this->where("email = '$email'")->update([
-         "status"=>$status
+         "privileges" => $privileges
       ]);
    }
-   
-   public function updatePassword($email, $password) {
+
+   public function getLoginDetails(string $email)
+   {
+      return $this->where("email = '$email'")
+         ->misc("LIMIT 1")
+         ->read("id, email, password, role, status");
+   }
+
+   public function updateStatus($email, $status)
+   {
       return $this->where("email = '$email'")->update([
-         "password"=>$password
+         "status" => $status
       ]);
    }
-   
-    public function updateToken($email, $token) {
+
+   public function updatePassword($email, $password)
+   {
       return $this->where("email = '$email'")->update([
-         "token"=>$token
+         "password" => $password
       ]);
    }
-   
-   public function verifyEmailToken($email, $token) {
+
+   public function updateToken($email, $token)
+   {
+      return $this->where("email = '$email'")->update([
+         "token" => $token
+      ]);
+   }
+
+   public function verifyEmailToken($email, $token)
+   {
       return $this->where("email = '$email' AND token = '$token'")->exist();
    }
 }

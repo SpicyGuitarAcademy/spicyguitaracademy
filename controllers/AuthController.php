@@ -358,7 +358,7 @@ class AuthController
             <p>Your verification token is $token.</p>
          </div>
 HTML;
-      $send = Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $email, "Verification Token.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $email, "Verification Token.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
 
       // get login data
       $mdl = new AuthModel();

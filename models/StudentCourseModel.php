@@ -30,6 +30,16 @@ class StudentCourseModel extends Model
 
    }
 
+   public function listStudentCourses($email)
+   {
+      return $this->where("student_id = '$email' AND medium = 'NORMAL'")->read("*, DATE_FORMAT(date_started,'%d/%m/%y %l:%i %p') as date_started");
+   }
+
+   public function listStudentFeaturedCourses($email)
+   {
+      return $this->where("student_id = '$email' AND medium = 'FEATURED'")->read("*, DATE_FORMAT(date_started,'%d/%m/%y %l:%i %p') as date_started");
+   }
+
    public function updateCourseStatus($courseId, $email, $status) {
       return $this->where("course_id = $courseId AND student_id = '$email'")->update([
          'status' => $status

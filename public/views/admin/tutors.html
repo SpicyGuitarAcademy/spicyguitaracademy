@@ -70,6 +70,7 @@
                      <td><span class="fa fa-phone"></span>&nbsp;Telephone</td>
                      <td><span class="fa fa-twitter" style="color: rgb(97, 191, 223);"></span>&nbsp;Twitter</td>
                      <td>Role</td>
+                     <td>Privileges</td>
                      <td>Experience</td>
                      <td>Added</td>
                      <td>Status</td>
@@ -104,6 +105,11 @@
 
                         <td class="align-middle">
                            {{ucfirst($tutor->role)}}
+                        </td>
+
+                        <td class="align-middle">
+                           <!-- {{ucfirst($tutor->role)}} -->
+                           <a href="@/admin/tutors/privilege/{{$tutor->email}}" class="btn btn-sm btn-primary">privileges</a>
                         </td>
 
                         <td class="align-middle">

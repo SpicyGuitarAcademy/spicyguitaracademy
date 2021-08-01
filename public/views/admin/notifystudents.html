@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Send Notifications | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+
+<body class="bg-light">
+
+   @vars
+
+   @import admin/header.html
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/students">
+         <i class="fa fa-graduation-cap"></i>
+         Students
+      </a>
+      <span class="h5">&nbsp;/&nbsp;Send Notifications</span>
+   </nav>
+
+   <main class="container my-5">
+      <form action="@/admin/students/notify/send" method="post">
+         @csrftoken
+
+         <div class="row no-gutters">
+            <div class="chats col-12 col-md-4">
+               <div class="w-100 font-weight-bold d-flex justify-content-between align-items-center px-2">
+                  <span>Students</span>
+                  <div>
+                     <label for="allstudents" class="cursor-pointer">Select All</label>
+                     <input class="cursor-pointer" onchange="allStudent(this);" type="checkbox" id="allstudents">
+                  </div>
+               </div>
+               <hr class="m-0">
+
+               <div style="overflow-y: scroll; height: 100%;">
+                  @php $students = json_decode($students);
+                  @if (count($students) == 0)
+                  <div style="height: 200px;" class="w-100 d-flex justify-content-center align-items-center">
+                     No students
+                  </div>
+                  @else
+                  @foreach ($students as $student)
+                  <div class="border-bottom p-2 d-flex justify-content-between align-items-start">
+                     <label for="{{$student->email}}" class="cursor-pointer">
+                        <span>{{$student->firstname}} {{$student->lastname}}</span> <br>
+                        <small><b>{{$student->email}}</b></small>
+                     </label>
+                     <input class="student cursor-pointer" onchange="updateViewBox();" type="checkbox" name="students[]"
+                        id="{{$student->email}}" value="{{$student->email}}">
+                  </div>
+                  @endforeach
+                  @endif
+               </div>
+            </div>
+
+            <div class="col-12 col-md-8">
+
+               <div class="w-100 font-weight-bold">
+                  Selected Students
+               </div>
+               <hr class="m-0">
+
+               <div class="my-2 p-2 rounded border d-flex flex-wrap" id="viewbox">
+               </div>
+
+               <div class="chatbox">
+
+                  <input type="text" name="subject" class="form-control my-2" placeholder="Message subject">
+                  <textarea name="message" cols="30" rows="3" style="resize: none;" placeholder="Message body"
+                     class="form-control" required></textarea>
+                  <div class="d-flex justify-content-end">
+                     <button type="submit" class="btn btn-sm btn-primary mt-2">Send</button>
+                  </div>
+               </div>
+            </div>
+
+         </div>
+     
+      </form>
+
+      <script>
+
+         function updateViewBox() {
+            var viewbox = document.getElementById('viewbox');
+            viewbox.innerHTML = "";
+            document.querySelectorAll('input[type=checkbox].student').forEach((box) => {
+               if (box.checked === true) {
+                  viewbox.innerHTML += `
+                        <div class='p-1 m-1 border rounded'>${box.value}</div>
+                     `;
+               }
+            })
+         }
+
+         function allStudent(e) {
+            document.querySelectorAll('input[type=checkbox].student').forEach((box) => {
+               box.checked = e.checked;
+            });
+            updateViewBox()
+         }
+
+         function goToTop() {
+            var chatbox = document.querySelectorAll('.chats')[0];
+            chatbox != null && chatbox.scrollIntoView();
+         }
+
+         function goToBottom() {
+            var chatbox = document.querySelectorAll('.chatbox')[0];
+            chatbox != null && chatbox.scrollIntoView();
+         }
+      </script>
+
+   </main>
+
+</body>
+
+<div style="position: sticky; right: 0; bottom: 0;" class="py-2 d-flex justify-content-end">
+   <button type="button" onclick="goToTop()" class="btn btn-primary btn-sm py-0 mx-2 mt-2"><span
+         class="fa fa-arrow-up"></span></button>
+   <button type="button" onclick="goToBottom()" class="btn btn-primary btn-sm py-0 mx-2 mt-2"><span
+         class="fa fa-arrow-down"></span></button>
+</div>
+
+</html>

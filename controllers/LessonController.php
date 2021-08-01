@@ -1,5 +1,7 @@
 <?php
+
 namespace Controllers;
+
 use Framework\Http\Http;
 use Framework\Http\Request;
 use Framework\Http\Response;
@@ -19,14 +21,14 @@ class LessonController
    public function index(Request $req, Response $res)
    {
       // return all resources
-      
+
       // get all courses by their category
       $mdl = new CourseModel();
       $beginners = $mdl->getCoursesByCategory(1);
       $amateur = $mdl->getCoursesByCategory(2);
       $intermediate = $mdl->getCoursesByCategory(3);
       $advanced = $mdl->getCoursesByCategory(4);
-      
+
       $lmdl = new LessonModel();
 
       $beginnerLessons = [];
@@ -53,7 +55,7 @@ class LessonController
          ];
       }
 
-    //   exit(json_encode($amateurLessons));
+      //   exit(json_encode($amateurLessons));
 
       $intermediateLessons = [];
       foreach ($intermediate as $course) {
@@ -87,13 +89,12 @@ class LessonController
             "advanced" => json_encode($advancedLessons)
          ])
       );
-
    }
 
    public function new(Request $req, Response $res)
    {
       $course = $req->query()->course ?? '';
-      
+
       $mdl = new CourseModel();
 
       $beginners = $mdl->getCoursesByCategory(1);
@@ -122,7 +123,7 @@ class LessonController
          $res->render('admin/free-lessons.html', [
             "lessons" => json_encode($lessons)
          ])
-      );    
+      );
    }
 
    public function create(Request $req, Response $res)
@@ -136,11 +137,11 @@ class LessonController
 
       $course = trim($req->body()->course);
       $lesson = trim($req->body()->lesson);
-      $description = (trim($req->body()->description) != '') ? trim($req->body()->description) : 'No Description' ;
+      $description = (trim($req->body()->description) != '') ? trim($req->body()->description) : 'No Description';
       $order = trim($req->body()->order);
-      $free = isset($req->body()->free) ? true : false ;
-      $thumbnail = ($req->files_exists() == true && $req->files()->thumbnail->error == 0) ? $req->files()->thumbnail : null ;
-      
+      $free = isset($req->body()->free) ? 1 : 0;
+      $thumbnail = ($req->files_exists() == true && $req->files()->thumbnail->error == 0) ? $req->files()->thumbnail : null;
+
       $data = [
          "course" => $course,
          "beginners" => json_encode($beginners ?? []),
@@ -190,7 +191,7 @@ class LessonController
                $res->render('admin/new-lesson.html', $data)
             );
          }
-      
+
          $path = $up->uri('thumbnail');
       } else {
          $path = STORAGE_PATH . 'thumbnails/default.jpg';
@@ -199,26 +200,23 @@ class LessonController
       $mdl = new LessonModel();
       $added = $mdl->addLesson($course, $lesson, $description, $order, $path, User::$fullname ?? 'No Tutor', $free);
 
-
       if ($added != false) {
 
-        //  // add the lesson to the quick lessons
-        //  $mdl = new QuickLessonModel();
-        //  $mdl->addQLesson($added);
+         //  // add the lesson to the quick lessons
+         //  $mdl = new QuickLessonModel();
+         //  $mdl->addQLesson($added);
 
          // then added is the last inserted id
          $res->route("/admin/lessons/edit/$added");
-
       } else {
          // unlink uploaded file
-         if ($thumbnail != null) unlink(STORAGE_DIR . $path) ;
+         if ($thumbnail != null) unlink(STORAGE_DIR . $path);
 
          $data['errors'] = json_encode(["Lesson was not added!"]);
          $res->send(
             $res->render('admin/new-lesson.html', $data)
          );
       }
-      
    }
 
    public function edit(Request $req, Response $res)
@@ -240,7 +238,7 @@ class LessonController
          $s = new Sanitize();
          $id = $s->numbers($id);
          $section = $s->numbers($section);
-         
+
          // courses
          $mdl = new CourseModel();
          $beginners = $mdl->getCoursesByCategory(1);
@@ -277,8 +275,8 @@ class LessonController
                   "tablature" => $lesson['tablature'] ?? '',
                   "practice" => $lesson['practice_audio'] ?? '',
                   "note" => $lesson['note'] ?? '',
-                //   "price" => $featured['price'],
-                //   "status" => $featured['status'],
+                  //   "price" => $featured['price'],
+                  //   "status" => $featured['status'],
                   "free" => $lesson['free']
                ])
             );
@@ -290,9 +288,10 @@ class LessonController
       }
    }
 
-   public function read(Request $req, Response $res) {
+   public function read(Request $req, Response $res)
+   {
       $lesson = $req->params()->lesson ?? null;
-      
+
       if (!is_null($lesson)) {
 
          $s = new Sanitize();
@@ -302,11 +301,9 @@ class LessonController
          $lesson = $mdl->getLesson($lesson)[0];
 
          $res->success('Tutorial Lesson', $lesson);
-
       } else {
          $res->error('No lesson');
       }
-
    }
 
    private function editContent($id)
@@ -324,9 +321,9 @@ class LessonController
       if ($lesson) {
          $lesson = $lesson[0];
          // get the lesson featured status
-        //  $mdl = new QuickLessonModel();
-        //  $featured = $mdl->getQLesson($id)[0];
-      
+         //  $mdl = new QuickLessonModel();
+         //  $featured = $mdl->getQLesson($id)[0];
+
          return [
             "id" => $id,
             "course" => $lesson['course'], // ?*
@@ -352,14 +349,13 @@ class LessonController
       } else {
          return [];
       }
-
    }
 
    public function updateLowVideo(Request $req, Response $res)
    {
       $id = $req->body()->id ?? '';
-      $low_video = ($req->files_exists() == true && $req->files()->low_video->error == 0) ? $req->files()->low_video : null ;
-      
+      $low_video = ($req->files_exists() == true && $req->files()->low_video->error == 0) ? $req->files()->low_video : null;
+
       if ($id == '') {
          $data = $this->editContent($id);
          $data['errors'] = json_encode(["Invalid Id!"]);
@@ -387,9 +383,9 @@ class LessonController
                $res->render("admin/edit-lesson.html", $data)
             );
          }
-      
+
          $path = $up->uri('low_video');
-         
+
          $mdl = new LessonModel();
          $added = $mdl->updateLowVideo($id, $path);
 
@@ -400,8 +396,8 @@ class LessonController
    public function updateHighVideo(Request $req, Response $res)
    {
       $id = $req->body()->id ?? '';
-      $high_video = ($req->files_exists() == true && $req->files()->high_video->error == 0) ? $req->files()->high_video : null ;
-      
+      $high_video = ($req->files_exists() == true && $req->files()->high_video->error == 0) ? $req->files()->high_video : null;
+
       if ($id == '') {
          $data = $this->editContent($id);
          $data['errors'] = json_encode(["Invalid Id!"]);
@@ -429,9 +425,9 @@ class LessonController
                $res->render("admin/edit-lesson.html", $data)
             );
          }
-      
+
          $path = $up->uri('high_video');
-         
+
          $mdl = new LessonModel();
          $added = $mdl->updateHighVideo($id, $path);
 
@@ -442,8 +438,8 @@ class LessonController
    public function updateAudio(Request $req, Response $res)
    {
       $id = $req->body()->id ?? '';
-      $audio = ($req->files_exists() == true && $req->files()->audio->error == 0) ? $req->files()->audio : null ;
-      
+      $audio = ($req->files_exists() == true && $req->files()->audio->error == 0) ? $req->files()->audio : null;
+
       if ($id == '') {
          $data = $this->editContent($id);
          $data['errors'] = json_encode(["Invalid Id!"]);
@@ -471,9 +467,9 @@ class LessonController
                $res->render("admin/edit-lesson.html", $data)
             );
          }
-      
+
          $path = $up->uri('audio');
-         
+
          $mdl = new LessonModel();
          $added = $mdl->updateAudio($id, $path);
 
@@ -484,8 +480,8 @@ class LessonController
    public function updatePractice(Request $req, Response $res)
    {
       $id = $req->body()->id ?? '';
-      $practice = ($req->files_exists() == true && $req->files()->practice->error == 0) ? $req->files()->practice : null ;
-      
+      $practice = ($req->files_exists() == true && $req->files()->practice->error == 0) ? $req->files()->practice : null;
+
       if ($id == '') {
          $data = $this->editContent($id);
          $data['errors'] = json_encode(["Practice was not uploaded!"]);
@@ -513,9 +509,9 @@ class LessonController
                $res->render("admin/edit-lesson.html", $data)
             );
          }
-      
+
          $path = $up->uri('practice');
-         
+
          $mdl = new LessonModel();
          $added = $mdl->updatePractice($id, $path);
 
@@ -526,8 +522,8 @@ class LessonController
    public function updateTablature(Request $req, Response $res)
    {
       $id = $req->body()->id ?? '';
-      $tablature = ($req->files_exists() == true && $req->files()->tablature->error == 0) ? $req->files()->tablature : null ;
-      
+      $tablature = ($req->files_exists() == true && $req->files()->tablature->error == 0) ? $req->files()->tablature : null;
+
       if ($id == '') {
          $data = $this->editContent($id);
          $data['errors'] = json_encode(["Invalid Id!"]);
@@ -556,9 +552,9 @@ class LessonController
                $res->render("admin/edit-lesson.html", $data)
             );
          }
-      
+
          $path = $up->uri('tablature');
-         
+
          $mdl = new LessonModel();
          $added = $mdl->updateTablature($id, $path);
 
@@ -570,12 +566,12 @@ class LessonController
    {
       $id = $req->body()->id ?? '';
       $note = $req->body()->note ?? '';
-      
+
       $v = new Validate();
       $v->numbers("id", $id, "Invalid Id!")->minvalue(1);
       $v->any("note", $note, "Invalid Note!")->min(1)->max(65535);
       $errors = $v->errors();
-      
+
       $s = new Sanitize();
       $note = $s->string($note);
 
@@ -598,11 +594,11 @@ class LessonController
       $id = $req->body()->id ?? '';
       $course = trim($req->body()->course);
       $lesson = trim($req->body()->lesson);
-      $free = isset($req->body()->free) ? true : false ;
-      $description = (trim($req->body()->description) != '') ? trim($req->body()->description) : 'No Description' ;
+      $free = isset($req->body()->free) ? true : false;
+      $description = (trim($req->body()->description) != '') ? trim($req->body()->description) : 'No Description';
       $order = trim($req->body()->order);
-      $thumbnail = ($req->files_exists() == true && $req->files()->thumbnail->error == 0) ? $req->files()->thumbnail : null ;
-      
+      $thumbnail = ($req->files_exists() == true && $req->files()->thumbnail->error == 0) ? $req->files()->thumbnail : null;
+
       // validate
       $v = new Validate();
       $v->numbers("id", $id, "Invalid Id!")->minvalue(1);
@@ -642,7 +638,7 @@ class LessonController
                   $res->render('admin/edit-lesson.html', $data)
                );
             }
-         
+
             $path = $up->uri('thumbnail');
             (new LessonModel)->updateThumbnail($id, $path);
          }
@@ -658,8 +654,8 @@ class LessonController
    {
       $id = $req->body()->id ?? '';
       $price = $req->body()->price ?? null;
-      $status = isset($req->body()->status) ? true : false ;
-      $free = isset($req->body()->free) ? true : false ;
+      $status = isset($req->body()->status) ? true : false;
+      $free = isset($req->body()->free) ? true : false;
 
       $v = new Validate();
       $v->numbers("id", $id, "Invalid Id!")->minvalue(1);
@@ -668,11 +664,10 @@ class LessonController
 
       $mdl = new QuickLessonModel();
       // $mdl->updateFree($free);
-      
+
       if ($free == true) {
-          
       }
-      
+
       if (($errors || is_null($price)) && $free == false) {
          $data = $this->editContent($id);
          $data['errors'] = json_encode([$errors['price']]);
@@ -706,15 +701,13 @@ class LessonController
          $s = new Sanitize();
          $id = $s->numbers($id);
          (new LessonModel)->removeLesson($id);
-         
+
          // remove from quick lesson
          // (new QuickLessonModel)
-            
+
          $res->route('/admin/lessons');
-         
       } else {
          $res->redirect($req->referer() ?? '/admin/dashboard');
       }
    }
-
 }

@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Services;
+
 use Framework\Http\Request;
 use Framework\Http\Response;
 use Framework\Database\Model;
@@ -8,6 +10,7 @@ use Framework\Cipher\Encrypt;
 use Framework\Cipher\AES;
 use Framework\Cipher\JWT;
 use App\Services\User;
+use Models\AuthModel;
 
 class Auth
 {
@@ -18,7 +21,7 @@ class Auth
 
       $username = trim($request->body()->username);
       $password = trim($request->body()->password);
-      $remember = isset($request->body()->remember) ? true : false ;
+      $remember = isset($request->body()->remember) ? true : false;
 
       if (!empty($username) && !empty($password)) {
 
@@ -49,16 +52,13 @@ class Auth
             User::$role = $credentials['role'];
 
             return true;
-
          } else {
             return false;
          }
-
       } else {
          // die("Username & Password is empty");
          return false;
       }
-
    }
 
    // web logout
@@ -76,21 +76,21 @@ class Auth
    // jwt login
    public static function jwt_login(Request $request, Response $response)
    {
-      
+
       $username = trim($request->body()->username);
       $password = trim($request->body()->password);
-      $remember = isset($request->body()->remember) ? true : false ;
+      $remember = isset($request->body()->remember) ? true : false;
 
       if (!empty($username) && !empty($password)) {
 
          if ($username == "admin" && $password == "admin") {
-      
+
             /** 
              * Create some payload data with user data we would normally retrieve from a
-               * database with users credentials. Then when the client sends back the token,
-               * this payload data is available for us to use to retrieve other data 
-               * if necessary.
-               */
+             * database with users credentials. Then when the client sends back the token,
+             * this payload data is available for us to use to retrieve other data 
+             * if necessary.
+             */
             // $credentials = [
             //    "username" => $username,
             //    "role" => "admin",
@@ -99,27 +99,31 @@ class Auth
 
             /**
              * Uncomment the following line and add an appropriate date to enable the 
-               * "not before" feature.
-               */
+             * "not before" feature.
+             */
             // $nbf = strtotime('2021-01-01 00:00:01');
 
             /**
              * Uncomment the following line and add an appropriate date and time to enable the 
-               * "expire" feature.
-               */
+             * "expire" feature.
+             */
             if ($remember) {
                $lifetime = REMEMBER_ME_LIFETIME * 60;
             } else {
                $lifetime = 60;
             }
             $exp = strtotime("$lifetime minutes");
-            
+
             // create a token
             $payloadArray = array();
             $payloadArray['username'] = $username;
             $payloadArray['role'] = "admin";
-            if (isset($nbf)) {$payloadArray['nbf'] = $nbf;}
-            if (isset($exp)) {$payloadArray['exp'] = $exp;}
+            if (isset($nbf)) {
+               $payloadArray['nbf'] = $nbf;
+            }
+            if (isset($exp)) {
+               $payloadArray['exp'] = $exp;
+            }
             $token = JWT::encode($payloadArray, SECRET_KEY);
 
             // set the users details
@@ -129,21 +133,18 @@ class Auth
             User::$token = $token;
 
             return true;
-
          } else {
             return false;
          }
-
       } else {
          // die("Username & Password is empty");
          return false;
       }
    }
-   
+
    // jwt logout
    public static function jwt_logout(Request $request, Response $response)
    {
-
    }
 
    // Middleware Auths
@@ -158,7 +159,7 @@ class Auth
       $avatar = $request->auth_credentials()->avatar ?? '';
 
       // these are credentials coming from the session
-      if ( isset($email) && !empty($email) && isset($role) && !empty($role) ) {
+      if (isset($email) && !empty($email) && isset($role) && !empty($role)) {
          // set the users details
          User::$auth = true;
          User::$email = $email;
@@ -173,7 +174,6 @@ class Auth
             $response->route("/login?redirect=" . $request->uri(), 401);
          }
       }
-      
    }
 
    // Basic Auth
@@ -192,7 +192,8 @@ class Auth
       // username = admin, password = admin
 
       // Comment this when you have your password from the database
-      $db_username = "admin"; $db_password = "admin";
+      $db_username = "admin";
+      $db_password = "admin";
 
       // You can replace this with your own authentication code
       if ($username == $db_username && $password == $db_password) {
@@ -203,13 +204,12 @@ class Auth
          $response->remove_all_headers();
          $response->auth_basic(BASIC_REALM);
       }
-
    }
 
    // // Digest Auth
    // public static function digest(Request $request, Response $response)
    // {
-      
+
    //    $username = $request->auth_credentials()->username;
 
    //    // use the username to retrieve the password (A1) from the database.
@@ -222,7 +222,7 @@ class Auth
    //    // Default
    //    // username = admin, password = admin, realm = Initframework
    //    // the database password is 330902e4da960d4a7fd25c09c41ebb8c
-      
+
    //    // Comment this when you have your password from the database
    //    $password = "330902e4da960d4a7fd25c09c41ebb8c";
 
@@ -239,14 +239,14 @@ class Auth
    //    $valid_response = md5("$A1:$nonce:$nc:$cnonce:$qop:$A2");
 
    //    if ($request_response == $valid_response) {
-         
+
    //       return true;
    //    } else {
    //       $response->remove_all_headers();
    //       $response->auth_digest(DIGEST_REALM);
    //       return false;
    //    }
-      
+
    // }
 
    // JWT Auth
@@ -262,8 +262,7 @@ class Auth
          User::$username = $payload->username ?? '';
          User::$fullname = $payload->fullname ?? '';
          User::$role = $payload->role;
-      }
-      catch(IException $ex) {
+      } catch (IException $ex) {
          $ex->handle('api');
          $response->send("Unauthorized Accesss", 401);
       }
@@ -271,11 +270,13 @@ class Auth
 
    // OAuth Auth
    public static function oauth()
-   { }
+   {
+   }
 
    // OAuth2 Auth
    public static function oauth2()
-   { }
+   {
+   }
 
    // Middleware Handlers
    // Guard
@@ -307,8 +308,10 @@ class Auth
    public static function antiCsrf(Request $request, Response $response)
    {
       try {
-         if ( $request->csrftoken() == '' 
-         || empty(@AES::decrypt(SECRET_KEY, $request->csrftoken())) == true) {
+         if (
+            $request->csrftoken() == ''
+            || empty(@AES::decrypt(SECRET_KEY, $request->csrftoken())) == true
+         ) {
             // log possible csrf attack
             // throw new IException("SECURITY: Possible CSRF attack from IP: " . $request->ip());
             // log user out
@@ -317,14 +320,28 @@ class Auth
       } catch (IException $ex) {
          $ex->handle();
       }
-      
    }
 
    // Generating CSRF Token for View
    public static function csrfToken()
    {
       // return AES::encrypt(SECRET_KEY, session_id() . time());
-      return AES::encrypt( SECRET_KEY, session_id() );
+      return AES::encrypt(SECRET_KEY, session_id());
    }
 
+   public static function guardPrivilege(Request $req, Response $res, $privilege)
+   {
+      // get user's privileges
+      $amdl = new AuthModel();
+      $privilegeStr = $amdl->getAuthPrivileges(User::$email)[0]['privileges'];
+      $privileges = explode(',', $privilegeStr);
+
+      if (!in_array($privilege, $privileges)) {
+         $res->send(
+            $res->render('framework/noprivilege.html', [
+               'back' => $req->referer()
+            ])
+         );
+      }
+   }
 }

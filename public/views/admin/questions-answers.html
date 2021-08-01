@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Questions & Answers | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+
+<body class="bg-light">
+
+   @vars
+
+   @import admin/header.html
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/students">
+         <i class="fa fa-graduation-cap"></i>
+         Students
+      </a>
+      <span class="h5">&nbsp;/&nbsp;Questions & Answers</span>
+   </nav>
+
+   <main class="container my-5">
+
+      <div class="row no-gutters">
+         <div class="chats col-12 col-md-4 vh-100">
+            <div class="w-100 font-weight-bold">
+               Chats
+            </div>
+            <hr class="m-0">
+
+            <div style="overflow-y: scroll; height: 100%;">
+               @php $group = json_decode($group);
+               @if (count($group) == 0)
+               <div style="height: 200px;" class="w-100 d-flex justify-content-center align-items-center">
+                  No questions
+               </div>
+               @else
+               @foreach ($group as $item)
+               <div class="border-bottom p-2 cursor-pointer">
+                  <a href="@/admin/student/qa?student={{$item->sender}}&lessonId={{$item->lesson_id}}">
+                     <span>{{$item->sendername}}</span> <br>
+                     <small><b>{{$item->lessondetails->lesson}}</b></small>
+                  </a>
+               </div>
+               @endforeach
+               @endif
+            </div>
+         </div>
+
+         <div class="col-12 col-md-8">
+            @php $comments = json_decode($comments);
+
+            @if (count($comments) == 0)
+            <div style="height: 500px;" class="w-100 d-flex justify-content-center align-items-center">
+               Select a chat
+            </div>
+            @else
+
+            <div class="w-100 font-weight-bold">
+               <a href="@/admin/lessons/edit/{{$lessonId}}" target="_blank">
+                  {{$lesson}}
+               </a>
+            </div>
+            <hr class="m-0">
+
+            @foreach ($comments as $message)
+
+            <div class="d-flex {{$message->sender == $user->email ? 'justify-content-end' : 'justify-content-start'}}">
+               <div class="my-2 p-2 rounded border" style="width: 80%;">
+                  <div class="d-flex justify-content-between align-items-center">
+                     <div class="d-flex justify-content-center align-items-center">
+                        <span>{{$message->sendername}}</span>
+                     </div>
+                     <div>
+                        <span>{{$message->date_added}}</span>
+                     </div>
+                  </div>
+                  <div class="my-1">
+                     {{$message->comment}}
+                  </div>
+               </div>
+            </div>
+
+            @endforeach
+
+            <div class="chatbox">
+               <form action="@/admin/student/qa/answer" method="post">
+                  @csrftoken
+                  <input type="hidden" name="lessonId" value="{{$lessonId}}">
+                  <input type="hidden" name="receiver" id="replyId" value="{{$receiver}}">
+                  <textarea name="comment" cols="30" rows="3" style="resize: none;" placeholder="write message"
+                     class="form-control" required></textarea>
+                  <div class="d-flex justify-content-end">
+                     <button type="button" onclick="location.reload()" class="btn btn-sm py-0 mx-2 mt-2"><span
+                           class="fa fa-refresh"></span></button>
+                     <button type="submit" class="btn btn-sm btn-primary mt-2">Submit</button>
+                  </div>
+               </form>
+            </div>
+
+            @endif
+
+            <script>
+               goToBottom();
+
+               function scrollMsgToView(id) {
+                  var msg = document.querySelectorAll('#' + id)[0];
+                  msg != null && msg.scrollIntoView();
+               }
+
+               function goToTop() {
+                  var chatbox = document.querySelectorAll('.chats')[0];
+                  chatbox != null && chatbox.scrollIntoView();
+               }
+
+               function goToBottom() {
+                  var chatbox = document.querySelectorAll('.chatbox')[0];
+                  chatbox != null && chatbox.scrollIntoView();
+               }
+            </script>
+
+         </div>
+
+      </div>
+
+
+   </main>
+
+</body>
+
+<div style="position: sticky; right: 0; bottom: 0;" class="py-2 d-flex justify-content-end">
+   <button type="button" onclick="goToTop()" class="btn btn-primary btn-sm py-0 mx-2 mt-2"><span
+         class="fa fa-arrow-up"></span></button>
+   <button type="button" onclick="goToBottom()" class="btn btn-primary btn-sm py-0 mx-2 mt-2"><span
+         class="fa fa-arrow-down"></span></button>
+</div>
+
+</html>

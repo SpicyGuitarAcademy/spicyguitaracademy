@@ -20,7 +20,7 @@ class CourseModel extends Model
 
     public function getFeaturedCourses()
     {
-        return $this->where("active = true AND featured = true")->read("*");
+        return $this->where("active = true AND featured = true ORDER BY featured_order ASC")->read("*");
     }
 
     public function addCourse($category, $course, $description, $thumbnail, $tutor, $order, $featured, $featuredprice)
@@ -41,6 +41,13 @@ class CourseModel extends Model
         } else {
             return false;
         }
+    }
+
+    public function updateFeaturedCourseOrder($id, $order)
+    {
+        return $this->where("id = $id")->update([
+            'featured_order' => $order
+        ]);
     }
 
     public function updateFeaturedCourseLessons($id, $lessons)

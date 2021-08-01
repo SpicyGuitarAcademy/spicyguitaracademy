@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,24 +16,26 @@
    <script src="@assets/js/bootstrap.min.js"></script>
    <link rel="stylesheet" href="@assets/css/bootstrap.css">
    <!-- Font Awesome -->
-	<link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
    <!-- Custom -->
    <script src="@assets/js/main.js"></script>
    <link rel="stylesheet" href="@assets/css/main.css">
 
 </head>
+
 <body class="bg-light">
-   
+
    @vars
 
    @import admin/header.html
 
    <main class="container my-5">
 
-      <div class="my-5 row no-gutters">
+      <div class="my-md-5 my-1 row no-gutters">
 
          <div class="col-lg-3 col-12 my-1 mx-auto card text-dark text-center">
-            <a href="@/admin/categories" class="h-100 d-flex align-content-center" style="color: inherit; text-decoration: none;">
+            <a href="@/admin/categories" class="h-100 d-flex align-content-center"
+               style="color: inherit; text-decoration: none;">
                <div class="card-body my-auto py-5 h3">
                   <i class="fa fa-bookmark"></i>
                   Categories
@@ -40,9 +43,10 @@
             </a>
             <div class="p-2 bg-primary rounded-bottom"></div>
          </div>
-         
+
          <div class="col-lg-3 col-12 my-1 mx-auto card text-dark text-center">
-            <a href="@/admin/courses" class="h-100 d-flex align-content-center" style="color: inherit; text-decoration: none;">
+            <a href="@/admin/courses" class="h-100 d-flex align-content-center"
+               style="color: inherit; text-decoration: none;">
                <div class="card-body my-auto py-5 h3">
                   <i class="fa fa-list-ul"></i>
                   Courses
@@ -52,7 +56,8 @@
          </div>
 
          <div class="col-lg-3 col-12 my-1 mx-auto card text-dark text-center">
-            <a href="@/admin/lessons" class="h-100 d-flex align-content-center" style="color: inherit; text-decoration: none;">
+            <a href="@/admin/lessons" class="h-100 d-flex align-content-center"
+               style="color: inherit; text-decoration: none;">
                <div class="card-body my-auto py-5 h3">
                   <i class="fa fa-film"></i>
                   Lessons
@@ -63,11 +68,11 @@
 
       </div>
 
-      
-      <div class="my-5 row no-gutters">
+      <div class="my-md-5 my-1 row no-gutters">
 
          <div class="col-lg-3 col-12 my-1 mx-auto card text-dark text-center">
-            <a href="@/admin/courses/featured" class="h-100 d-flex align-content-center"  style="color: inherit; text-decoration: none;">
+            <a href="@/admin/courses/featured" class="h-100 d-flex align-content-center"
+               style="color: inherit; text-decoration: none;">
                <div class="card-body my-auto py-5 h3">
                   <i class="fa fa-video-camera"></i>
                   Featured Courses
@@ -75,9 +80,10 @@
             </a>
             <div class="p-2 bg-primary rounded-bottom"></div>
          </div>
-         
+
          <div class="col-lg-3 col-12 my-1 mx-auto card text-dark text-center">
-            <a href="@/admin/lessons/free" class="h-100 d-flex align-content-center" style="color: inherit; text-decoration: none;">
+            <a href="@/admin/lessons/free" class="h-100 d-flex align-content-center"
+               style="color: inherit; text-decoration: none;">
                <div class="card-body my-auto py-5 h3">
                   <i class="fa fa-video-camera"></i>
                   Free Lessons
@@ -85,9 +91,10 @@
             </a>
             <div class="p-2 bg-primary rounded-bottom"></div>
          </div>
-         
+
          <div class="col-lg-3 col-12 my-1 mx-auto card text-dark text-center">
-            <a href="@/admin/subscriptions" class="h-100 d-flex align-content-center" style="color: inherit; text-decoration: none;">
+            <a href="@/admin/subscriptions" class="h-100 d-flex align-content-center"
+               style="color: inherit; text-decoration: none;">
                <div class="card-body my-auto py-5 h3">
                   <i class="fa fa-refresh"></i>
                   Subscriptions Plans
@@ -95,14 +102,15 @@
             </a>
             <div class="p-2 bg-primary rounded-bottom"></div>
          </div>
-         
+
       </div>
 
-      <div class="my-5 row no-gutters">
-    
+      <div class="my-md-5 my-1 row no-gutters">
+
          <div class="col-lg-3 col-12 my-1 mx-auto card text-dark text-center">
             <!--<a href="#" class="h-100 d-flex align-content-center" style="color: inherit; text-decoration: none;">-->
-             <a href="@/admin/students" class="h-100 d-flex align-content-center" style="color: inherit; text-decoration: none;"> 
+            <a href="@/admin/students" class="h-100 d-flex align-content-center"
+               style="color: inherit; text-decoration: none;">
                <div class="card-body my-auto py-5 h3">
                   <i class="fa fa-graduation-cap"></i>
                   Students
@@ -111,10 +119,11 @@
             <div class="p-2 bg-primary rounded-bottom"></div>
          </div>
 
-        @if ($user->role == 'admin')
+         @if ($user->role == 'admin')
          <div class="col-lg-3 col-12 my-1 mx-auto card text-dark text-center">
             <!-- <a href="#" class="h-100 d-flex align-content-center" style="color: inherit; text-decoration: none;"> -->
-            <a href="@/admin/tutors" class="h-100 d-flex align-content-center" style="color: inherit; text-decoration: none;">
+            <a href="@/admin/tutors" class="h-100 d-flex align-content-center"
+               style="color: inherit; text-decoration: none;">
                <div class="card-body my-auto py-5 h3">
                   <i class="fa fa-users"></i>
                   Tutors
@@ -124,7 +133,8 @@
          </div>
 
          <div class="col-lg-3 col-12 my-1 mx-auto card text-dark text-center">
-            <a href="@/admin/transactions" class="h-100 d-flex align-content-center" style="color: inherit; text-decoration: none;">
+            <a href="@/admin/transactions" class="h-100 d-flex align-content-center"
+               style="color: inherit; text-decoration: none;">
                <div class="card-body my-auto py-5 h3">
                   <i class="fa fa-dollar"></i>
                   Transactions
@@ -132,12 +142,50 @@
             </a>
             <div class="p-2 bg-primary rounded-bottom"></div>
          </div>
-        @endif
-        
+         @endif
+
       </div>
-      
+
+      <div class="my-md-5 my-1 row no-gutters">
+
+         <div class="col-lg-3 col-12 my-1 mx-auto card text-dark text-center">
+            <a href="@/admin/chatforums" class="h-100 d-flex align-content-center"
+               style="color: inherit; text-decoration: none;">
+               <div class="card-body my-auto py-5 h3">
+                  <i class="fa fa-comment"></i>
+                  Chat Forums
+               </div>
+            </a>
+            <div class="p-2 bg-primary rounded-bottom"></div>
+         </div>
+
+         <div class="col-lg-3 col-12 my-1 mx-auto card text-dark text-center">
+            <a href="@/admin/student/qa" class="h-100 d-flex align-content-center"
+               style="color: inherit; text-decoration: none;">
+               <div class="card-body my-auto py-5 h3">
+                  <i class="fa fa-question"></i>
+                  Questions & Answers
+               </div>
+            </a>
+            <div class="p-2 bg-primary rounded-bottom"></div>
+         </div>
+
+         <!-- <div class="col-lg-3 mx-auto"></div> -->
+
+         <div class="col-lg-3 col-12 my-1 mx-auto card text-dark text-center">
+            <a href="@/admin/students/notify" class="h-100 d-flex align-content-center" style="color: inherit; text-decoration: none;">
+               <div class="card-body my-auto py-5 h3">
+                  <i class="fa fa-bell-o"></i>
+                  Send Notifications
+               </div>
+            </a>
+            <div class="p-2 bg-primary rounded-bottom"></div>
+         </div>
+
+      </div>
 
    </main>
-   
+
 </body>
+
 </html>

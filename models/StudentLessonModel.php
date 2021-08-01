@@ -23,6 +23,12 @@ class StudentLessonModel extends Model
 
    }
 
+   public function listStudentLessons($email)
+   {
+      return $this->where("student_id = '$email'")->read("*, DATE_FORMAT(date_accessed,'%d/%m/%y %l:%i %p') as date_started");
+   }
+
+
    public function getNextLesson($email, $currentcourse, $currentlesson) {
       return $this->where("course_id = $currentcourse AND lesson_id > $currentlesson AND student_id = '$email' AND (status = 0 OR status = 1) AND medium = 'NORMAL'")->misc("LIMIT 1")->read("lesson_id");
    }

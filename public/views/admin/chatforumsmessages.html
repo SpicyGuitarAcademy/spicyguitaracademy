@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Chat Forums Messages | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+
+<body class="bg-light">
+
+   @vars
+
+   @import admin/header.html
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/chatforums">
+         <i class="fa fa-comment"></i>
+         Chat Forums
+      </a>
+      <span class="h5">&nbsp;/&nbsp;{{$categoryLabel}}</span>
+   </nav>
+
+   <main class="container my-5">
+
+      <div class="my-md-5 my-1">
+         @php $dmessages = json_decode($messages);
+
+         @if (count($dmessages) == 0)
+         <div style="height: 500px;" class="w-100 d-flex justify-content-center align-items-center">
+            No messages
+         </div>
+         @else
+
+         @foreach ($dmessages as $message)
+
+         <div id="msg{{$message->id}}"
+            class="d-flex {{$message->sender == $user->email ? 'justify-content-end' : 'justify-content-start'}}">
+            <div class="my-2 p-2 rounded border" style="width: 80%;">
+               @if ($message->reply_id != '0')
+               <div class="w-100 p-2 my-1 rounded border d-flex align-items-start cursor-pointer"
+                  onclick="scrollMsgToView('msg{{$message->reply_id}}');" id="repliedcomment">
+                  <span class="msg w-100">
+                     {{$message->reply_msg}}
+                  </span>
+               </div>
+               @endif
+               <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex justify-content-center align-items-center">
+                     <!--  ?? @/storage/public/avatars/default.png -->
+                     <img class="rounded-circle mx-2" src="{{$message->is_admin == true ? $message->tutor->avatar : $message->student->avatar}}"
+                        alt="{{$message->is_admin == true ? $message->tutor->name : $message->student->name}}" width="25px" height="25px">
+                     <span>{{$message->is_admin == true ? $message->tutor->name : $message->student->name}}</span>
+                  </div>
+                  <div>
+                     <span>{{$message->date_added}}</span>
+                     <button type="button" onclick="reply('{{$message->id}}');" class="btn btn-sm py-0"><span
+                           class="fa fa-reply"></span></button>
+                  </div>
+               </div>
+               <div class="px-lg-2 my-1">
+                  {{$message->comment}}
+               </div>
+            </div>
+         </div>
+
+         @endforeach
+         @endif
+
+         <div class="chatbox">
+            <div class="w-100 p-2 my-1 rounded border d-none justify-content-between align-items-start" id="repliedmsg">
+               <span class="msg w-100"></span>
+               <button type="button" onclick="cancelReply();" class="btn btn-sm py-0"><span
+                     class="fa fa-times"></span></button>
+            </div>
+            <form action="@/admin/chatforums/add" method="post">
+               @csrftoken
+               <input type="hidden" name="categoryId" value="{{$categoryId}}">
+               <input type="hidden" name="replyId" id="replyId" value="0">
+               <textarea name="comment" cols="30" rows="3" maxlength="250" style="resize: none;" placeholder="write message"
+                  class="form-control" required></textarea>
+               <div class="d-flex justify-content-end">
+                  <button type="button" onclick="location.reload()" class="btn btn-sm py-0 mx-2 mt-2"><span
+                        class="fa fa-refresh"></span></button>
+                  <button type="submit" class="btn btn-sm btn-primary mt-2">Submit</button>
+               </div>
+            </form>
+         </div>
+
+         @php $messages = json_encode($dmessages);
+         <script>
+            var chats = JSON.parse('{{$messages}}');
+            goToBottom();
+
+            function scrollMsgToView(id) {
+               var msg = document.querySelectorAll('#' + id)[0];
+               msg != null && msg.scrollIntoView();
+            }
+
+            function reply(id) {
+               var replymsg = document.querySelectorAll('#repliedmsg')[0];
+               replymsg.classList.remove('d-none');
+               replymsg.classList.add('d-flex');
+
+               document.querySelectorAll('#replyId')[0].value = id;
+               var repliedChat = chats.find((v) => v.id == id);
+
+               document.querySelectorAll('#repliedmsg>span.msg')[0].innerHTML = repliedChat.comment
+               goToBottom();
+            }
+
+            function cancelReply() {
+               var replymsg = document.querySelectorAll('#repliedmsg')[0];
+               replymsg.classList.remove('d-flex');
+               replymsg.classList.add('d-none');
+               document.querySelectorAll('#replyId')[0].value = 0;
+            }
+
+            function goToBottom() {
+               var chatbox = document.querySelectorAll('.chatbox')[0];
+               chatbox != null && chatbox.scrollIntoView();
+            }
+         </script>
+
+      </div>
+   </main>
+
+</body>
+
+<div style="position: sticky; right: 0; bottom: 0;" class="py-2 d-flex justify-content-end">
+   <button type="button" onclick="goToBottom()" class="btn btn-primary btn-sm py-0 mx-2 mt-2"><span
+         class="fa fa-arrow-down"></span></button>
+</div>
+
+</html>

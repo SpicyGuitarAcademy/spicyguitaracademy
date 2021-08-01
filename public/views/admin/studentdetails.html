@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Student Details | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+
+<body class="bg-light">
+
+   @vars
+
+   @import admin/header.html
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/students">
+         <i class="fa fa-graduation-cap"></i>
+         Students
+      </a>
+      <span class="h5">&nbsp;/&nbsp;Details</span>
+      <span class="h5">&nbsp;/&nbsp;{{ucfirst($page)}}</span>
+   </nav>
+
+   <main class="container my-5">
+
+      <div class="row no-gutters">
+         <div class="chats col-12 col-md-4 h-100">
+            <div class="w-100 font-weight-bold">
+               {{$studentname}}
+            </div>
+            <hr class="m-0">
+
+            <div>
+
+               <div class="border-bottom p-2 cursor-pointer">
+                  <a href="@/admin/student/details?student={{$student}}&page=category">
+                     <span>Category</span> <br>
+                     <small>View categories taken by student.</small>
+                  </a>
+               </div>
+               <div class="border-bottom p-2 cursor-pointer">
+                  <a href="@/admin/student/details?student={{$student}}&page=courses">
+                     <span>Courses</span> <br>
+                     <small>View courses taken by student.</small>
+                  </a>
+               </div>
+               <div class="border-bottom p-2 cursor-pointer">
+                  <a href="@/admin/student/details?student={{$student}}&page=featured">
+                     <span>Featured Courses</span> <br>
+                     <small>View featured courses bought by student.</small>
+                  </a>
+               </div>
+               <div class="border-bottom p-2 cursor-pointer">
+                  <a href="@/admin/student/details?student={{$student}}&page=lessons">
+                     <span>Lessons</span> <br>
+                     <small>View lessons taken by student.</small>
+                  </a>
+               </div>
+               <div class="border-bottom p-2 cursor-pointer">
+                  <a href="@/admin/student/details?student={{$student}}&page=subscription">
+                     <span>Subscriptions</span> <br>
+                     <small>View student's subscription history.</small>
+                  </a>
+               </div>
+               <div class="border-bottom p-2 cursor-pointer">
+                  <a href="@/admin/student/details?student={{$student}}&page=access">
+                     <span>Access</span> <br>
+                     <small>Update student's access.</small>
+                  </a>
+               </div>
+            </div>
+         </div>
+
+         <div class="col-12 col-md-8 border-left ">
+            @php $comments = json_decode($comments);
+
+            @if ($page == '')
+            <div style="height: 200px;" class="w-100 d-flex justify-content-center align-items-center">
+               Select a detail
+            </div>
+            @else
+
+            <!-- ---------------------------------------------------------------- -->
+
+            @if ($page == 'category')
+
+            @php $list = json_decode($list);
+            @foreach ($list as $item)
+            <div class="border rounded p-2 my-1 mx-2">
+               <h5>{{$item->categoryLabel}}</h5>
+
+               <div>
+                  <span>Started: {{$item->date_started}}</span> <br>
+                  <span>Status: {{$item->status == 1 ? 'Active' : 'Requesting...'}}</span>
+                  @if ($item->status == 0)
+                  <br>
+                  <form action="@/admin/student/details/category/update" method="post">
+                     @method=PATCH
+                     @csrftoken
+                     <input type="hidden" name="student" value="{{$student}}">
+                     <input type="hidden" name="categoryId" value="{{$item->category_id}}">
+                     <button class="btn btn-sm btn-primary" type="submit">Make Active</button>
+                  </form>
+                  @endif
+               </div>
+            </div>
+            @endforeach
+
+            @endif
+
+            <!-- ---------------------------------------------------------------- -->
+
+            @if ($page == 'courses')
+
+            @php $list = json_decode($list);
+            @foreach ($list as $item)
+            <div class="border rounded p-2 my-1 mx-2">
+               <h5>{{$item->courseLabel}}</h5>
+
+               <div>
+                  <span>Category: {{$item->categoryLabel}}</span> <br>
+                  <span>Started: {{$item->date_started}}</span>
+               </div>
+            </div>
+            @endforeach
+
+            @endif
+
+            <!-- ---------------------------------------------------------------- -->
+
+            @if ($page == 'featured')
+
+            @php $list = json_decode($list);
+            @foreach ($list as $item)
+            <div class="border rounded p-2 my-1 mx-2">
+               <h5>{{$item->courseLabel}}</h5>
+
+               <div>
+                  <span>Category: {{$item->categoryLabel}}</span> <br>
+                  <span>Started: {{$item->date_started}}</span>
+               </div>
+            </div>
+            @endforeach
+
+            @endif
+
+            <!-- ---------------------------------------------------------------- -->
+
+            @if ($page == 'lessons')
+
+            @php $list = json_decode($list);
+            @foreach ($list as $item)
+            <div class="border rounded p-2 my-1 mx-2">
+               <h5>{{$item->lessonLabel}}</h5>
+
+               <div>
+                  <span>Course: {{$item->courseLabel}}</span> <br>
+                  <span>Started: {{$item->date_started}}</span>
+               </div>
+            </div>
+            @endforeach
+
+            @endif
+
+            <!-- ---------------------------------------------------------------- -->
+
+            @if ($page == 'subscription')
+
+            @php $list = json_decode($list);
+            @foreach ($list as $item)
+            @php $types = ['', '1','3', '6', '12']
+            @php $extract = substr("{$item->txnref}", 4, 2); $service = "";
+            @if ($extract[0] == "N")
+            @php $service = "Paid for {$types[$extract[1]]} months subscription plan";
+            @endif
+            @if ($extract[0] == "Q")
+            @php $service = "Bought a featured course with ID: {$extract[1]}";
+            @endif
+            <div class="border rounded p-2 my-1 mx-2">
+               <h5>{{$service}}</h5>
+
+               <div>
+                  <span>Started: {{$item->sub_date}}</span> <br>
+                  <span>Expires: {{$item->sub_expire}}</span> <br>
+               </div>
+            </div>
+            @endforeach
+
+            @endif
+
+            <!-- ------------------------------------------------------------------- -->
+
+            @if ($page == 'access')
+            <div class="border rounded p-2 my-1 mx-2">
+               <form action="@/admin/student/details/access/update" method="post">
+                  @method=PATCH
+                  @csrftoken
+
+                  <input type="hidden" name="email" value="{{$student}}">
+                  @if ($authstatus == 'active')
+                  <input type="hidden" name="status" value="blocked">
+                  <button type="submit" class="btn btn-sm btn-danger">Block Account</button>
+                  @else
+                  <input type="hidden" name="status" value="active">
+                  <button type="submit" class="btn btn-sm btn-success">Activate Account</button>
+                  @endif
+               </form>
+            </div>
+            @endif
+
+            <!-- ------------------------------------------------------------------- -->
+
+            @endif
+
+            <script>
+               goToBottom();
+
+               function scrollMsgToView(id) {
+                  var msg = document.querySelectorAll('#' + id)[0];
+                  msg != null && msg.scrollIntoView();
+               }
+
+            </script>
+
+         </div>
+
+      </div>
+
+
+   </main>
+
+</body>
+
+</html>

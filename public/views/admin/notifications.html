@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Notifications | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+
+<body class="bg-light">
+
+   @vars
+
+   @import admin/header.html
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/notifications">
+         <i class="fa fa-bell-o"></i>
+         Notifications
+      </a>
+   </nav>
+
+   <main class="container my-5">
+
+      <div>
+         
+         <div>
+            @php $notifications = json_decode($notifications);
+            @if (count($notifications) == 0)
+            <div style="height: 200px;" class="w-100 d-flex justify-content-center align-items-center">
+               No notifications
+            </div>
+            @else
+            @foreach ($notifications as $notification)
+            <div class="border rounded p-2 my-2">
+               <div>
+                  @if ($notification->email == 'admin')
+                     <span class="fa fa-shield text-primary"></span>
+                  @endif
+                  <span>{{$notification->message}}</span> <br>
+                  <small><b>{{$notification->created_at}}</b></small>
+               </div>
+               @if ($notification->route !== '')
+               <br>
+               <a class="btn btn-sm btn-primary my-1" href="@/{{substr($notification->route, 1)}}">Open</a>
+               @endif
+
+               @if ($notification->status == 'unread')
+               <form action="@/admin/notification/markasread" method="post">
+                  @csrftoken
+                  @method=PATCH
+                  <input type="hidden" name="notificationId" value="{{$notification->id}}">
+                  <button class="btn btn-sm btn-primary my-1" type="submit">Mark as read</button>
+               </form>
+               @endif
+            </div>
+            @endforeach
+            @endif
+         </div>
+
+      </div>
+
+
+   </main>
+
+</body>
+
+</html>

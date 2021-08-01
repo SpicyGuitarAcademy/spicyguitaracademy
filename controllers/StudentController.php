@@ -22,10 +22,12 @@ use Models\StudentAssignmentModel;
 use Models\CourseModel;
 use Models\LessonModel;
 use Models\AssignmentModel;
+use Models\CategoryModel;
 use Models\StudentSubscriptionModel;
 use Models\QuickLessonModel;
 use Models\StudentCommentsModel;
 use Models\ForumsModel;
+use Models\NotificationsModel;
 
 class StudentController
 {
@@ -87,6 +89,10 @@ class StudentController
 
       if ($mdl->addStudent($firstname, $lastname, $email, $telephone, STORAGE_PATH . 'avatars/default.png') == true) {
 
+         (new NotificationsModel())->addNotification("admin", "A new student has joined Spicy Guitar Academy. The name is $firstname $lastname ($email).", '/admin/students');
+
+         (new NotificationsModel())->addNotification($email, "Hi, $firstname. Welcome to Spicy Guitar Academy. Spicy Guitar Academy is aimed at guiding beginners to fulfill their dreams of becoming professional guitar players. Please verify your account");
+
          $msg = <<<HTML
          <div>
             <h3>Hi, $firstname</h3>
@@ -133,6 +139,45 @@ HTML;
       }
    }
 
+   public function rechooseCategory(Request $req, Response $res)
+   {
+
+      $email = User::$email;
+      $category = $req->body()->category ?? null;
+
+      $v = new Validate();
+      $v->numbers('Category', $category, 'Invalid Category')->minvalue(1)->maxvalue(4);
+
+      if (!$v->errors()) {
+
+         $s = new Sanitize();
+         $email = $s->email($email);
+         $category = $s->numbers($category);
+
+         // add student category
+         $mdl = new StudentCategoryModel();
+
+         $mdl->addStudentCategory($email, $category, 0);
+
+         $categoryLabel = (new CategoryModel())->getCategoryById($category)[0]['category'];
+
+         (new NotificationsModel())->addNotification("admin", "A Spicy Guitar Academy student ($email) wants to reselect another category ($categoryLabel).", "/admin/student/details?student=$email&page=category");
+
+         (new NotificationsModel())->addNotification($email, "Your request to change category is being reviewed. This might take some awhile.", "");
+
+         $msg = <<<HTML
+         <div>
+            <p>A Spicy Guitar Academy student ($email) wants to reselect another category ($categoryLabel)</p>
+         </div>
+HTML;
+         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", 'info@spicyguitaracademy.com', "Re-select Category.", $email);
+
+         $res->success('Your request to change category is being reviewed. This might take some awhile.');
+      } else {
+         $res->error('Student category not selected', $v->errors());
+      }
+   }
+
    public function activateNormalCourse(Request $req, Response $res)
    {
       $email = User::$email;
@@ -165,8 +210,19 @@ HTML;
          $sAMdl = new StudentAssignmentModel();
          $assignment = $sAMdl->getAvailableAssignment($email, $previousCourseId)[0] ?? null;
 
+         // if the assignment have been taken but didn't pass the minimum score
+         if (!is_null($assignment) && $assignment['status'] == '0' && (intval(intval($assignment['rating']) > 0 && $assignment['rating']) < 3)) {
+            $res->error('Your answer did not meet the minimum requirement. Please retake the course and take the assignment again.');
+         }
+
+         // if the assignment have not been taken
          if (!is_null($assignment) && $assignment['status'] == '0') {
             $res->error('Complete assignment for the previous course');
+         }
+
+         // if the assignment have been taken but is still awaiting review
+         if (!is_null($assignment) && $assignment['status'] == '1' && $assignment['rating'] == '0') {
+            $res->error('The tutors are still reviewing your answer. This might take a while.');
          }
 
          if ($studentCourseMdl->where("medium = 'NORMAL' AND student_id = '$email' AND course_id = '$courseId'")->exist() == false) {
@@ -176,10 +232,12 @@ HTML;
             $res->error('Course already activated');
          }
       } else {
+         // activate the course if it doesn't exist before
          if ($studentCourseMdl->where("medium = 'NORMAL' AND student_id = '$email' AND course_id = '$courseId'")->exist() == false) {
             $this->makeCourseActive($courseId, $email);
             $res->success('Course activated');
          } else {
+            // the course is already activated
             $res->error('Course already activated');
          }
       }
@@ -434,9 +492,9 @@ HTML;
 
          $countCoursesTotal = count($courseMdl->where("category = '$categoryId' AND active = 1")->read("*") ?? []);
 
-         $countLessonsDone = count($studentLessonMdl->custom("SELECT * FROM student_lesson_tbl WHERE course_id IN (SELECT course_id FROM student_course_tbl WHERE student_id = '$email' AND category_id = '$categoryId')", true) ?? []);
+         $countLessonsDone = count($studentLessonMdl->custom("SELECT * FROM student_lesson_tbl WHERE course_id IN (SELECT course_id FROM student_course_tbl WHERE student_id = '$email' AND category_id = '$categoryId') AND student_id = '$email'", true) ?? []);
 
-         $countLessonsTotal = count($lessonMdl->custom("SELECT * FROM lesson_tbl WHERE course IN (SELECT id FROM course_tbl WHERE category = '$categoryId' AND active = 1)", true) ?? []);
+         $countLessonsTotal = count($lessonMdl->custom("SELECT * FROM lesson_tbl WHERE course IN (SELECT id FROM course_tbl WHERE category = '$categoryId' AND active = 1) AND active = 1", true) ?? []);
 
          $res->success('Student statistics', [
             "takenCourses" => $countCoursesDone,
@@ -572,6 +630,7 @@ HTML;
       $email = User::$email;
       $assignment = $req->body()->assignment ?? null;
       $answerId = $req->body()->answerId ?? null;
+      $courseId = $req->body()->courseId ?? null;
       $note = $req->body()->note ?? null;
       $video = $req->files()->video ?? null;
 
@@ -586,6 +645,16 @@ HTML;
       if ($errors) {
          $res->error('Invalid Assignment');
       }
+
+      (new NotificationsModel())->addNotification('admin', "A student answered an assignment question.", "/admin/courses/$courseId/assignment");
+
+      $msg = <<<HTML
+      <div>
+         <h3>Hello Admin</h3>
+         <p>A student just answered an assignment question.</p>
+      </div>
+HTML;
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", 'Assignment Answer', 'info@spicyguitaracademy.com:Spicy Guitar Academy');
 
       if (!is_null($video)) {
          // if video is sent, upload video and update the database
@@ -602,9 +671,6 @@ HTML;
          $mdl = new StudentAssignmentModel();
          $mdl->answerAsVideo($email, $assignment, $answerId, $path);
 
-         // notify the tutor
-         // send a mail to the tutor
-         // add to notification table
          $res->success('Answer is submitted', ['path' => $path]);
       } elseif (!is_null($note)) {
 
@@ -613,10 +679,6 @@ HTML;
 
          $mdl = new StudentAssignmentModel();
          $mdl->answerAsNote($email, $assignment, $answerId, $note);
-
-         // notify the tutor
-         // send a mail to the tutor
-         // add to notification table
 
          $res->success('Answer is submitted');
       } else {
@@ -724,6 +786,17 @@ HTML;
       $commentMdl = new StudentCommentsModel();
       $response = $commentMdl->addComment($lessonId, $comment, $email, $receiver);
 
+      // notify the receiver
+      (new NotificationsModel())->addNotification($receiver, "You have a reply -- $comment", "/admin/student/qa?student=$email&lessonId=$lessonId");
+
+      $msg = <<<HTML
+      <div>
+         <h3>You have a reply</h3>
+         <p>$comment</p>
+      </div>
+HTML;
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, 'You have a reply', 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+
       if ($response == true) {
          $res->success('Added successfully');
       } else {
@@ -764,6 +837,54 @@ HTML;
       }
    }
 
+   public function addForumMessageAsAdmin(Request $req, Response $res)
+   {
+      $email = User::$email;
+      $comment = $req->body()->comment ?? '';
+      $categoryId = $req->body()->categoryId ?? '';
+      $replyId = $req->body()->replyId ?? null;
+
+      $s = new Sanitize();
+      $comment = $s->string($comment);
+
+      if ($categoryId == null) {
+         $res->redirect(SERVER . '/admin/chatforums/' . $categoryId);
+      }
+
+      if ($replyId == null) {
+         $res->redirect(SERVER . '/admin/chatforums/' . $categoryId);
+      }
+
+      if ($comment == '') {
+         $res->redirect(SERVER . '/admin/chatforums/' . $categoryId);
+      }
+
+      $commentMdl = new ForumsModel();
+      $commentMdl->addMessage($categoryId, $comment, $email, $replyId, true);
+
+      // if reply id, send notification to sender
+      if ($replyId !== '0') {
+         $replyMsg = $commentMdl->getMessage($replyId)[0];
+
+
+         if ($replyMsg['is_admin'] == '1') {
+            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply -- $comment", "/admin/chatforums/$categoryId");
+         } else {
+            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply -- $comment", "/forums");
+         }
+
+         $msg = <<<HTML
+      <div>
+         <h3>You have a reply</h3>
+         <p>$comment</p>
+      </div>
+HTML;
+         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], 'You have a reply', 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+      }
+      
+      $res->redirect(SERVER . '/admin/chatforums/' . $categoryId);
+   }
+
    public function addForumMessage(Request $req, Response $res)
    {
       $email = User::$email;
@@ -788,6 +909,25 @@ HTML;
 
       $commentMdl = new ForumsModel();
       $response = $commentMdl->addMessage($categoryId, $comment, $email, $replyId);
+
+      // if reply id, send notification to sender
+      if ($replyId !== null) {
+         $replyMsg = $commentMdl->getMessage($replyId)[0];
+
+         if ($replyMsg['is_admin'] == '1') {
+            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply -- $comment", "/admin/chatforums/$categoryId");
+         } else {
+            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply -- $comment", "/forums");
+         }
+
+         $msg = <<<HTML
+      <div>
+         <h3>You have a reply</h3>
+         <p>$comment</p>
+      </div>
+HTML;
+         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], 'You have a reply', 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+      }
 
       if ($response == true) {
          $res->success('Added successfully');

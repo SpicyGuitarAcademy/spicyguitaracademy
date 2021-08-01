@@ -16,6 +16,11 @@ class CategoryModel extends Model
       return $this->read('*');
    }
 
+   public function getCategoryById($id)
+   {
+      return $this->where("id = $id")->read('category');
+   }
+
    public function addCategory($category, $thumbnail)
    {
       return $this->create([
