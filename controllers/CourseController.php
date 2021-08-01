@@ -20,7 +20,6 @@ use Models\AssignmentModel;
 class CourseController
 {
 
-   // ALTER TABLE `course_tbl` ADD `featured_order` INT(11) NULL DEFAULT '0' AFTER `featured`;
    public function index(Request $req, Response $res)
    {
       // return all resources

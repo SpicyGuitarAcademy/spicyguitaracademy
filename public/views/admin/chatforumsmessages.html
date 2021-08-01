@@ -64,7 +64,7 @@
                <div class="d-flex justify-content-between align-items-center">
                   <div class="d-flex justify-content-center align-items-center">
                      <!--  ?? @/storage/public/avatars/default.png -->
-                     <img class="rounded-circle mx-2" src="@/{{$message->is_admin == true ? $message->tutor->avatar : $message->student->avatar}}"
+                     <img class="rounded-circle mx-2" src="@/{{$message->is_admin == true ? $message->tutor->avatar ?? '@/storage/public/avatars/default.png' : $message->student->avatar ?? '@/storage/public/avatars/default.png'}}"
                         alt="{{$message->is_admin == true ? $message->tutor->name : $message->student->name}}" width="25px" height="25px">
                      <span>{{$message->is_admin == true ? $message->tutor->name : $message->student->name}}</span>
                   </div>
