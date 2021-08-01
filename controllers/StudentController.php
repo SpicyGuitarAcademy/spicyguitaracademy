@@ -892,6 +892,9 @@ HTML;
       $categoryId = $req->body()->categoryId ?? '';
       $replyId = $req->body()->replyId ?? null;
 
+      $s = new Sanitize();
+      $comment = $s->string($comment);
+
       if ($categoryId == null) {
          $res->error('Invalid category id');
          exit;
