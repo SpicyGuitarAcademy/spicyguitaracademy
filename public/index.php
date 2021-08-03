@@ -197,56 +197,56 @@ $http->auth('web')->guard('admin', 'tutor')->privilege('FEATURED COURSES')->csrf
 $http->auth('web')->guard('admin', 'tutor')->privilege('FREE LESSONS')->get('/admin/lessons/free', 'LessonController@free');
 
 // students
-$http->auth('web')->guard('admin', 'tutors')->privilege('STUDENTS')->get('/admin/students', 'TutorController@students');
+$http->auth('web')->guard('admin', 'tutor')->privilege('STUDENTS')->get('/admin/students', 'TutorController@students');
 
-$http->auth('web')->guard('admin', 'tutors')->privilege('STUDENTS')->get('/admin/student/details', 'TutorController@studentDetails');
+$http->auth('web')->guard('admin', 'tutor')->privilege('STUDENTS')->get('/admin/student/details', 'TutorController@studentDetails');
 
-$http->auth('web')->guard('admin', 'tutors')->privilege('STUDENTS')->csrf()->patch('/admin/student/details/category/update', 'TutorController@makeCategoryActive');
+$http->auth('web')->guard('admin', 'tutor')->privilege('STUDENTS')->csrf()->patch('/admin/student/details/category/update', 'TutorController@makeCategoryActive');
 
-$http->auth('web')->guard('admin', 'tutors')->privilege('STUDENTS')->csrf()->patch('/admin/student/details/access/update', 'TutorController@updateStudentStatus');
+$http->auth('web')->guard('admin', 'tutor')->privilege('STUDENTS')->csrf()->patch('/admin/student/details/access/update', 'TutorController@updateStudentStatus');
 
 // chat forums
-$http->auth('web')->guard('admin', 'tutors')->privilege('CHAT FORUMS')->get('/admin/chatforums', 'TutorController@loadForums');
+$http->auth('web')->guard('admin', 'tutor')->privilege('CHAT FORUMS')->get('/admin/chatforums', 'TutorController@loadForums');
 
-$http->auth('web')->guard('admin', 'tutors')->privilege('CHAT FORUMS')->get('/admin/chatforums/{category}', 'TutorController@loadForumMessages');
+$http->auth('web')->guard('admin', 'tutor')->privilege('CHAT FORUMS')->get('/admin/chatforums/{category}', 'TutorController@loadForumMessages');
 
-$http->auth('web')->guard('admin', 'tutors')->privilege('CHAT FORUMS')->csrf()->post('/admin/chatforums/add', 'StudentController@addForumMessageAsAdmin');
+$http->auth('web')->guard('admin', 'tutor')->privilege('CHAT FORUMS')->csrf()->post('/admin/chatforums/add', 'StudentController@addForumMessageAsAdmin');
 
 // Questions and Answers
-$http->auth('web')->guard('admin', 'tutors')->privilege('QUESTIONS & ANSWERS')->get('/admin/student/qa', 'TutorController@loadQuestionsAnswers');
+$http->auth('web')->guard('admin', 'tutor')->privilege('QUESTIONS & ANSWERS')->get('/admin/student/qa', 'TutorController@loadQuestionsAnswers');
 
-$http->auth('web')->guard('admin', 'tutors')->privilege('QUESTIONS & ANSWERS')->csrf()->post('/admin/student/qa/answer', 'TutorController@addLessonComment');
+$http->auth('web')->guard('admin', 'tutor')->privilege('QUESTIONS & ANSWERS')->csrf()->post('/admin/student/qa/answer', 'TutorController@addLessonComment');
 
 // tutors
-$http->auth('web')->guard('admin', 'tutors')->privilege('TUTORS')->get('/admin/tutors', 'TutorController@index');
+$http->auth('web')->guard('admin', 'tutor')->privilege('TUTORS')->get('/admin/tutors', 'TutorController@index');
 
-$http->auth('web')->guard('admin', 'tutors')->privilege('TUTORS')->get('/admin/tutors/new', 'TutorController@new');
+$http->auth('web')->guard('admin', 'tutor')->privilege('TUTORS')->get('/admin/tutors/new', 'TutorController@new');
 
-$http->auth('web')->guard('admin', 'tutors')->privilege('TUTORS')->get('/admin/tutors/privilege/{tutor}', 'TutorController@privilege');
+$http->auth('web')->guard('admin', 'tutor')->privilege('TUTORS')->get('/admin/tutors/privilege/{tutor}', 'TutorController@privilege');
 
-$http->auth('web')->guard('admin', 'tutors')->privilege('TUTORS')->csrf()->patch('/admin/tutors/privilege/update/{tutor}', 'TutorController@updatePrivilege');
+$http->auth('web')->guard('admin', 'tutor')->privilege('TUTORS')->csrf()->patch('/admin/tutors/privilege/update/{tutor}', 'TutorController@updatePrivilege');
 
-$http->auth('web')->guard('admin', 'tutors')->privilege('TUTORS')->csrf()->post('/admin/tutors/add', 'TutorController@create');
+$http->auth('web')->guard('admin', 'tutor')->privilege('TUTORS')->csrf()->post('/admin/tutors/add', 'TutorController@create');
 
-$http->auth('web')->guard('admin', 'tutors')->privilege('TUTORS')->csrf()->patch('/admin/tutors/update-status', 'TutorController@updateStatus');
+$http->auth('web')->guard('admin', 'tutor')->privilege('TUTORS')->csrf()->patch('/admin/tutors/update-status', 'TutorController@updateStatus');
 
 // Subscription plans
-$http->auth('web')->guard('admin', 'tutors')->privilege('SUBSCRIPTION PLANS')->get('/admin/subscriptions', 'SubscriptionController@subscriptions');
+$http->auth('web')->guard('admin', 'tutor')->privilege('SUBSCRIPTION PLANS')->get('/admin/subscriptions', 'SubscriptionController@subscriptions');
 
-$http->auth('web')->guard('admin', 'tutors')->privilege('SUBSCRIPTION PLANS')->post('/admin/subscriptions/updateprice', 'SubscriptionController@updateprice');
+$http->auth('web')->guard('admin', 'tutor')->privilege('SUBSCRIPTION PLANS')->post('/admin/subscriptions/updateprice', 'SubscriptionController@updateprice');
 
-$http->auth('web')->guard('admin', 'tutors')->privilege('SUBSCRIPTION PLANS')->post('/admin/subscriptions/updatedescription', 'SubscriptionController@updatedescription');
+$http->auth('web')->guard('admin', 'tutor')->privilege('SUBSCRIPTION PLANS')->post('/admin/subscriptions/updatedescription', 'SubscriptionController@updatedescription');
 
 // Transactions
-$http->auth('web')->guard('admin', 'tutors')->privilege('TRANSACTIONS')->get('/admin/transactions', 'TransactionController@index');
+$http->auth('web')->guard('admin', 'tutor')->privilege('TRANSACTIONS')->get('/admin/transactions', 'TransactionController@index');
 
 // Send notifications
-$http->auth('web')->guard('admin', 'tutors')->privilege('SEND NOTIFICATIONS')->get('/admin/students/notify', 'TutorController@notifyStudents');
+$http->auth('web')->guard('admin', 'tutor')->privilege('SEND NOTIFICATIONS')->get('/admin/students/notify', 'TutorController@notifyStudents');
 
-$http->auth('web')->guard('admin', 'tutors')->privilege('SEND NOTIFICATIONS')->csrf()->post('/admin/students/notify/send', 'TutorController@sendNotifications');
+$http->auth('web')->guard('admin', 'tutor')->privilege('SEND NOTIFICATIONS')->csrf()->post('/admin/students/notify/send', 'TutorController@sendNotifications');
 
 // Admin notifications
-$http->auth('web')->guard('admin', 'tutors')->get('/admin/notifications', function (Request $req, Response $res) {
+$http->auth('web')->guard('admin', 'tutor')->get('/admin/notifications', function (Request $req, Response $res) {
    $mdl = new NotificationsModel();
    $notifications = $mdl->getNotifications(User::$email);
    $adminNotifications = $mdl->getNotifications('admin');
@@ -258,7 +258,7 @@ $http->auth('web')->guard('admin', 'tutors')->get('/admin/notifications', functi
    );
 });
 
-$http->auth('web')->guard('admin', 'tutors')->csrf()->patch('/admin/notification/markasread', function (Request $req, Response $res) {
+$http->auth('web')->guard('admin', 'tutor')->csrf()->patch('/admin/notification/markasread', function (Request $req, Response $res) {
    $mdl = new NotificationsModel();
    $notificationId = $req->body()->notificationId ?? null;
    $mdl->updateNotificationStatus(User::$email, $notificationId);
