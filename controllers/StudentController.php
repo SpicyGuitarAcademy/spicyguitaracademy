@@ -212,7 +212,7 @@ HTML;
 
          // if the assignment have been taken but didn't pass the minimum score
          if (!is_null($assignment) && $assignment['status'] == '0' && (intval(intval($assignment['rating']) > 0 && $assignment['rating']) < 3)) {
-            $res->error('Your answer did not meet the minimum requirement. Please retake the course and take the assignment again.');
+            $res->error('Your answer did not meet the minimum requirement. Please go through the course and retake the assignment.');
          }
 
          // if the assignment have not been taken

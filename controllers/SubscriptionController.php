@@ -1,5 +1,7 @@
 <?php
+
 namespace Controllers;
+
 use Framework\Http\Http;
 use Framework\Http\Request;
 use Framework\Http\Response;
@@ -106,7 +108,8 @@ class SubscriptionController
       }
    }
 
-   public function status(Request $req, Response $res) {
+   public function status(Request $req, Response $res)
+   {
       // temporary
       $email = User::$email;
 
@@ -119,27 +122,26 @@ class SubscriptionController
          $today = new \DateTime(date("Y-m-d"));
          $expire = new \DateTime(date("Y-m-d", strtotime($sub['sub_expire'])));
          $diff = $today->diff($expire);
-         
+
          if ($today > $expire) {
-             $studentSubMdl->update(['status'=>'EXPIRED'], "WHERE id = '$id'");
-             $res->error('Subscription expired', [
-                 'status'=>'INACTIVE',
-                  'days'=>0,
-                  "plan" => $sub['plan']
-             ]);
+            $studentSubMdl->update(['status' => 'EXPIRED'], "WHERE id = '$id'");
+            $res->error('Subscription expired', [
+               'status' => 'INACTIVE',
+               'days' => 0,
+               "plan" => $sub['plan']
+            ]);
          } else {
             $res->success('Subscription is active', [
-                 "status" => "ACTIVE",
-                 "days" => $diff->days,
-                 "plan" => $sub['plan']
-             ]);
+               "status" => "ACTIVE",
+               "days" => $diff->days,
+               "plan" => $sub['plan']
+            ]);
          }
-
       } else {
-        $res->error('Subscription expired', [
-             'status'=>'INACTIVE',
-              'days'=>0,
-              'plan'=>$sub['plan']
+         $res->error('Subscription expired', [
+            'status' => 'INACTIVE',
+            'days' => 0,
+            'plan' => $sub['plan']
          ]);
       }
    }
@@ -154,29 +156,29 @@ class SubscriptionController
 
       if (!$v->errors()) {
          $mdl = new SubscriptionModel();
-         
+
          $sub = $mdl->getThisSubscription($plan)[0];
          $price = $sub['price'] ?? 0;
          $title = $sub['plan'];
-         
-        // the price is supposed to be on a per month basis
-        switch ($plan) {
-            case '1':
-                $price *= 1;
-            break;
-            case '2':
-                $price *= 3;
-            break;
-            case '3':
-                $price *= 6;
-            break;
-            case '4':
-                $price *= 12;
-            break;
-            default:
-                $price *= 1;
-            break;
-        }
+
+         // // the price is supposed to be on a per month basis
+         // switch ($plan) {
+         //    case '1':
+         //       $price *= 1;
+         //       break;
+         //    case '2':
+         //       $price *= 3;
+         //       break;
+         //    case '3':
+         //       $price *= 6;
+         //       break;
+         //    case '4':
+         //       $price *= 12;
+         //       break;
+         //    default:
+         //       $price *= 1;
+         //       break;
+         // }
 
          // prepare payment parameters
          $amountInKobo = $price * 100;
@@ -190,32 +192,29 @@ class SubscriptionController
 
          // add payment record
          $mdl = new PaymentModel();
-         $add = $mdl->addPayment($reference,$amountInKobo,$paymentMedium);
+         $add = $mdl->addPayment($reference, $amountInKobo, $paymentMedium);
          if ($add > 0) {
             // last added Id of payment
             $paymentId = $add;
 
             // initiate payment with paystack
             $paystack = new Paystack();
-            $init = $paystack->initiatePayment($paymentId,$displayName,$variableName,$variableValue,$paymentMedium,$email,$amountInKobo,$callback,$reference);
+            $init = $paystack->initiatePayment($paymentId, $displayName, $variableName, $variableValue, $paymentMedium, $email, $amountInKobo, $callback, $reference);
 
             if ($init['flag'] == true) {
                $init['data']['price'] = $amountInKobo;
                $res->success('Payment intialized', $init['data']);
             } else {
-                $res->error('Error', $init);
+               $res->error('Error', $init);
             }
-            
          } else {
-             $res->error('Payment was not added');
+            $res->error('Payment was not added');
          }
-
       } else {
-          $res->error('Invalid plan');
+         $res->error('Invalid plan');
       }
-      
    }
-   
+
    public function initiateFeaturedPayment(Request $req, Response $res)
    {
       $email = $req->body()->email ?? null;
@@ -226,11 +225,11 @@ class SubscriptionController
 
       if (!$v->errors()) {
          $mdl = new CourseModel();
-         
+
          $course = $mdl->getCourse($courseId)[0];
          $price = $course['featuredprice'] ?? 0;
          $title = $course['course'];
-         
+
          // prepare payment parameters
          $amountInKobo = $price * 100;
          $reference = $this->generateTxnref("Q$courseId");
@@ -243,30 +242,27 @@ class SubscriptionController
 
          // add payment record
          $mdl = new PaymentModel();
-         $add = $mdl->addPayment($reference,$amountInKobo,$paymentMedium);
+         $add = $mdl->addPayment($reference, $amountInKobo, $paymentMedium);
          if ($add > 0) {
             // last added Id of payment
             $paymentId = $add;
 
             // initiate payment with paystack
             $paystack = new Paystack();
-            $init = $paystack->initiatePayment($paymentId,$displayName,$variableName,$variableValue,$paymentMedium,$email,$amountInKobo,$callback,$reference);
+            $init = $paystack->initiatePayment($paymentId, $displayName, $variableName, $variableValue, $paymentMedium, $email, $amountInKobo, $callback, $reference);
 
             if ($init['flag'] == true) {
                $init['data']['price'] = $amountInKobo;
                $res->success('Payment intialized', $init['data']);
             } else {
-                $res->error('Error', $init);
+               $res->error('Error', $init);
             }
-            
          } else {
-             $res->error('Payment was not added');
+            $res->error('Payment was not added');
          }
-
       } else {
-          $res->error('Invalid plan');
+         $res->error('Invalid plan');
       }
-      
    }
 
    public function verifyPayment(Request $req, Response $res)
@@ -279,7 +275,7 @@ class SubscriptionController
       if ($txnref != null) {
 
          $paystack = new Paystack();
-		   $verification = $paystack->verifyPayment($txnref);
+         $verification = $paystack->verifyPayment($txnref);
 
          if ($verification['flag'] == true) {
 
@@ -305,7 +301,7 @@ class SubscriptionController
 
             // update payment log
             $mdl = new PaymentModel();
-            $mdl->updatePaymentRecord($paymentId,$id,$domain,$reference,$product,$amount,$currency,$channel,$ipAddress,$paymentMedium,$log,$status,$gatewayResponse,$message,$createdAt,$paidAt);
+            $mdl->updatePaymentRecord($paymentId, $id, $domain, $reference, $product, $amount, $currency, $channel, $ipAddress, $paymentMedium, $log, $status, $gatewayResponse, $message, $createdAt, $paidAt);
 
             // prepare details
             $amountInNaira = $amount / 100;
@@ -315,50 +311,52 @@ class SubscriptionController
             // generate expiry date
             switch ($plan) {
                case '1 Month Subscription Plan' || '1 Month':
-                  $plan = 1; $end = '1 Month';
-               break;
+                  $plan = 1;
+                  $end = '1 Month';
+                  break;
 
                case '3 Months Subscription Plan' || '3 Months':
-                  $plan = 2; $end = '3 Months';
-               break;
+                  $plan = 2;
+                  $end = '3 Months';
+                  break;
 
                case '6 Months Subscription Plan' || '6 Months':
-                  $plan = 3; $end = '6 Months';
-               break;
+                  $plan = 3;
+                  $end = '6 Months';
+                  break;
 
                case '12 Months Subscription Plan' || '12 Months':
-                  $plan = 4; $end = '12 Months';
-               break;
-               
+                  $plan = 4;
+                  $end = '12 Months';
+                  break;
+
                default:
                   $plan = 0;
-               break;
+                  break;
             }
             $date = date_create();
-            date_add($date,date_interval_create_from_date_string($end));
-            $end = date_format($date,"Y-m-d H:i:s");
+            date_add($date, date_interval_create_from_date_string($end));
+            $end = date_format($date, "Y-m-d H:i:s");
 
             // add transaction
             $mdl = new TransactionModel();
-            
-            if ($mdl->addTransaction(User::$email,$reference,$amountInNaira,date("Y-m-d"),date("H:i:s"),$status) == true) {
-            
+
+            if ($mdl->addTransaction(User::$email, $reference, $amountInNaira, date("Y-m-d"), date("H:i:s"), $status) == true) {
+
                // add to student subscription table
                $mdl = new StudentSubscriptionModel();
-               $mdl->addStudentSubscription(User::$email,$reference,$plan,0,$start,$end);
+               $mdl->addStudentSubscription(User::$email, $reference, $plan, 0, $start, $end);
 
                $res->success('Subscription completed');
-            
             } else {
-                $res->error('Incomplete transaction');
+               $res->error('Incomplete transaction');
             }
          } else {
-             $res->error('Verification failed');
+            $res->error('Verification failed');
          }
       } else {
-          $res->error('No reference');
+         $res->error('No reference');
       }
-		
    }
 
    public function verifyFeaturedPayment(Request $req, Response $res)
@@ -371,7 +369,7 @@ class SubscriptionController
       if ($txnref != null) {
 
          $paystack = new Paystack();
-		   $verification = $paystack->verifyPayment($txnref);
+         $verification = $paystack->verifyPayment($txnref);
 
          if ($verification['flag'] == true) {
 
@@ -397,7 +395,7 @@ class SubscriptionController
 
             // update payment log
             $mdl = new PaymentModel();
-            $mdl->updatePaymentRecord($paymentId,$id,$domain,$reference,$product,$amount,$currency,$channel,$ipAddress,$paymentMedium,$log,$status,$gatewayResponse,$message,$createdAt,$paidAt);
+            $mdl->updatePaymentRecord($paymentId, $id, $domain, $reference, $product, $amount, $currency, $channel, $ipAddress, $paymentMedium, $log, $status, $gatewayResponse, $message, $createdAt, $paidAt);
 
             // prepare details
             $amountInNaira = $amount / 100;
@@ -405,45 +403,43 @@ class SubscriptionController
 
             // add transaction
             $mdl = new TransactionModel();
-            
-            if ($mdl->addTransaction(User::$email,$reference,$amountInNaira,date("Y-m-d"),date("H:i:s"),$status) == true) {
-                
-                $cmdl = new CourseModel();
-                $categoryId = $cmdl->getCourse($courseId)[0]['category'] ?? 0;
-            
+
+            if ($mdl->addTransaction(User::$email, $reference, $amountInNaira, date("Y-m-d"), date("H:i:s"), $status) == true) {
+
+               $cmdl = new CourseModel();
+               $categoryId = $cmdl->getCourse($courseId)[0]['category'] ?? 0;
+
                // add the course to the student courses table
                $studentCourseMdl = new StudentCourseModel();
-               
-               $studentCourseMdl->addCourseForStudent($categoryId,$courseId,User::$email,"FEATURED");
+
+               $studentCourseMdl->addCourseForStudent($categoryId, $courseId, User::$email, "FEATURED");
                $res->success('Subscription completed');
-            
             } else {
-                $res->error('Incomplete transaction');
+               $res->error('Incomplete transaction');
             }
          } else {
-             $res->error('Verification failed');
+            $res->error('Verification failed');
          }
       } else {
-          $res->error('No reference');
+         $res->error('No reference');
       }
-		
    }
 
 
-   private function generateTxnref(string $desc) {
-        return "SGA.$desc.".Encrypt::token(8);
+   private function generateTxnref(string $desc)
+   {
+      return "SGA.$desc." . Encrypt::token(8);
    }
-   
+
    public function plans(Request $req, Response $res)
    {
       $mdl = new SubscriptionModel();
       $plans = $mdl->getSubscriptions();
 
       $res->success('Subscription plans', $plans);
-    //   $res->send(
-    //      $res->json(['plans'=>$plans])
-    //   );
+      //   $res->send(
+      //      $res->json(['plans'=>$plans])
+      //   );
 
    }
-
 }
