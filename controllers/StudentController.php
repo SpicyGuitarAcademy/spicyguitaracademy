@@ -163,7 +163,7 @@ HTML;
 
          (new NotificationsModel())->addNotification("admin", "A Spicy Guitar Academy student ($email) wants to reselect another category ($categoryLabel).", "/admin/student/details?student=$email&page=category");
 
-         (new NotificationsModel())->addNotification($email, "Your request to change category is being reviewed. This might take some awhile.", "");
+         (new NotificationsModel())->addNotification($email, "Your request to change category is being reviewed. This might take awhile.", "");
 
          $msg = <<<HTML
          <div>
@@ -172,7 +172,7 @@ HTML;
 HTML;
          Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", 'info@spicyguitaracademy.com', "Re-select Category.", $email);
 
-         $res->success('Your request to change category is being reviewed. This might take some awhile.');
+         $res->success('Your request to change category is being reviewed. This might take awhile.');
       } else {
          $res->error('Student category not selected', $v->errors());
       }
