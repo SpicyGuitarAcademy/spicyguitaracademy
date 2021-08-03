@@ -492,7 +492,7 @@ HTML;
 
          $countCoursesTotal = count($courseMdl->where("category = '$categoryId' AND active = 1")->read("*") ?? []);
 
-         $countLessonsDone = count($studentLessonMdl->custom("SELECT * FROM student_lesson_tbl WHERE course_id IN (SELECT course_id FROM student_course_tbl WHERE student_id = '$email' AND category_id = '$categoryId' AND medium = 'NORMAL') AND student_id = '$email'", true) ?? []);
+         $countLessonsDone = count($studentLessonMdl->custom("SELECT * FROM student_lesson_tbl WHERE course_id IN (SELECT course_id FROM student_course_tbl WHERE student_id = '$email' AND category_id = '$categoryId') AND medium = 'NORMAL' AND student_id = '$email'", true) ?? []);
 
          $countLessonsTotal = count($lessonMdl->custom("SELECT * FROM lesson_tbl WHERE course IN (SELECT id FROM course_tbl WHERE category = '$categoryId' AND active = 1) AND active = 1", true) ?? []);
 
