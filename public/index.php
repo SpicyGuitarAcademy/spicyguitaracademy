@@ -218,27 +218,27 @@ $http->auth('web')->guard('admin', 'tutors')->privilege('QUESTIONS & ANSWERS')->
 $http->auth('web')->guard('admin', 'tutors')->privilege('QUESTIONS & ANSWERS')->csrf()->post('/admin/student/qa/answer', 'TutorController@addLessonComment');
 
 // tutors
-$http->auth('web')->guard('admin')->privilege('TUTORS')->get('/admin/tutors', 'TutorController@index');
+$http->auth('web')->guard('admin', 'tutors')->privilege('TUTORS')->get('/admin/tutors', 'TutorController@index');
 
-$http->auth('web')->guard('admin')->privilege('TUTORS')->get('/admin/tutors/new', 'TutorController@new');
+$http->auth('web')->guard('admin', 'tutors')->privilege('TUTORS')->get('/admin/tutors/new', 'TutorController@new');
 
-$http->auth('web')->guard('admin')->privilege('TUTORS')->get('/admin/tutors/privilege/{tutor}', 'TutorController@privilege');
+$http->auth('web')->guard('admin', 'tutors')->privilege('TUTORS')->get('/admin/tutors/privilege/{tutor}', 'TutorController@privilege');
 
-$http->auth('web')->guard('admin')->privilege('TUTORS')->csrf()->patch('/admin/tutors/privilege/update/{tutor}', 'TutorController@updatePrivilege');
+$http->auth('web')->guard('admin', 'tutors')->privilege('TUTORS')->csrf()->patch('/admin/tutors/privilege/update/{tutor}', 'TutorController@updatePrivilege');
 
-$http->auth('web')->guard('admin')->privilege('TUTORS')->csrf()->post('/admin/tutors/add', 'TutorController@create');
+$http->auth('web')->guard('admin', 'tutors')->privilege('TUTORS')->csrf()->post('/admin/tutors/add', 'TutorController@create');
 
-$http->auth('web')->guard('admin')->privilege('TUTORS')->csrf()->patch('/admin/tutors/update-status', 'TutorController@updateStatus');
+$http->auth('web')->guard('admin', 'tutors')->privilege('TUTORS')->csrf()->patch('/admin/tutors/update-status', 'TutorController@updateStatus');
 
 // Subscription plans
-$http->auth('web')->guard('admin')->privilege('SUBSCRIPTION PLANS')->get('/admin/subscriptions', 'SubscriptionController@subscriptions');
+$http->auth('web')->guard('admin', 'tutors')->privilege('SUBSCRIPTION PLANS')->get('/admin/subscriptions', 'SubscriptionController@subscriptions');
 
-$http->auth('web')->guard('admin')->privilege('SUBSCRIPTION PLANS')->post('/admin/subscriptions/updateprice', 'SubscriptionController@updateprice');
+$http->auth('web')->guard('admin', 'tutors')->privilege('SUBSCRIPTION PLANS')->post('/admin/subscriptions/updateprice', 'SubscriptionController@updateprice');
 
-$http->auth('web')->guard('admin')->privilege('SUBSCRIPTION PLANS')->post('/admin/subscriptions/updatedescription', 'SubscriptionController@updatedescription');
+$http->auth('web')->guard('admin', 'tutors')->privilege('SUBSCRIPTION PLANS')->post('/admin/subscriptions/updatedescription', 'SubscriptionController@updatedescription');
 
 // Transactions
-$http->auth('web')->guard('admin')->privilege('TRANSACTIONS')->get('/admin/transactions', 'TransactionController@index');
+$http->auth('web')->guard('admin', 'tutors')->privilege('TRANSACTIONS')->get('/admin/transactions', 'TransactionController@index');
 
 // Send notifications
 $http->auth('web')->guard('admin', 'tutors')->privilege('SEND NOTIFICATIONS')->get('/admin/students/notify', 'TutorController@notifyStudents');
