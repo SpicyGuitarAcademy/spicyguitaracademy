@@ -1,5 +1,7 @@
 <?php
+
 namespace Models;
+
 use Framework\Database\Model;
 
 class StudentModel extends Model
@@ -8,42 +10,53 @@ class StudentModel extends Model
    {
       parent::__construct('student_tbl');
    }
-   
-   public function getAllStudents() {
-       return $this->read('*');
+
+   public function getAllStudents()
+   {
+      return $this->read('*');
+   }
+
+   public function searchAllStudents($query)
+   {
+      return $this->where("email LIKE '%$query%' OR firstname LIKE '%$query%' OR lastname LIKE '%$query%'")->read('*');
    }
 
    // write wonderful model codes...
-   public function addStudent($firstname, $lastname, $email, $telephone, $avatar) {
+   public function addStudent($firstname, $lastname, $email, $telephone, $avatar)
+   {
       return $this->create([
-         'firstname'=>$firstname,
-         'lastname'=>$lastname,
-         'email'=>$email,
-         'telephone'=>$telephone,
-         'avatar'=>$avatar
+         'firstname' => $firstname,
+         'lastname' => $lastname,
+         'email' => $email,
+         'telephone' => $telephone,
+         'avatar' => $avatar
       ]);
    }
 
-   public function getStudent($email) {
+   public function getStudent($email)
+   {
       return $this->where("email = '$email'")->read("*");
    }
-   
-   public function getStudentById($id) {
+
+   public function getStudentById($id)
+   {
       return $this->where("id = '$id'")->read("*")[0] ?? null;
    }
 
-   public function getStudentId($email) {
+   public function getStudentId($email)
+   {
       return $this->where("email = '$email'")->read("id");
    }
 
-   public function getStudents() {
+   public function getStudents()
+   {
       return $this->where('student_tbl.email = auth_tbl.email')->readJoin('student_tbl, auth_tbl', 'student_tbl.*, auth_tbl.role as role, auth_tbl.status as status');
    }
 
-   public function updateAvatar($email, $path) {
+   public function updateAvatar($email, $path)
+   {
       return $this->where("email = '$email'")->update([
-         'avatar'=>$path
+         'avatar' => $path
       ]);
    }
-
 }

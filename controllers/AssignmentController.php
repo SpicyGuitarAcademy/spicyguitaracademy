@@ -16,6 +16,7 @@ use Models\TutorModel;
 use Models\AssignmentModel;
 use Models\NotificationsModel;
 use Models\StudentAssignmentModel;
+use Models\StudentModel;
 
 class AssignmentController
 {
@@ -72,11 +73,12 @@ class AssignmentController
       $amdl = new StudentAssignmentModel();
       $amdl->updateRating($answerId, $review, $rating);
 
-      (new NotificationsModel())->addNotification($studentId, "Assignment Review -- $review");
+      $tutor = (new TutorModel())->getTutor(User::$email)[0];
+      (new NotificationsModel())->addNotification($studentId, "Assignment Review from  Admin {$tutor['firstname']} {$tutor['lastname']} -- $review");
 
       $msg = <<<HTML
             <div>
-               <h3>You have a reply</h3>
+               <h3>You have a reply from Admin {$tutor['firstname']} {$tutor['lastname']}</h3>
                <p>$review</p>
             </div>
       HTML;

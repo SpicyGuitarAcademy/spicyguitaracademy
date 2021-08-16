@@ -208,7 +208,13 @@ HTML;
    public function students(Request $req, Response $res)
    {
       $mdl = new StudentModel();
-      $students = $mdl->getAllStudents();
+      $query = trim($req->query()->query) ?? "";
+
+      if ($query == "") {
+         $students = $mdl->getAllStudents();
+      } else {
+         $students = $mdl->searchAllStudents($query);
+      }
 
       $res->send(
          $res->render('admin/students.html', [
@@ -224,6 +230,16 @@ HTML;
 
       $mdl = new StudentCategoryModel();
       $mdl->makeCategoryActive($student, $categoryId);
+
+      $category = (new CategoryModel())->getCategoryById($categoryId)[0];
+      (new NotificationsModel())->addNotification($student, "You have have been moved to {$category['category']} Category");
+
+      $msg = <<<HTML
+            <div>
+               <p>You have have been moved to {$category['category']} Category</p>
+            </div>
+      HTML;
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $student, 'Category Changed', 'info@spicyguitaracademy.com:Spicy Guitar Academy');
 
       $res->redirect($req->referer());
    }
@@ -410,11 +426,12 @@ HTML;
       $commentMdl->addComment($lessonId, $comment, $email, $receiver);
 
       // notify the receiver
-      (new NotificationsModel())->addNotification($receiver, "You have a reply -- $comment", "/forums");
+      $tutor = (new TutorModel())->getTutor($email)[0];
+      (new NotificationsModel())->addNotification($receiver, "You have a reply from {$tutor['firstname']} {$tutor['lastname']} -- $comment", "/forums");
 
       $msg = <<<HTML
             <div>
-               <h3>You have a reply</h3>
+               <h3>You have a reply from Admin {$tutor['firstname']} {$tutor['lastname']}</h3>
                <p>$comment</p>
             </div>
       HTML;

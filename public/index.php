@@ -326,6 +326,8 @@ $http->auth('api')->guard('student')->post('/api/student/category/select', 'Stud
 // student selects another cateogry
 $http->auth('api')->guard('student')->post('/api/student/category/re-select', 'StudentController@rechooseCategory');
 
+$http->auth('api')->guard('student')->post('/api/student/category/complete', 'StudentController@completeCategory');
+
 // make course active
 $http->auth('api')->guard('student')->post('/api/student/course/activate', 'StudentController@activateNormalCourse');
 

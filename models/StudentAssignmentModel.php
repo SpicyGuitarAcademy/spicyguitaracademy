@@ -37,7 +37,8 @@ class StudentAssignmentModel extends Model
       return $this->where("student_id = '$email' AND assignment_id = $assignmentId AND id = $answerId")
          ->update([
             'video' => $path,
-            'status' => 1
+            'status' => 1,
+            'rating' => 0
          ]);
    }
 

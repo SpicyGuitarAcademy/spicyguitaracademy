@@ -856,6 +856,7 @@ class CourseController
          // get lesson title and course title for each lesson
          foreach ($lessons as $lesson) {
             $lessonDetails = $lmdl->getLesson($lesson)[0];
+            if ($lessonDetails == null) continue;
             $lessons[$count] = [
                'id' => $lesson,
                'title' => $lessonDetails['lesson'],

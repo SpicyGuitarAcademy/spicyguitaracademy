@@ -211,8 +211,8 @@ HTML;
          $assignment = $sAMdl->getAvailableAssignment($email, $previousCourseId)[0] ?? null;
 
          // if the assignment have been taken but didn't pass the minimum score
-         if (!is_null($assignment) && $assignment['status'] == '0' && (intval(intval($assignment['rating']) > 0 && $assignment['rating']) < 3)) {
-            $res->error('Your answer did not meet the minimum requirement. Please go through the course and retake the assignment.');
+         if (!is_null($assignment) && $assignment['status'] == '0' && (intval($assignment['rating']) > 0 && intval($assignment['rating']) < 3)) {
+            $res->error('Your score is below average, please carefully study the course and attempt the assignment again.');
          }
 
          // if the assignment have not been taken
@@ -241,6 +241,33 @@ HTML;
             $res->error('Course already activated');
          }
       }
+   }
+
+   public function completeCategory(Request $req, Response $res)
+   {
+      $email = User::$email;
+      $courseId = $req->body()->course ?? null;
+
+      // make sure assignment for the previous course have been answered
+      $sAMdl = new StudentAssignmentModel();
+      $assignment = $sAMdl->getAvailableAssignment($email, $courseId)[0] ?? null;
+
+      // if the assignment have been taken but didn't pass the minimum score
+      if (!is_null($assignment) && $assignment['status'] == '0' && (intval($assignment['rating']) > 0 && intval($assignment['rating']) < 3)) {
+         $res->error('Your score is below average, please carefully study the course and attempt the assignment again.');
+      }
+
+      // if the assignment have not been taken
+      if (!is_null($assignment) && $assignment['status'] == '0') {
+         $res->error('Complete assignment for the course');
+      }
+
+      // if the assignment have been taken but is still awaiting review
+      if (!is_null($assignment) && $assignment['status'] == '1' && $assignment['rating'] == '0') {
+         $res->error('The tutors are still reviewing your answer. This might take a while.');
+      }
+
+      $res->success('Category completed');
    }
 
    private function makeCourseActive($courseId, $email)
@@ -646,15 +673,17 @@ HTML;
          $res->error('Invalid Assignment');
       }
 
-      (new NotificationsModel())->addNotification('admin', "A student answered an assignment question.", "/admin/courses/$courseId/assignment");
+      $student = (new StudentModel())->getStudent($email)[0];
+      $course = (new CourseModel())->getCourse($courseId)[0];
+      (new NotificationsModel())->addNotification('admin', "{$student['firstname']} {$student['lastname']} answered the assignment question on course: {$course['course']}.", "/admin/courses/$courseId/assignment");
 
       $msg = <<<HTML
       <div>
          <h3>Hello Admin</h3>
-         <p>A student just answered an assignment question.</p>
+         <p>{$student['firstname']} {$student['lastname']} answered the assignment question on course: {$course['course']}.</p>
       </div>
 HTML;
-      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", 'Assignment Answer', 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", 'Assignment Answer', $email);
 
       if (!is_null($video)) {
          // if video is sent, upload video and update the database
@@ -787,15 +816,16 @@ HTML;
       $response = $commentMdl->addComment($lessonId, $comment, $email, $receiver);
 
       // notify the receiver
-      (new NotificationsModel())->addNotification($receiver, "You have a reply -- $comment", "/admin/student/qa?student=$email&lessonId=$lessonId");
+      $student = (new StudentModel())->getStudent($email)[0];
+      (new NotificationsModel())->addNotification($receiver, "You have a reply from {$student['firstname']} {$student['lastname']} -- $comment", "/admin/student/qa?student=$email&lessonId=$lessonId");
 
       $msg = <<<HTML
       <div>
-         <h3>You have a reply</h3>
+         <h3>You have a reply from {$student['firstname']} {$student['lastname']}</h3>
          <p>$comment</p>
       </div>
 HTML;
-      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, 'You have a reply', 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, "You have a reply from {$student['firstname']} {$student['lastname']}", $email);
 
       if ($response == true) {
          $res->success('Added successfully');
@@ -867,21 +897,26 @@ HTML;
          $replyMsg = $commentMdl->getMessage($replyId)[0];
 
 
+         $from = "";
          if ($replyMsg['is_admin'] == '1') {
-            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply -- $comment", "/admin/chatforums/$categoryId");
+            $student = (new StudentModel())->getStudent($email)[0];
+            $from = "{$student['firstname']} {$student['lastname']}";
+            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply from $from -- $comment", "/admin/chatforums/$categoryId");
          } else {
-            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply -- $comment", "/forums");
+            $tutor = (new TutorModel())->getTutor($email)[0];
+            $from = "Admin {$tutor['firstname']} {$tutor['lastname']}";
+            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply from $from -- $comment", "/forums");
          }
 
          $msg = <<<HTML
       <div>
-         <h3>You have a reply</h3>
+         <h3>You have a reply from $from</h3>
          <p>$comment</p>
       </div>
 HTML;
-         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], 'You have a reply', 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], "You have a reply from $from", $email);
       }
-      
+
       $res->redirect(SERVER . '/admin/chatforums/' . $categoryId);
    }
 
@@ -918,18 +953,22 @@ HTML;
          $replyMsg = $commentMdl->getMessage($replyId)[0];
 
          if ($replyMsg['is_admin'] == '1') {
-            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply -- $comment", "/admin/chatforums/$categoryId");
+            $student = (new StudentModel())->getStudent($email)[0];
+            $from = "{$student['firstname']} {$student['lastname']}";
+            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply from $from -- $comment", "/admin/chatforums/$categoryId");
          } else {
-            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply -- $comment", "/forums");
+            $tutor = (new TutorModel())->getTutor($email)[0];
+            $from = "Admin {$tutor['firstname']} {$tutor['lastname']}";
+            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply from $from -- $comment", "/forums");
          }
 
          $msg = <<<HTML
       <div>
-         <h3>You have a reply</h3>
+         <h3>You have a reply from $from</h3>
          <p>$comment</p>
       </div>
 HTML;
-         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], 'You have a reply', 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], "You have a reply from $from", $email);
       }
 
       if ($response == true) {
@@ -1004,7 +1043,7 @@ HTML;
             <p>$message</p>
          </div>
 HTML;
-      $send = Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy Student", "info@spicyguitaracademy.com", "Contact Us ($subject)", '$email');
+      $send = Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy Student", "info@spicyguitaracademy.com", "Contact Us ($subject)", $email);
 
       if ($send == true) {
          $res->success("Message sent successfully, We will reply you shortly.");

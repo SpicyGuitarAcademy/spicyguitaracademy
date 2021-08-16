@@ -161,25 +161,6 @@ class SubscriptionController
          $price = $sub['price'] ?? 0;
          $title = $sub['plan'];
 
-         // // the price is supposed to be on a per month basis
-         // switch ($plan) {
-         //    case '1':
-         //       $price *= 1;
-         //       break;
-         //    case '2':
-         //       $price *= 3;
-         //       break;
-         //    case '3':
-         //       $price *= 6;
-         //       break;
-         //    case '4':
-         //       $price *= 12;
-         //       break;
-         //    default:
-         //       $price *= 1;
-         //       break;
-         // }
-
          // prepare payment parameters
          $amountInKobo = $price * 100;
          $reference = $this->generateTxnref("N$plan");
@@ -277,6 +258,9 @@ class SubscriptionController
          $paystack = new Paystack();
          $verification = $paystack->verifyPayment($txnref);
 
+         $file = fopen("$txnref.txt", 'w');
+         fwrite($file, json_encode($verification));
+
          if ($verification['flag'] == true) {
 
             $details = $verification['data'];
@@ -310,22 +294,22 @@ class SubscriptionController
             $start = date("Y-m-d H:i:s");
             // generate expiry date
             switch ($plan) {
-               case '1 Month Subscription Plan' || '1 Month':
+               case '1 Month':
                   $plan = 1;
                   $end = '1 Month';
                   break;
 
-               case '3 Months Subscription Plan' || '3 Months':
+               case '3 Months':
                   $plan = 2;
                   $end = '3 Months';
                   break;
 
-               case '6 Months Subscription Plan' || '6 Months':
+               case '6 Months':
                   $plan = 3;
                   $end = '6 Months';
                   break;
 
-               case '12 Months Subscription Plan' || '12 Months':
+               case '12 Months':
                   $plan = 4;
                   $end = '12 Months';
                   break;

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,96 +16,103 @@
    <script src="@assets/js/bootstrap.min.js"></script>
    <link rel="stylesheet" href="@assets/css/bootstrap.css">
    <!-- Font Awesome -->
-	<link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
    <!-- Custom -->
    <script src="@assets/js/main.js"></script>
    <link rel="stylesheet" href="@assets/css/main.css">
 
 </head>
+
 <body class="bg-light">
-   
+
    @vars
 
    @import admin/header.html
 
-   <nav class="container my-4 h4">
+   <nav class="container my-4 h4 d-flex justify-content-between align-items-center">
       <a href="@/admin/students">
-         <div class="float-left">
+         <div>
             <i class="fa fa-graduation-cap"></i>
             Students
          </div>
       </a>
 
-      <div class="clearfix"></div>
+      <div>
+         <form action="@/admin/students" method="get">
+            <input type="search" name="query" placeholder="search with email or name">
+         </form>
+      </div>
    </nav>
 
    <main class="container my-5">
 
-   @if (isset($_GET['msg']))
-   <div class="alert alert-info show text-dark text-center">
-      {{$_GET['msg']}}
-   </div>
-   @endif
+      @if (isset($_GET['msg']))
+      <div class="alert alert-info show text-dark text-center">
+         {{$_GET['msg']}}
+      </div>
+      @endif
 
       @php $students = json_decode($students);
       @if ($students == [])
-         <div class="alert show text-dark text-center alert-dismissible">
-            There are no students.
-         </div>
+      <div class="alert show text-dark text-center alert-dismissible">
+         There are no students.
+      </div>
       @else
 
-         <div class="table-responsive">
+      <div class="table-responsive">
 
-            <table class="table table-striped table-hover text-center border border-primary">
-               <thead class="bg-primary text-light">
-                  <tr>
-                     <td></td>
-                     <td><span class="fa fa-user-circle"></span>&nbsp;Name</td>
-                     <td><span class="fa fa-envelope"></span>&nbsp;Email</td>
-                     <td><span class="fa fa-phone"></span>&nbsp;Telephone</td>
-                     <td>Added</td>
-                     <td>Action</td>
-                  </tr>
-               </thead>
+         <table class="table table-striped table-hover text-center border border-primary">
+            <thead class="bg-primary text-light">
+               <tr>
+                  <td></td>
+                  <td><span class="fa fa-user-circle"></span>&nbsp;Name</td>
+                  <td><span class="fa fa-envelope"></span>&nbsp;Email</td>
+                  <td><span class="fa fa-phone"></span>&nbsp;Telephone</td>
+                  <td>Added</td>
+                  <td>Action</td>
+               </tr>
+            </thead>
 
-               <tbody>
+            <tbody>
 
-                  @foreach ($students as $student)
+               @foreach ($students as $student)
 
-                     <tr>
-                        <td class="align-middle">
-                           <img class="rounded-circle" src="@/{{$student->avatar ?? 'storage/public/avatars/default.png'}}" alt="{{$student->firstname}} {{$student->lastname}}" width="40px" height="40px">
-                        </td>
+               <tr>
+                  <td class="align-middle">
+                     <img class="rounded-circle" src="@/{{$student->avatar ?? 'storage/public/avatars/default.png'}}"
+                        alt="{{$student->firstname}} {{$student->lastname}}" width="40px" height="40px">
+                  </td>
 
-                        <td class="align-middle">
-                           {{$student->firstname}}&nbsp;{{$student->lastname}}
-                        </td>
+                  <td class="align-middle">
+                     {{$student->firstname}}&nbsp;{{$student->lastname}}
+                  </td>
 
-                        <td class="align-middle">
-                           {{$student->email}}
-                        </td>
+                  <td class="align-middle">
+                     {{$student->email}}
+                  </td>
 
-                        <td class="align-middle">
-                           {{$student->telephone}}
-                        </td>
-                        
-                        <td class="align-middle">
-                           @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$student->date_added)));
-                           {{$date->day}}/{{$date->month}}/{{$date->year}}
-                        </td>
+                  <td class="align-middle">
+                     {{$student->telephone}}
+                  </td>
 
-                        <td class="align-middle">
-                           <a href='@/admin/student/details?student={{$student->email}}' class="btn badge btn-sm btn-success">details</a>
-                        </td>
-                     </tr>
+                  <td class="align-middle">
+                     @php $date = json_decode(json_encode(date_parse_from_format('Y-m-d',$student->date_added)));
+                     {{$date->day}}/{{$date->month}}/{{$date->year}}
+                  </td>
 
-                  @endforeach
+                  <td class="align-middle">
+                     <a href='@/admin/student/details?student={{$student->email}}'
+                        class="btn badge btn-sm btn-success">details</a>
+                  </td>
+               </tr>
 
-               </tbody>
+               @endforeach
 
-            </table>
+            </tbody>
 
-         </div>
+         </table>
+
+      </div>
 
       @endif
 
@@ -113,4 +121,5 @@
    @import admin/footer.html
 
 </body>
+
 </html>
