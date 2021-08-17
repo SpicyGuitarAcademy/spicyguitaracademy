@@ -69,17 +69,19 @@ class AssignmentController
       $s = new Sanitize();
       $rating = $s->numbers($rating);
       $review = $s->string($review);
+      $ratingsComment = $rating >= 3 ? "Congratulations, you have a $rating star rating, you can proceed to the next course." : "You scored below average, please study the lessons carefully and attempt the assignment again.";
 
       $amdl = new StudentAssignmentModel();
       $amdl->updateRating($answerId, $review, $rating);
 
       $tutor = (new TutorModel())->getTutor(User::$email)[0];
-      (new NotificationsModel())->addNotification($studentId, "Assignment Review from  Admin {$tutor['firstname']} {$tutor['lastname']} -- $review");
+      (new NotificationsModel())->addNotification($studentId, "Assignment Review from  Admin {$tutor['firstname']} {$tutor['lastname']} -- $review. $ratingsComment");
 
       $msg = <<<HTML
             <div>
                <h3>You have a reply from Admin {$tutor['firstname']} {$tutor['lastname']}</h3>
                <p>$review</p>
+               <p>$ratingsComment</p>
             </div>
       HTML;
       Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $studentId, 'Assignment Review', 'info@spicyguitaracademy.com:Spicy Guitar Academy');
