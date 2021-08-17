@@ -258,9 +258,6 @@ class SubscriptionController
          $paystack = new Paystack();
          $verification = $paystack->verifyPayment($txnref);
 
-         $file = fopen("$txnref.txt", 'w');
-         fwrite($file, json_encode($verification));
-
          if ($verification['flag'] == true) {
 
             $details = $verification['data'];
