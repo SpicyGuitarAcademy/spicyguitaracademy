@@ -929,27 +929,28 @@ HTML;
 
       $s = new Sanitize();
       $comment = $s->string($comment);
-
+      
       if ($categoryId == null) {
          $res->error('Invalid category id');
          exit;
       }
-
+      
       if ($replyId == null) {
          $res->error('Invalid reply id');
          exit;
       }
-
+      
       if ($comment == '') {
          $res->error('No comment');
          exit;
       }
-
+      
       $commentMdl = new ForumsModel();
       $response = $commentMdl->addMessage($categoryId, $comment, $email, $replyId);
-
+      
+      // exit("Hi");
       // if reply id, send notification to sender
-      if ($replyId !== null) {
+      if ($replyId !== null && $replyId > 0) {
          $replyMsg = $commentMdl->getMessage($replyId)[0];
 
          if ($replyMsg['is_admin'] == '1') {
