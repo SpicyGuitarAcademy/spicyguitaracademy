@@ -503,13 +503,18 @@ p, a {
     align-items: center;
     justify-content: center;
   }
-  section#stories>div#contents>div.container>div.studentcomment {
+  section#stories>div#contents>div.container>div.studentcomment.show {
     margin-top: auto;
     margin-bottom: auto;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: space-between;
+  }
+  section#stories>div#contents>div.container>div.studentcomment.hide {
+    margin-top: auto;
+    margin-bottom: auto;
+    display: none;
   }
   div#contents>div.navbutton {
     width: 50px;
@@ -524,7 +529,7 @@ p, a {
   div#contents>div.navbutton>button:focus {
     border: none;
   }
-  div#contents>div.container>div.studentcomment {
+  div#contents>div.container>div.studentcomment.show {
     transition-duration: 0.5s;
     transition-timing-function: ease-in-out;
   }
@@ -568,13 +573,18 @@ p, a {
   section#stories>div#contents {
     min-height: 600px;
   }
-  section#stories>div#contents>div.container>div.studentcomment {
+  section#stories>div#contents>div.container>div.studentcomment.show {
     margin-top: auto;
     margin-bottom: auto;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-between;
+  }
+  section#stories>div#contents>div.container>div.studentcomment.hide {
+    margin-top: auto;
+    margin-bottom: auto;
+    display: none;
   }
   div#contents>div.container>div.studentcomment>div.avatar, div#contents>div.container>div.studentcomment>div.avatar>img {
     width: 250px;
@@ -655,8 +665,7 @@ p, a {
   header#terms-header>section#terms>div.container>small {
     font-size: var(--text-xs);
   }
-  section#termscontent>div>p,
-  section#termscontent>div>div {
+  section#termscontent>div>p, section#termscontent>div>div {
     font-size: var(--text-xs);
     text-align: justify;
   }
@@ -671,8 +680,7 @@ p, a {
   header#terms-header>section#terms>div.container>small {
     font-size: var(--text-sm);
   }
-  section#termscontent>div>p,
-  section#termscontent>div>div {
+  section#termscontent>div>p, section#termscontent>div>div {
     font-size: var(--text-sm);
     text-align: justify;
   }

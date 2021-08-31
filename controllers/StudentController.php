@@ -689,6 +689,7 @@ HTML;
          // if video is sent, upload video and update the database
          $up = new Upload();
          $up->video('video', $video, "Assignment Video was not uploaded", ["video/mp4"]);
+         $up->max(30, 'Mb');
          $up->upload("tutorials/answers/", Encrypt::hash());
 
          $errors = $up->errors();
