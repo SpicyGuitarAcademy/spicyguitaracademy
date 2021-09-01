@@ -26,7 +26,7 @@ $http->group('guest');
 
 $http->get('/', function (Request $req, Response $res) {
    $res->send(
-      $res->render('homepage.html')
+      $res->render('homepage.v2.html')
    );
 });
 
