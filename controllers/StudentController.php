@@ -694,7 +694,7 @@ HTML;
 
          $errors = $up->errors();
          if ($errors) {
-            $res->error('Upload failed', [$errors['video']]);
+            $res->error('Upload failed. File must be less than 30mb.', [$errors['video']]);
          }
          $path = $up->uri('video');
 
