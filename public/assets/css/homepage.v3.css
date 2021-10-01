@@ -335,6 +335,50 @@ p, a {
 
 /* #endregion */
 
+/* #region Promotional Video */
+
+@media (min-width: 0px) {
+  section#promotional-video {
+    margin-bottom: 50px;
+  }
+  section#promotional-video>div#subtitle {
+    height: 70px;
+    width: 100% !important;
+    background-color: var(--white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  section#promotional-video>div.video-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 0px;
+  }
+  section#promotional-video>div.video-container>video {
+    width: 95% !important;
+    border: 2px solid var(--brown);
+    border-radius: 10px;
+    box-shadow: 0px 3px 8px 1px;
+  }
+}
+
+@media (min-width: 480px) {
+  section#promotional-video {
+    margin-bottom: 100px;
+  }
+  section#promotional-video>div#subtitle {
+    height: 200px !important;
+  }
+  section#promotional-video>div.video-container>video {
+    width: 50% !important;
+    border-radius: 30px;
+  }
+}
+
+/* #endregion */
+
 /* #region Features */
 
 @media (min-width: 0px) {

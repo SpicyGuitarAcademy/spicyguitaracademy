@@ -7,3 +7,6 @@ cgi-bin
 storage/logs/
 .*
 .htaccess
+
+# promo video
+public/assets/imgs/public/promotional-video.mp4

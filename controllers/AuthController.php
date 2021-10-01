@@ -394,7 +394,7 @@ HTML;
          $mdl->updateStatus($email, 'active');
          $res->success("Verified account successfully");
       } else {
-         $res->success("Account verification failed");
+         $res->error("Account verification failed");
       }
    }
 
