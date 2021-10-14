@@ -1,6 +1,8 @@
 <?php
 // namespace App;
 
+use App\Services\PayPalClient;
+// use App\Services\PaypalService;
 use App\Services\User;
 use Framework\Handler\IException;
 use Framework\Http\Http;
@@ -8,8 +10,12 @@ use Framework\Http\Request;
 use Framework\Http\Response;
 use Models\NotificationsModel;
 
+// TODO: update packages
+// composer require paypal/paypal-checkout-sdk
+
 // Include autoload for composer packages
 include_once '../vendor/autoload.php';
+
 // Setup Configurations
 include_once '../app/config.php';
 
@@ -18,9 +24,9 @@ date_default_timezone_set(TIMEZONE);
 // Start Application 😉
 $http = new Http();
 
+
+
 // Now let's Route 🚀🚀🚀
-
-
 
 $http->group('guest');
 
@@ -305,17 +311,21 @@ $http->auth('api')->guard('student')->post('/api/notification/markasread', funct
    $res->success('Done');
 });
 
+$http->auth('api')->guard('student')->post('/api/device/verify', 'AuthController@verifyAccountDevice');
+
+$http->auth('api')->guard('student')->post('/api/device/reset', 'AuthController@resetAccountDevice');
+
 $http->auth('api')->guard('student')->get('/api/subscription/plans', 'SubscriptionController@plans');
 
 $http->auth('api')->guard('student')->get('/api/subscription/status', 'SubscriptionController@status');
 
-$http->auth('api')->guard('student')->post('/api/subscription/initiate', 'SubscriptionController@initiatePayment');
+$http->auth('api')->guard('student')->post('/api/subscription/{medium}/initiate', 'SubscriptionController@initiatePayment');
 
-$http->auth('api')->guard('student')->post('/api/subscription/initiate-featured', 'SubscriptionController@initiateFeaturedPayment');
+$http->auth('api')->guard('student')->post('/api/subscription/{medium}/initiate-featured', 'SubscriptionController@initiateFeaturedPayment');
 
-$http->auth('api')->guard('student')->post('/api/subscription/verify/{reference}', 'SubscriptionController@verifyPayment');
+$http->auth('api')->guard('student')->post('/api/subscription/{medium}/verify/{reference}', 'SubscriptionController@verifyPayment');
 
-$http->auth('api')->guard('student')->post('/api/subscription/verify-featured/{reference}', 'SubscriptionController@verifyFeaturedPayment');
+$http->auth('api')->guard('student')->post('/api/subscription/{medium}/verify-featured/{reference}', 'SubscriptionController@verifyFeaturedPayment');
 
 // student statistics
 $http->auth('api')->guard('student')->get('/api/student/statistics', 'StudentController@stats');
@@ -344,7 +354,8 @@ $http->auth('api')->guard('student')->get('/api/student/courses/all', 'StudentCo
 $http->auth('api')->guard('student')->get('/api/student/courses/studying', 'StudentController@studyingCourses');
 
 // list all featured courses
-$http->auth('api')->guard('student')->get('/api/student/featuredcourses/all', 'StudentController@allFeaturedCourses');
+// ->auth('api')->guard('student')
+$http->get('/api/student/featuredcourses/all', 'StudentController@allFeaturedCourses');
 
 $http->auth('api')->guard('student')->get('/api/student/featuredcourses/bought', 'StudentController@boughtFeaturedCourses');
 
@@ -382,7 +393,8 @@ $http->auth('api')->guard('student')->get('/api/lesson/{lessonId}/comments', 'St
 
 $http->auth('api')->guard('student')->post('/api/student/avatar/update', 'StudentController@uploadAvatar');
 
-$http->auth('api')->guard('student')->get('/api/student/freelessons', 'StudentController@freeLessons');
+// ->auth('api')->guard('student')
+$http->get('/api/student/freelessons', 'StudentController@freeLessons');
 
 
 
