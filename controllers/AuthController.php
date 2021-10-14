@@ -253,13 +253,91 @@ class AuthController
       }
    }
 
+   // TODO: UPDATE SQL 
+   // ALTER TABLE `auth_tbl` ADD `device` VARCHAR(250) NULL AFTER `privileges`;
+
+   public function verifyAccountDevice(Request $req, Response $res)
+   {
+      $deviceInfo = trim($req->body()->device ?? '');
+
+      if ($deviceInfo === '') {
+         $res->error('Device info cannot be empty');
+      }
+
+      // get device registered to account
+      $email = User::$email;
+      $mdl = new AuthModel();
+      $resp = $mdl->where("email = '$email'")->read('device');
+      $dbDeviceInfo = $resp[0]['device'];
+      
+      // check device
+      if ($deviceInfo == $dbDeviceInfo) {
+         $res->success('Device verified');
+      } elseif ($dbDeviceInfo == "") {
+         $mdl->updateDevice($email, $deviceInfo);
+         $res->success('Device verified');
+      } else {
+
+         $token = Encrypt::token(6);
+
+         $mdl = new AuthModel();
+         $result = $mdl->updateToken($email, $token);
+
+         if ($result == true) {
+
+            $msg = <<<HTML
+      <div>
+         <h3>Hi there,</h3>
+         <p>
+            You are trying to access your account on a different device. You can only use Spicy Guitar Academy on one device. To continue on this device <b>$deviceInfo</b>, use the token <b>$token</b> to continue with the device instead.
+         </p>
+      </div>
+HTML;
+            Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $email, "Verify New Device", "info@spicyguitaracademy.com:Spicy Guitar Academy");
+
+            $res->error('You can only use Spicy Guitar Academy on one device. A verification token has been sent to your email to continue with this device.');
+         } else {
+            $res->error('You can only use Spicy Guitar Academy on one device.');
+         }
+      }
+   }
+
+   // pfsockopen
+
+   public function resetAccountDevice(Request $req, Response $res)
+   {
+      $token = trim($req->body()->token);
+      $deviceInfo = trim($req->body()->device ?? '');
+
+      // validate
+      $v = new Validate();
+      $v->any("token", $token, "Invalid Token")->exact(6);
+      $v->any("device", $deviceInfo, "Invalid Device Info")->min(1);
+      $errors = $v->errors();
+
+      if ($errors) {
+         $res->error('Error', $errors);
+      }
+
+      $email = User::$email;
+      $mdl = new AuthModel();
+      $result = $mdl->verifyEmailToken($email, $token);
+
+      if ($result == true) {
+         $mdl->updateDevice($email, $deviceInfo);
+         $res->success("Device verified successfully");
+      } else {
+         $res->error("Device verification failed");
+      }
+   }
+
    public function authApiLogin(Request $req, Response $res)
    {
       $email = trim($req->body()->email);
       $password = trim($req->body()->password);
       // $remember = isset($req->body()->remember) ? true : false ;
       // redirect
-      $redirect = isset($req->body()->redirect) ? $req->body()->redirect : null;
+      // $redirect = isset($req->body()->redirect) ? $req->body()->redirect : null;
 
       // validate un-empty fields
       if (empty($email) || empty($password)) {

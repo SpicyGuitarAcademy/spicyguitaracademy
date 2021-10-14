@@ -32,10 +32,11 @@ use Models\NotificationsModel;
 class StudentController
 {
 
+   // TODO: UPDATE SQL 
+   // ALTER TABLE `student_tbl` ADD `referral_code` VARCHAR(7) NULL AFTER `telephone`, ADD `referred_by` VARCHAR(7) NULL AFTER `referral_code`, ADD `referral_units` DOUBLE NOT NULL DEFAULT '0' AFTER `referred_by`;
+
    public function register(Request $req, Response $res)
    {
-      //   $res->error('Failed Register');
-
       // create a resource
       $firstname = trim($req->body()->firstname);
       $lastname = trim($req->body()->lastname);
@@ -43,6 +44,7 @@ class StudentController
       $telephone = trim($req->body()->telephone);
       $password = trim($req->body()->password);
       $cpassword = trim($req->body()->cpassword);
+      $refBy = trim($req->body()->referral_code ?? '');
 
       $data = [];
 
@@ -62,6 +64,14 @@ class StudentController
          $errors['cpassword'] = "Password and Confirm Password must be the same!";
       }
 
+      $amdl = new AuthModel();
+      $mdl = new StudentModel();
+
+      // verify referral code if submitted
+      if ($refBy !== '' && !$mdl->doesRefCodeExist($refBy)) {
+         $errors['referral_code'] = "Referral Code does not exist.";
+      }
+
       if ($errors) {
          $res->error('Registeration failed', $errors);
       }
@@ -72,9 +82,6 @@ class StudentController
       $lastname = $s->string($lastname);
       $email = $s->email($email);
       $telephone = $s->string($telephone);
-
-      $amdl = new AuthModel();
-      $mdl = new StudentModel();
 
       if ($amdl->emailExists($email) == true) {
          $res->error('Email already exists. Try another email!');
@@ -87,11 +94,22 @@ class StudentController
          $res->error('Account was not created. Try again!');
       }
 
-      if ($mdl->addStudent($firstname, $lastname, $email, $telephone, STORAGE_PATH . 'avatars/default.png') == true) {
+      // generate unique referral code
+      $refCode = Encrypt::hash(7);
+      while ($mdl->doesRefCodeExist($refCode)) {
+         $refCode = Encrypt::hash(7);
+      }
+
+      if ($mdl->addStudent($firstname, $lastname, $email, $telephone, STORAGE_PATH . 'avatars/default.png', $refCode, $refBy) == true) {
+
+         // Notify admin
 
          (new NotificationsModel())->addNotification("admin", "A new student has joined Spicy Guitar Academy. The name is $firstname $lastname ($email).", '/admin/students');
 
+         // Notify Student
          (new NotificationsModel())->addNotification($email, "Hi, $firstname. Welcome to Spicy Guitar Academy. Spicy Guitar Academy is aimed at guiding beginners to fulfill their dreams of becoming professional guitar players. Please verify your account");
+
+         (new NotificationsModel())->addNotification($email, "Hi, $firstname. Invite your friends to Spicy Guitar Academy with your referral code $refCode and Win Spicy Units everytime they subscribe or buy a Featured Course. You can use these Spicy Units to buy Featured Courses you find interesting.");
 
          $msg = <<<HTML
          <div>
@@ -104,9 +122,30 @@ class StudentController
 
             <p>Use this token $token to verify your account.</p>
 
+            <p>You can also invite your friends to Spicy Guitar Academy with your referral code <b>$refCode</b> and WIN Spicy Units everytime they subscribe or buy a Featured Course. You can use these Spicy Units to buy Featured Courses you find interesting.</p>
+
          </div>
 HTML;
-         $send = Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $email, "Welcome to Spicy Guitar Academy.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $email, "Welcome to Spicy Guitar Academy.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+
+         // Notify Student who referred
+         if ($refBy !== '') {
+            $refStudent = $mdl->getStudentByRefCode($refBy);
+
+            (new NotificationsModel())->addNotification($refStudent['email'], "Hi, {$refStudent['firstname']}. Thank you for referring $firstname $lastname. Henceforth you would receive Spicy Units whenever $firstname subscribes or buys a Featured Course.", "/invite_friend");
+
+            $msg = <<<HTML
+         <div>
+            <h3>Hi, {$refStudent['firstname']}</h3>
+            <p>Thank you for referring $firstname $lastname.</p>
+            <p>Henceforth you would receive Spicy Units whenever $firstname subscribes or buys a Featured Course.</p>
+                
+            <p>Continue enjoying our lessons and keep referring more of your friends.</p>
+            <p>Thanks.</p>
+         </div>
+HTML;
+            Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $refStudent['email'], "Thank You For Referring.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+         }
 
          $res->success('Account was created.');
       } else {
@@ -930,25 +969,25 @@ HTML;
 
       $s = new Sanitize();
       $comment = $s->string($comment);
-      
+
       if ($categoryId == null) {
          $res->error('Invalid category id');
          exit;
       }
-      
+
       if ($replyId == null) {
          $res->error('Invalid reply id');
          exit;
       }
-      
+
       if ($comment == '') {
          $res->error('No comment');
          exit;
       }
-      
+
       $commentMdl = new ForumsModel();
       $response = $commentMdl->addMessage($categoryId, $comment, $email, $replyId);
-      
+
       // exit("Hi");
       // if reply id, send notification to sender
       if ($replyId !== null && $replyId > 0) {
