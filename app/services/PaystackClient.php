@@ -1,14 +1,10 @@
 <?php
 namespace App\Services;
 
-class Paystack
+class PaystackClient
 {
 
-	public function __construct()
-	{
-	}
-
-	public function initiatePayment(int $paymentId, string $displayName, string $variableName, string $variableValue, string $paymentMedium, string $email, int $amount, string $callbackUrl, string $reference)
+	public static function initiatePayment(int $paymentId, string $displayName, string $variableName, string $variableValue, string $paymentMedium, string $email, int $amount, string $callbackUrl, string $reference)
 	{
 		$curl = curl_init();
 		curl_setopt_array($curl, array(
@@ -80,7 +76,7 @@ class Paystack
 		];
 	}
 
-	public function verifyPayment(string $reference)
+	public static function verifyPayment(string $reference)
 	{
 		$result = array();
 		//The parameter after verify/ is the transaction reference to be verified
