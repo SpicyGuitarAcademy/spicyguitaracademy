@@ -3,7 +3,8 @@
     "description": "The Admin application for Spicy guitar academy",
     "type": "project",
     "require": {
-        "ebukaodini/initframework": "dev-master"
+        "ebukaodini/initframework": "dev-master",
+        "paypal/paypal-checkout-sdk": "dev-develop"
     },
     "authors": [
         {
