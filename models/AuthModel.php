@@ -83,6 +83,13 @@ class AuthModel extends Model
       ]);
    }
 
+   public function updateDevice($email, $device)
+   {
+      return $this->where("email = '$email'")->update([
+         "device" => $device
+      ]);
+   }
+
    public function verifyEmailToken($email, $token)
    {
       return $this->where("email = '$email' AND token = '$token'")->exist();

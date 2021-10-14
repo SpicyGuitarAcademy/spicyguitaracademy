@@ -22,20 +22,39 @@ class StudentModel extends Model
    }
 
    // write wonderful model codes...
-   public function addStudent($firstname, $lastname, $email, $telephone, $avatar)
+   public function addStudent($firstname, $lastname, $email, $telephone, $avatar, $referralCode, $referredBy)
    {
       return $this->create([
          'firstname' => $firstname,
          'lastname' => $lastname,
          'email' => $email,
          'telephone' => $telephone,
-         'avatar' => $avatar
+         'avatar' => $avatar,
+         'referral_code' => $referralCode,
+         'referred_by' => $referredBy
       ]);
    }
 
    public function getStudent($email)
    {
       return $this->where("email = '$email'")->read("*");
+   }
+
+   public function doesRefCodeExist($refCode)
+   {
+      return $this->where("referral_code = '$refCode'")->exist();
+   }
+
+   public function getStudentByRefCode($refCode)
+   {
+      return $this->where("referral_code = '$refCode'")->read("*")[0] ?? null;
+   }
+
+   public function updateRefUnits($email, $units)
+   {
+      return $this->where("email = '$email'")->update([
+         'referral_units' => $units
+      ]);
    }
 
    public function getStudentById($id)
