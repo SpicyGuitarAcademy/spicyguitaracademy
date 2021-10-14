@@ -1,12 +1,21 @@
+# app
 app/config.php
+
+# storage
 storage/
-vendor/
-.well-known
-cgi-bin
-.todo
 storage/logs/
-.*
+
+# server
+cgi-bin
+.cpanel.yml
+.user.ini
+.well-known
+.todo
 .htaccess
+
+# vendor
+vendor/
+vendor/composer
 
 # promo video
 public/assets/imgs/public/promotional-video.mp4
