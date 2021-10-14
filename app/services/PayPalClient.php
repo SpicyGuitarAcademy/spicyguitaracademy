@@ -2,13 +2,11 @@
 
 namespace App\Services;
 
-use Framework\Http\Response;
 use PayPalCheckoutSdk\Core\PayPalHttpClient;
 use PayPalCheckoutSdk\Core\SandboxEnvironment;
 use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 use PayPalCheckoutSdk\Payments\CapturesRefundRequest;
-use PayPalCheckoutSdk\Payments\AuthorizationsCaptureRequest;
 
 class PayPalClient
 {
