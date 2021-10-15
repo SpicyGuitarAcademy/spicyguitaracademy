@@ -571,18 +571,18 @@ HTML;
                $courseId = $details['purchase_units'][0]['custom_id'];
             }
 
-//             // notify student of subscription details
-//             (new NotificationsModel())->addNotification(User::$email, "Thank you for buying a Featured Course. You have lifetime access to this course.");
+            // notify student of subscription details
+            (new NotificationsModel())->addNotification(User::$email, "Thank you for buying a Featured Course. You have lifetime access to this course.");
 
-//             $msg = <<<HTML
-//          <div>
-//             <h3>Thank you for buying a Featured Course.</h3>
-//             <p>You have lifetime access to this course.</p>
+            $msg = <<<HTML
+         <div>
+            <h3>Thank you for buying a Featured Course.</h3>
+            <p>You have lifetime access to this course.</p>
 
-//             <p>Thanks.</p>
-//          </div>
-// HTML;
-//             Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Buying.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+            <p>Thanks.</p>
+         </div>
+HTML;
+            Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Buying.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
 
             // add spicy units for referral
             $this->addSpicyUnitsForStudentReferral(User::$email, $amountInNaira);
