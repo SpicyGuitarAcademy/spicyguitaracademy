@@ -433,7 +433,7 @@ HTML;
       //   update token for user and send mail to the user
       $msg = <<<HTML
          <div>
-            <p>Your verification token is $token.</p>
+            <p>Your verification token is <b>$token</b>.</p>
          </div>
 HTML;
       Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $email, "Verification Token.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
