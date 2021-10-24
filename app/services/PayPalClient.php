@@ -103,7 +103,7 @@ class PayPalClient
     $response = json_decode(json_encode($response), true);
 
     $link = $response['result']['links'][0]['href'];
-    $response['result']['domain'] = str_contains($link, 'sandbox') ? 'test' : 'live';
+    $response['result']['domain'] = \str_contains($link, 'sandbox') ? 'test' : 'live';
 
     return $response;
   }
