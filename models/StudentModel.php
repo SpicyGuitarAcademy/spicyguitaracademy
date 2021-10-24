@@ -50,6 +50,13 @@ class StudentModel extends Model
       return $this->where("referral_code = '$refCode'")->read("*")[0] ?? null;
    }
 
+   public function updateRefCode($email, $refCode)
+   {
+      return $this->where("email = '$email'")->update([
+         'referral_code' => $refCode
+      ]);
+   }
+
    public function updateRefUnits($email, $units)
    {
       return $this->where("email = '$email'")->update([
