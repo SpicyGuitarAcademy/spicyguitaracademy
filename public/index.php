@@ -1,6 +1,7 @@
 <?php
 // namespace App;
 
+use App\Services\CurrencyConverter;
 use App\Services\PayPalClient;
 // use App\Services\PaypalService;
 use App\Services\User;
@@ -23,7 +24,6 @@ date_default_timezone_set(TIMEZONE);
 
 // Start Application 😉
 $http = new Http();
-
 
 
 // Now let's Route 🚀🚀🚀
@@ -319,6 +319,10 @@ $http->auth('api')->guard('student')->get('/api/subscription/plans', 'Subscripti
 
 $http->auth('api')->guard('student')->get('/api/subscription/status', 'SubscriptionController@status');
 
+$http->auth('api')->guard('student')->post('/api/subscription/spicyunits/complete-subscription', 'SubscriptionController@completeSubscriptionPaymentWithSpicyUnits');
+
+$http->auth('api')->guard('student')->post('/api/subscription/spicyunits/complete-featured', 'SubscriptionController@completeFeaturedPaymentWithSpicyUnits');
+
 $http->auth('api')->guard('student')->post('/api/subscription/{medium}/initiate', 'SubscriptionController@initiatePayment');
 
 $http->auth('api')->guard('student')->post('/api/subscription/{medium}/initiate-featured', 'SubscriptionController@initiateFeaturedPayment');
@@ -407,6 +411,10 @@ $http->post('/api/forgotpassword', 'AuthController@forgotPassword');
 $http->post('/api/verify', 'AuthController@verifyAccount');
 
 $http->post('/api/resetpassword', 'AuthController@resetPassword');
+
+$http->auth('api')->guard('student')->get('/api/student/profile', 'StudentController@getProfile');
+
+$http->auth('api')->guard('student')->get('/api/student/request-referral-code', 'StudentController@requestReferralCode');
 
 $http->auth('api')->guard('student')->post('/api/account/updateprofile', 'AuthController@updateprofile');
 
