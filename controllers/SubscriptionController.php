@@ -2,15 +2,14 @@
 
 namespace Controllers;
 
+use App\Services\CurrencyConverter;
 use Framework\Http\Http;
 use Framework\Http\Request;
 use Framework\Http\Response;
-use App\Services\Auth;
 use App\Services\PayPalClient;
 use App\Services\User;
 use App\Services\Validate;
 use App\Services\Sanitize;
-use App\Services\Paystack;
 use App\Services\PaystackClient;
 use Framework\Cipher\Encrypt;
 use Framework\Mail\Mail;
@@ -204,7 +203,7 @@ class SubscriptionController
          } else if ($medium == 'paypal') {
 
             // conversion rate
-            $conversion_rate = 410.00;
+            $conversion_rate = CurrencyConverter::getNairaToDollarRate();
 
             // prepare payment parameters
             $amountInDollar = ceil($price / $conversion_rate);
@@ -294,10 +293,11 @@ class SubscriptionController
          } else if ($medium == 'paypal') {
 
             // conversion rate
-            $conversion_rate = 410.00;
+            $conversion_rate = CurrencyConverter::getNairaToDollarRate();
 
             // prepare payment parameters
-            $amountInDollar = ceil($price / $conversion_rate);
+            $amountInDollar = ceil((float)$price / $conversion_rate);
+            // exit($amountInDollar);
             $reference = $this->generateTxnref("Q$courseId");
             $displayName = $title . ' (Featured Course)';
             $variableValue = $courseId;
@@ -372,9 +372,9 @@ class SubscriptionController
          } else if ($medium == 'paypal') {
 
             $verification = PayPalClient::verifyPayment($paypalPaymentID);
-            
+
             $details = $verification['result'];
-            
+
             // retrieving payment details
             $id = $details['id'];
             $domain = $details['domain'];
@@ -394,7 +394,7 @@ class SubscriptionController
             // update payment log
             $mdl = new PaymentModel();
             $mdl->updatePaymentRecordForPaymentWithPayPal($id, $domain, $reference, $product, $amount, $currency, $channel, $ipAddress, $log, $status, $gatewayResponse, $message, $createdAt, $paidAt);
-            
+
             $isVerified = $status == 'success';
          } else {
             $res->error('Invalid payment medium');
@@ -403,7 +403,7 @@ class SubscriptionController
          if ($isVerified == true) {
 
             // conversion rate
-            $conversion_rate = 410.00;
+            $conversion_rate = CurrencyConverter::getNairaToDollarRate();
 
             // prepare details
             if ($medium == 'paystack') {
@@ -447,22 +447,6 @@ class SubscriptionController
             date_add($date, date_interval_create_from_date_string($end));
             $end = date_format($date, "Y-m-d H:i:s");
 
-            // notify student of subscription details
-            (new NotificationsModel())->addNotification(User::$email, "Thank you for subscribing. You have subscribe to a $plan Plan. Your subscribtion expires $end.");
-
-                        $msg = <<<HTML
-                     <div>
-                        <h3>Thank you for subscribing</h3>
-                        <p>You have subscribe to a $plan Plan. Your subscribtion expires $end.</p>
-
-                        <p>Thanks.</p>
-                     </div>
-HTML;
-                        Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Subscribing.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
-
-            // add spicy units for referral
-            $this->addSpicyUnitsForStudentReferral(User::$email, $amountInNaira);
-
             // add transaction
             $mdl = new TransactionModel();
 
@@ -471,6 +455,24 @@ HTML;
                // add to student subscription table
                $mdl = new StudentSubscriptionModel();
                $mdl->addStudentSubscription(User::$email, $reference, $plan, 0, $start, $end);
+
+               // notify student of subscription details
+               (new NotificationsModel())->addNotification(User::$email, "Thank you for subscribing. You have subscribe to a $plan Plan. Your subscribtion expires $end.");
+
+               $msg = <<<HTML
+                     <div>
+                        <h3>Thank you for subscribing</h3>
+                        <p>You have subscribe to a $plan Plan. Your subscribtion expires $end.</p>
+
+                        <p>Thanks.</p>
+                     </div>
+HTML;
+               Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Subscribing.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+
+               if ($medium == 'paypal' || $medium == 'paystack') {
+                  // add spicy units for referral
+                  $this->addSpicyUnitsForStudentReferral(User::$email, $amountInNaira);
+               }
 
                $res->success('Subscription completed');
             } else {
@@ -553,12 +555,10 @@ HTML;
             $res->error('Invalid payment medium');
          }
 
-         $verification = PaystackClient::verifyPayment($txnref);
-
          if ($isVerified == true) {
 
             // conversion rate
-            $conversion_rate = 410.00;
+            $conversion_rate = CurrencyConverter::getNairaToDollarRate();
 
             // prepare details
             if ($medium == 'paystack') {
@@ -571,22 +571,6 @@ HTML;
                $courseId = $details['purchase_units'][0]['custom_id'];
             }
 
-            // notify student of subscription details
-            (new NotificationsModel())->addNotification(User::$email, "Thank you for buying a Featured Course. You have lifetime access to this course.");
-
-            $msg = <<<HTML
-         <div>
-            <h3>Thank you for buying a Featured Course.</h3>
-            <p>You have lifetime access to this course.</p>
-
-            <p>Thanks.</p>
-         </div>
-HTML;
-            Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Buying.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
-
-            // add spicy units for referral
-            $this->addSpicyUnitsForStudentReferral(User::$email, $amountInNaira);
-
             // add transaction
             $mdl = new TransactionModel();
 
@@ -597,9 +581,27 @@ HTML;
 
                // add the course to the student courses table
                $studentCourseMdl = new StudentCourseModel();
-
                $studentCourseMdl->addCourseForStudent($categoryId, $courseId, User::$email, "FEATURED");
-               $res->success('Subscription completed');
+
+               // notify student of subscription details
+               (new NotificationsModel())->addNotification(User::$email, "Thank you for buying a Featured Course. You have lifetime access to this course.");
+
+               $msg = <<<HTML
+         <div>
+            <h3>Thank you for buying a Featured Course.</h3>
+            <p>You have lifetime access to this course.</p>
+
+            <p>Thanks.</p>
+         </div>
+HTML;
+               Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Buying.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+
+               if ($medium == 'paypal' || $medium == 'paystack') {
+                  // add spicy units for referral
+                  $this->addSpicyUnitsForStudentReferral(User::$email, $amountInNaira);
+               }
+
+               $res->success('Bought course successfully');
             } else {
                $res->error('Incomplete transaction');
             }
@@ -608,6 +610,172 @@ HTML;
          }
       } else {
          $res->error('No reference');
+      }
+   }
+
+   public function completeSubscriptionPaymentWithSpicyUnits(Request $req, Response $res)
+   {
+      // get the course from req body
+      // get the spicy units for this student
+      // if the units is greater thana or equal to the course price
+      // then: 
+      // 1. add course for student
+      // 2. deduct units from students units
+      // 3. notify students
+      // 4. send response
+
+      $plan = $req->body()->plan ?? null;
+
+      $v = new Validate();
+      $v->numbers('Plan', $plan, 'Invalid Plan')->minvalue(0)->maxvalue(4);
+
+      if (!$v->errors()) {
+         $mdl = new SubscriptionModel();
+         $sMdl = new Studentmodel();
+         $spicyUnits = $sMdl->getStudent(User::$email)[0]['referral_units'] ?? 0;
+
+         $reference = $this->generateTxnref("N$plan");
+         $sub = $mdl->getThisSubscription($plan)[0];
+         $price = $sub['price'] ?? 0;
+         $plan = $sub['plan'];
+
+         if ($spicyUnits >= $price) {
+            $status = "success";
+
+            $start = date("Y-m-d H:i:s");
+            // generate expiry date
+            switch ($plan) {
+               case '1 Month':
+                  $plan = 1;
+                  $end = '1 Month';
+                  break;
+
+               case '3 Months':
+                  $plan = 2;
+                  $end = '3 Months';
+                  break;
+
+               case '6 Months':
+                  $plan = 3;
+                  $end = '6 Months';
+                  break;
+
+               case '12 Months':
+                  $plan = 4;
+                  $end = '12 Months';
+                  break;
+
+               default:
+                  $plan = 0;
+                  break;
+            }
+            $date = date_create();
+            date_add($date, date_interval_create_from_date_string($end));
+            $end = date_format($date, "Y-m-d H:i:s");
+
+            // add transaction
+            $mdl = new TransactionModel();
+
+            if ($mdl->addTransaction(User::$email, $reference, $price, date("Y-m-d"), date("H:i:s"), $status) == true) {
+
+               // add to student subscription table
+               $mdl = new StudentSubscriptionModel();
+               $mdl->addStudentSubscription(User::$email, $reference, $plan, 0, $start, $end);
+
+               // deduct spicy units
+               $sMdl->updateRefUnits(User::$email, ($spicyUnits - $price));
+
+               // notify student of subscription details
+               (new NotificationsModel())->addNotification(User::$email, "Thank you for subscribing. You have subscribe to a $plan Plan. Your subscribtion expires $end.");
+
+               $msg = <<<HTML
+                     <div>
+                        <h3>Thank you for subscribing</h3>
+                        <p>You have subscribe to a $plan Plan. Your subscribtion expires $end.</p>
+
+                        <p>Thanks.</p>
+                     </div>
+HTML;
+               Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Subscribing.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+
+               $res->success('Subscription completed');
+            } else {
+               $res->error('Incomplete transaction');
+            }
+         } else {
+            $res->error("Insufficient Spicy Units");
+         }
+      } else {
+         $res->error('Invalid course id');
+      }
+   }
+
+   public function completeFeaturedPaymentWithSpicyUnits(Request $req, Response $res)
+   {
+      // get the course from req body
+      // get the spicy units for this student
+      // if the units is greater thana or equal to the course price
+      // then: 
+      // 1. add course for student
+      // 2. deduct units from students units
+      // 3. notify students
+      // 4. send response
+
+      $courseId = $req->body()->course ?? null;
+
+      $v = new Validate();
+      $v->numbers('Plan', $courseId, 'Invalid Course')->minvalue(1);
+
+      if (!$v->errors()) {
+         $mdl = new CourseModel();
+         $sMdl = new Studentmodel();
+         $spicyUnits = $sMdl->getStudent(User::$email)[0]['referral_units'] ?? 0;
+
+         $reference = $this->generateTxnref("Q$courseId");
+         $course = $mdl->getCourse($courseId)[0];
+         $price = $course['featuredprice'] ?? 0;
+
+         if ($spicyUnits >= $price) {
+            $status = "success";
+
+            // add transaction
+            $mdl = new TransactionModel();
+
+            if ($mdl->addTransaction(User::$email, $reference, $price, date("Y-m-d"), date("H:i:s"), $status) == true) {
+
+               $cmdl = new CourseModel();
+               $categoryId = $cmdl->getCourse($courseId)[0]['category'] ?? 0;
+
+               // add the course to the student courses table
+               $studentCourseMdl = new StudentCourseModel();
+
+               $studentCourseMdl->addCourseForStudent($categoryId, $courseId, User::$email, "FEATURED");
+
+               // deduct spicy units
+               $sMdl->updateRefUnits(User::$email, ($spicyUnits - $price));
+
+               // notify student of subscription details
+               (new NotificationsModel())->addNotification(User::$email, "Thank you for buying a Featured Course. You have lifetime access to this course.");
+
+               $msg = <<<HTML
+         <div>
+            <h3>Thank you for buying a Featured Course.</h3>
+            <p>You have lifetime access to this course.</p>
+
+            <p>Thanks.</p>
+         </div>
+HTML;
+               Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Buying.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+
+               $res->success('Bought course successfully');
+            } else {
+               $res->error('Incomplete transaction');
+            }
+         } else {
+            $res->error("Insufficient Spicy Units");
+         }
+      } else {
+         $res->error('Invalid course id');
       }
    }
 
@@ -625,12 +793,14 @@ HTML;
          $studentMdl->updateRefUnits($refBy['email'], ($refUnits + $spicyUnits));
 
          // notify student
-         (new NotificationsModel())->addNotification($refBy['email'], "Congratulations!!! You have earned $spicyUnits Spicy Units.");
+         (new NotificationsModel())->addNotification($refBy['email'], "Congratulations You have earned $spicyUnits Spicy Units. You can use Spicy Units to either pay for Subscription or buy Featured Courses. Thanks.");
 
          $msg = <<<HTML
          <div>
             <h3>Congratulations</h3>
             <p>You have earned $spicyUnits Spicy Units.</p>
+
+            <p>You can use Spicy Units to either pay for Subscription or buy Featured Courses.</p>
 
             <p>Continue referring.</p>
             <p>Thanks.</p>
