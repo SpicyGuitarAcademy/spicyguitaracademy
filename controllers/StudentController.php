@@ -120,7 +120,7 @@ class StudentController
             <p>We have the best qualified tutors who are dedicated to help you develop from start to finish to make your dreams come true.
             </p>
 
-            <p>Use this token $token to verify your account.</p>
+            <p>Use this token <b>$token</b> to verify your account.</p>
 
             <p>You can also invite your friends to Spicy Guitar Academy with your referral code <b>$refCode</b> and WIN Spicy Units everytime they subscribe or buy a Featured Course. You can use these Spicy Units to buy Featured Courses you find interesting.</p>
 
@@ -132,13 +132,13 @@ HTML;
          if ($refBy !== '') {
             $refStudent = $mdl->getStudentByRefCode($refBy);
 
-            (new NotificationsModel())->addNotification($refStudent['email'], "Hi, {$refStudent['firstname']}. Thank you for referring $firstname $lastname. Henceforth you would receive Spicy Units whenever $firstname subscribes or buys a Featured Course.", "/invite_friend");
+            (new NotificationsModel())->addNotification($refStudent['email'], "Hi, {$refStudent['firstname']}. Thank you for referring $firstname $lastname. Hence you would receive Spicy Units whenever \"$firstname\" subscribes or buys a Featured Course.", "/invite_friend");
 
             $msg = <<<HTML
          <div>
             <h3>Hi, {$refStudent['firstname']}</h3>
             <p>Thank you for referring $firstname $lastname.</p>
-            <p>Henceforth you would receive Spicy Units whenever $firstname subscribes or buys a Featured Course.</p>
+            <p>Hence you would receive Spicy Units whenever "$firstname" subscribes or buys a Featured Course.</p>
                 
             <p>Continue enjoying our lessons and keep referring more of your friends.</p>
             <p>Thanks.</p>
@@ -151,6 +151,23 @@ HTML;
       } else {
          $res->error('Account was not created. Try again!');
       }
+   }
+
+   public function requestReferralCode(Request $req, Response $res)
+   {
+      $mdl = new StudentModel();
+
+      // generate unique referral code
+      $refCode = Encrypt::hash(7);
+      while ($mdl->doesRefCodeExist($refCode)) {
+         $refCode = Encrypt::hash(7);
+      }
+
+      $mdl->updateRefCode(User::$email, $refCode);
+
+      $res->success('Referral code', [
+         'referral_code' => $refCode
+      ]);
    }
 
    public function chooseCategory(Request $req, Response $res)
@@ -176,6 +193,27 @@ HTML;
       } else {
          $res->error('Student category not selected', $v->errors());
       }
+   }
+
+   public function getProfile(Request $req, Response $res)
+   {
+      $email = User::$email;
+
+      $mdl = new StudentModel();
+      $profile = $mdl->getStudent($email)[0];
+
+      // get login data
+      $mdl = new AuthModel();
+      $details = $mdl->getLoginDetails($email);
+      $status = $details[0]['status'];
+      $profile['status'] = $status;
+
+      // check status
+      if ($status == 'blocked') {
+         $res->error('Your Account has been Blocked. Contact the Administrator');
+      }
+
+      $res->success("Student Profile", $profile);
    }
 
    public function rechooseCategory(Request $req, Response $res)
