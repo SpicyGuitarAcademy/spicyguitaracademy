@@ -206,7 +206,7 @@ class SubscriptionController
             $conversion_rate = CurrencyConverter::getNairaToDollarRate();
 
             // prepare payment parameters
-            $amountInDollar = ceil($price / $conversion_rate);
+            $amountInDollar = ceil((float)$price / $conversion_rate);
             $reference = $this->generateTxnref("N$plan");
             $displayName = $title . ' Subscription Plan';
             $variableValue = $title;
