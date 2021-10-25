@@ -1,46 +1,153 @@
-[
-    {
-        "name": "ebukaodini/initframework",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ebukaodini/initframework.git",
-            "reference": "b6e5dbba9d558c700ccf09276835b63e9fb1f81b"
+{
+    "packages": [
+        {
+            "name": "ebukaodini/initframework",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ebukaodini/initframework.git",
+                "reference": "b6e5dbba9d558c700ccf09276835b63e9fb1f81b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ebukaodini/initframework/zipball/b6e5dbba9d558c700ccf09276835b63e9fb1f81b",
+                "reference": "b6e5dbba9d558c700ccf09276835b63e9fb1f81b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.3.0"
+            },
+            "time": "2020-05-23T18:43:24+00:00",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "Framework\\": "src/Framework"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ebuka Odini",
+                    "email": "ebukaodini@gmail.com"
+                }
+            ],
+            "description": "👌🏽 A Simple Web Framework for PHP Developers.",
+            "homepage": "http://github.com/ebukaodini/initframework",
+            "keywords": [
+                "Simple",
+                "php",
+                "web framework"
+            ],
+            "install-path": "../ebukaodini/initframework"
         },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ebukaodini/initframework/zipball/b6e5dbba9d558c700ccf09276835b63e9fb1f81b",
-            "reference": "b6e5dbba9d558c700ccf09276835b63e9fb1f81b",
-            "shasum": ""
+        {
+            "name": "paypal/paypal-checkout-sdk",
+            "version": "dev-develop",
+            "version_normalized": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paypal/Checkout-PHP-SDK.git",
+                "reference": "d004c72c2eb16ad16ffe96ceda708007d599a584"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paypal/Checkout-PHP-SDK/zipball/d004c72c2eb16ad16ffe96ceda708007d599a584",
+                "reference": "d004c72c2eb16ad16ffe96ceda708007d599a584",
+                "shasum": ""
+            },
+            "require": {
+                "paypal/paypalhttp": "1.0.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.7"
+            },
+            "time": "2021-09-21T21:10:26+00:00",
+            "default-branch": true,
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "PayPalCheckoutSdk\\": "lib/PayPalCheckoutSdk",
+                    "Sample\\": "samples/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "PayPal",
+                    "homepage": "https://github.com/paypal/Checkout-PHP-SDK/contributors"
+                }
+            ],
+            "description": "PayPal's PHP SDK for Checkout REST APIs",
+            "homepage": "http://github.com/paypal/Checkout-PHP-SDK/",
+            "keywords": [
+                "checkout",
+                "orders",
+                "payments",
+                "paypal",
+                "rest",
+                "sdk"
+            ],
+            "support": {
+                "source": "https://github.com/paypal/Checkout-PHP-SDK/tree/develop"
+            },
+            "install-path": "../paypal/paypal-checkout-sdk"
         },
-        "require": {
-            "php": ">=7.3.0"
-        },
-        "time": "2020-05-23T18:43:24+00:00",
-        "type": "library",
-        "installation-source": "source",
-        "autoload": {
-            "psr-4": {
-                "Framework\\": "src/Framework"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Ebuka Odini",
-                "email": "ebukaodini@gmail.com"
-            }
-        ],
-        "description": "👌🏽 A Simple Web Framework for PHP Developers.",
-        "homepage": "http://github.com/ebukaodini/initframework",
-        "keywords": [
-            "Simple",
-            "php",
-            "web framework"
-        ]
-    }
-]
+        {
+            "name": "paypal/paypalhttp",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paypal/paypalhttp_php.git",
+                "reference": "7b09c89c80828e842c79230e7f156b61fbb68d25"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paypal/paypalhttp_php/zipball/7b09c89c80828e842c79230e7f156b61fbb68d25",
+                "reference": "7b09c89c80828e842c79230e7f156b61fbb68d25",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.7",
+                "wiremock-php/wiremock-php": "1.43.2"
+            },
+            "time": "2021-09-14T21:35:26+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "PayPalHttp\\": "lib/PayPalHttp"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PayPal",
+                    "homepage": "https://github.com/paypal/paypalhttp_php/contributors"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/paypal/paypalhttp_php/issues",
+                "source": "https://github.com/paypal/paypalhttp_php/tree/1.0.1"
+            },
+            "install-path": "../paypal/paypalhttp"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}
