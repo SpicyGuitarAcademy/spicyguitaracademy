@@ -15,7 +15,7 @@ cgi-bin
 
 # vendor
 vendor/
-vendor/composer
+vendor/composer/*
 
 # promo video
 public/assets/imgs/public/promotional-video.mp4
