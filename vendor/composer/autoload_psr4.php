@@ -6,6 +6,9 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Sample\\' => array($vendorDir . '/paypal/paypal-checkout-sdk/samples'),
+    'PayPalHttp\\' => array($vendorDir . '/paypal/paypalhttp/lib/PayPalHttp'),
+    'PayPalCheckoutSdk\\' => array($vendorDir . '/paypal/paypal-checkout-sdk/lib/PayPalCheckoutSdk'),
     'Models\\Admin\\' => array($baseDir . '/models/admin'),
     'Models\\' => array($baseDir . '/models'),
     'Framework\\' => array($vendorDir . '/ebukaodini/initframework/src/Framework'),
