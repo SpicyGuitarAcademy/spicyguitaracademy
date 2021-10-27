@@ -811,11 +811,12 @@ HTML;
          $msg = <<<HTML
          <div>
             <h3>Hi, </h3>
-            <p>Your friend ($email) has invited you to join Spicy Guitar Academy and learn how to become a professional guitar player.</p><br>
+            <p>Your friend ($email) has invited you to join Spicy Guitar Academy, a top African online guitar Learning platform where guitar learning has been made Easy for beginners to advanced.</p>
+            <p>Now you can become the Guitarist you Dream of.</p><br />
 
             <p>Download the Spicy Guitar Academy application <a href="https://play.google.com/store/apps/details?id=com.spicyguitaracademy">Here</a> and register with the Invitation code <b>$refCode</b>.</p><br>
 
-            <p>We can't wait to have you on board. 🙂🎉</p>
+            <p>We can't wait to have you on board. 🎸🎸🎶🎉</p>
          </div>
 HTML;
          $send = Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $friend, "Your Friend Invites You.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
