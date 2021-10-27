@@ -455,16 +455,17 @@ class SubscriptionController
                // add to student subscription table
                $mdl = new StudentSubscriptionModel();
                $mdl->addStudentSubscription(User::$email, $reference, $plan, 0, $start, $end);
+               
+               $planToWords = $this->planToWords($plan);
+               $endDate = date("d-m-Y H:i:s", $end);
 
                // notify student of subscription details
-               (new NotificationsModel())->addNotification(User::$email, "Thank you for subscribing. You have subscribe to a $plan Plan. Your subscribtion expires $end.");
+               (new NotificationsModel())->addNotification(User::$email, "Thank you for subscribing. You have Subscribed to a $planToWords plan. Your Subscription expires ($endDate).");
 
                $msg = <<<HTML
                      <div>
                         <h3>Thank you for subscribing</h3>
-                        <p>You have subscribe to a $plan Plan. Your subscribtion expires $end.</p>
-
-                        <p>Thanks.</p>
+                        <p>You have subscribed to a <b>{$planToWords}</b> plan. Your Subscription expires (<b>$endDate</b>).</p>
                      </div>
 HTML;
                Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Subscribing.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
@@ -483,6 +484,16 @@ HTML;
          }
       } else {
          $res->error('No reference');
+      }
+   }
+
+   public function planToWords(int $plan)
+   {
+      switch ($plan) {
+         case 1: return "One Month";
+         case 3: return "Three Months";
+         case 6: return "Six Months";
+         case 12: return "Twelve Months";
       }
    }
 
@@ -584,12 +595,12 @@ HTML;
                $studentCourseMdl->addCourseForStudent($categoryId, $courseId, User::$email, "FEATURED");
 
                // notify student of subscription details
-               (new NotificationsModel())->addNotification(User::$email, "Thank you for buying a Featured Course. You have lifetime access to this course.");
+               (new NotificationsModel())->addNotification(User::$email, "Thank you for Buying a Course. You have lifetime Access to this course and all its features.");
 
                $msg = <<<HTML
          <div>
-            <h3>Thank you for buying a Featured Course.</h3>
-            <p>You have lifetime access to this course.</p>
+            <h3>Thank you for Buying a Course.</h3>
+            <p>You have lifetime Access to this course and all its features.</p>
 
             <p>Thanks.</p>
          </div>
@@ -685,15 +696,16 @@ HTML;
                // deduct spicy units
                $sMdl->updateRefUnits(User::$email, ($spicyUnits - $price));
 
+               $planToWords = $this->planToWords($plan);
+               $endDate = date("d-m-Y H:i:s", $end);
+
                // notify student of subscription details
-               (new NotificationsModel())->addNotification(User::$email, "Thank you for subscribing. You have subscribe to a $plan Plan. Your subscribtion expires $end.");
+               (new NotificationsModel())->addNotification(User::$email, "Thank you for subscribing. You have Subscribed to a $planToWords plan. Your Subscription expires ($endDate).");
 
                $msg = <<<HTML
                      <div>
                         <h3>Thank you for subscribing</h3>
-                        <p>You have subscribe to a $plan Plan. Your subscribtion expires $end.</p>
-
-                        <p>Thanks.</p>
+                        <p>You have subscribed to a <b>{$planToWords}</b> plan. Your Subscription expires (<b>$endDate</b>).</p>
                      </div>
 HTML;
                Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Subscribing.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
@@ -755,12 +767,12 @@ HTML;
                $sMdl->updateRefUnits(User::$email, ($spicyUnits - $price));
 
                // notify student of subscription details
-               (new NotificationsModel())->addNotification(User::$email, "Thank you for buying a Featured Course. You have lifetime access to this course.");
+               (new NotificationsModel())->addNotification(User::$email, "Thank you for Buying a Course. You have lifetime Access to this course and all its features.");
 
                $msg = <<<HTML
          <div>
-            <h3>Thank you for buying a Featured Course.</h3>
-            <p>You have lifetime access to this course.</p>
+            <h3>Thank you for Buying a Course.</h3>
+            <p>You have lifetime Access to this course and all its features.</p>
 
             <p>Thanks.</p>
          </div>

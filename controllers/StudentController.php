@@ -132,16 +132,15 @@ HTML;
          if ($refBy !== '') {
             $refStudent = $mdl->getStudentByRefCode($refBy);
 
-            (new NotificationsModel())->addNotification($refStudent['email'], "Hi, {$refStudent['firstname']}. Thank you for referring $firstname $lastname. Hence you would receive Spicy Units whenever \"$firstname\" subscribes or buys a Featured Course.", "/invite_friend");
+            (new NotificationsModel())->addNotification($refStudent['email'], "Hi, {$refStudent['firstname']}. Thank you for referring $firstname {$lastname[0]}. Hence, you will be rewarded with Spicy Units anytime $firstname {$lastname[0]}. Subscribes or buys a Course. You can use spicy units to either pay for subscription or buy courses.", "/invite_friend");
 
             $msg = <<<HTML
          <div>
             <h3>Hi, {$refStudent['firstname']}</h3>
-            <p>Thank you for referring $firstname $lastname.</p>
-            <p>Hence you would receive Spicy Units whenever "$firstname" subscribes or buys a Featured Course.</p>
+            <p>Thank you for referring $firstname {$lastname[0]}.</p>
+            <p>Hence, you will be rewarded with Spicy Units anytime $firstname {$lastname[0]}. Subscribes or buy a Course.</p>
                 
-            <p>Continue enjoying our lessons and keep referring more of your friends.</p>
-            <p>Thanks.</p>
+            <p>You can use spicy units to either pay for subscription or buy courses.</p>
          </div>
 HTML;
             Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $refStudent['email'], "Thank You For Referring.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
@@ -799,6 +798,9 @@ HTML;
       $email = User::$email;
 
       $friend = $req->body()->friend ?? null;
+      $mdl = new StudentModel();
+
+      $refCode = $mdl->getStudent($email)[0]['referral_code'] ?? 'No Referral Code';
 
       $v = new Validate();
       $v->email("friend", $friend, "Invalid friend's email");
@@ -811,7 +813,7 @@ HTML;
             <h3>Hi, </h3>
             <p>Your friend ($email) has invited you to join in and learn how to become a professional guitar player.</p><br>
 
-            <p>Click <a href="https://spicyguitaracademy.com">Here</a> to join.</p><br>
+            <p>Download the Spicy Guitar Academy application <a href="https://play.google.com/store/apps/details?id=com.spicyguitaracademy">Here</a> and register with the Invitation code <b>$refCode</b>.</p><br>
 
             <p>We can't wait to have you on board. 🙂🎉</p>
          </div>
