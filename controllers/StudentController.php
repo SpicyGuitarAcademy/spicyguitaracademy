@@ -811,7 +811,7 @@ HTML;
          $msg = <<<HTML
          <div>
             <h3>Hi, </h3>
-            <p>Your friend ($email) has invited you to join in and learn how to become a professional guitar player.</p><br>
+            <p>Your friend ($email) has invited you to join Spicy Guitar Academy and learn how to become a professional guitar player.</p><br>
 
             <p>Download the Spicy Guitar Academy application <a href="https://play.google.com/store/apps/details?id=com.spicyguitaracademy">Here</a> and register with the Invitation code <b>$refCode</b>.</p><br>
 
