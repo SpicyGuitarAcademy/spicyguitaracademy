@@ -83,11 +83,9 @@ class PayPalClient
 
       return $response;
     } catch (\PayPalHttp\HttpException $th) {
-      error_log(json_encode($th));
-      exit(json_encode($th));
-      // return json_decode($error);
+      $error =  json_decode($th->getMessage(), true);
+      return ["error" => $error['error_description']];
     }
-    
   }
 
   // 2. Set up your server to receive a call from the client
