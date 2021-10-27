@@ -82,7 +82,7 @@ class PayPalClient
       $response['result']['reference'] = $response['result']['purchase_units'][0]['reference_id'];
 
       return $response;
-    } catch (\Throwable $th) {
+    } catch (\PayPalHttp\HttpException $th) {
       exit(json_encode($th));
       // return json_decode($error);
     }
