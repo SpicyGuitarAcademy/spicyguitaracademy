@@ -797,7 +797,7 @@ HTML;
       // temporary
       $email = User::$email;
 
-      $friend = $req->body()->friend ?? null;
+      $friend = trim($req->body()->friend) ?? null;
       $mdl = new StudentModel();
 
       $refCode = $mdl->getStudent($email)[0]['referral_code'] ?? 'No Referral Code';
