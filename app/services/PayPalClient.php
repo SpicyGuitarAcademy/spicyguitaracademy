@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use PayPalCheckoutSdk\Core\PayPalHttpClient;
+use PayPalCheckoutSdk\Core\ProductionEnvironment;
 use PayPalCheckoutSdk\Core\SandboxEnvironment;
 use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
@@ -29,7 +30,7 @@ class PayPalClient
   {
     $clientId = PAYPAL_CLIENT_ID; // getenv("CLIENT_ID") ?: "PAYPAL-SANDBOX-CLIENT-ID";
     $clientSecret = PAYPAL_SECRET_KEY; // getenv("CLIENT_SECRET") ?: "PAYPAL-SANDBOX-CLIENT-SECRET";
-    return new SandboxEnvironment($clientId, $clientSecret);
+    return PAYPAL_MODE == 'TEST' ? new SandboxEnvironment($clientId, $clientSecret) : new ProductionEnvironment($clientId, $clientSecret);
   }
 
   // 2. Set up your server to receive a call from the client
