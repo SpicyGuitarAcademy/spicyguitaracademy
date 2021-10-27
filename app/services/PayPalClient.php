@@ -39,48 +39,55 @@ class PayPalClient
    */
   public static function initiatePayment(string $displayName, float $amountInDollar, string $reference, string $variableValue)
   {
-    $request = new OrdersCreateRequest();
-    $request->prefer('return=representation');
-    $request->body = array(
-      'intent' => 'CAPTURE', // CAPTURE, AUTHORIZE
-      'application_context' =>
-      array(
-        'brand_name' => 'Spicy Guitar Academy',
-        'return_url' => SERVER . '/api/subscription/paypal/verify',
-        'cancel_url' => SERVER . '/api/subscription/paypal/verify',
-        'user_action' => 'PAY_NOW'
-      ),
-      'purchase_units' =>
-      array(
-        0 =>
+    try {
+      $request = new OrdersCreateRequest();
+      $request->prefer('return=representation');
+      $request->body = array(
+        'intent' => 'CAPTURE', // CAPTURE, AUTHORIZE
+        'application_context' =>
         array(
-          'reference_id' => $reference,
-          'description' => $displayName,
-          'custom_id' => $variableValue,
-          'amount' =>
+          'brand_name' => 'Spicy Guitar Academy',
+          'return_url' => SERVER . '/api/subscription/paypal/verify',
+          'cancel_url' => SERVER . '/api/subscription/paypal/verify',
+          'user_action' => 'PAY_NOW'
+        ),
+        'purchase_units' =>
+        array(
+          0 =>
           array(
-            'currency_code' => 'USD',
-            'value' => $amountInDollar
+            'reference_id' => $reference,
+            'description' => $displayName,
+            'custom_id' => $variableValue,
+            'amount' =>
+            array(
+              'currency_code' => 'USD',
+              'value' => $amountInDollar
+            )
           )
         )
-      )
-    );
+      );
 
-    // 3. Call PayPal to set up a transaction
-    $client = PayPalClient::client();
-    $response = $client->execute($request);
+      // 3. Call PayPal to set up a transaction
+      $client = PayPalClient::client();
+      $response = $client->execute($request);
 
-    // 4. Return a successful response to the client.
-    $response = json_decode(json_encode($response), true);
+      // 4. Return a successful response to the client.
+      $response = json_decode(json_encode($response), true);
 
-    $links = $response['result']['links'];
-    $approveLink = array_filter($links, function ($link) {
-      return $link['rel'] == 'approve';
-    });
-    $response['result']['authorization_url'] = array_values($approveLink)[0]['href'];
-    $response['result']['reference'] = $response['result']['purchase_units'][0]['reference_id'];
+      $links = $response['result']['links'];
+      $approveLink = array_filter($links, function ($link) {
+        return $link['rel'] == 'approve';
+      });
+      $response['result']['authorization_url'] = array_values($approveLink)[0]['href'];
+      $response['result']['reference'] = $response['result']['purchase_units'][0]['reference_id'];
 
-    return $response;
+      return $response;
+    } catch (\Throwable $th) {
+      exit($th->getMessage());
+      // ['error_description']
+      // return json_decode($error);
+    }
+    
   }
 
   // 2. Set up your server to receive a call from the client
