@@ -94,23 +94,27 @@ class PayPalClient
    */
   public static function verifyPayment($orderId)
   {
+    try {
+      // 3. Call PayPal to get the transaction details
+      $client = PayPalClient::client();
+      $response = $client->execute(new OrdersGetRequest($orderId));
 
-    // 3. Call PayPal to get the transaction details
-    $client = PayPalClient::client();
-    $response = $client->execute(new OrdersGetRequest($orderId));
+      // 4. Save the transaction in your database.
+      // Implement logic to save transaction to your database for future reference.
+      // print "Gross Amount: {$response->result->purchase_units[0]->amount->currency_code} {$response->result->purchase_units[0]->amount->value}\n";
 
-    // 4. Save the transaction in your database.
-    // Implement logic to save transaction to your database for future reference.
-    // print "Gross Amount: {$response->result->purchase_units[0]->amount->currency_code} {$response->result->purchase_units[0]->amount->value}\n";
+      // To print the whole response body, uncomment the following line
+      // echo json_encode($response->result, JSON_PRETTY_PRINT);
+      $response = json_decode(json_encode($response), true);
 
-    // To print the whole response body, uncomment the following line
-    // echo json_encode($response->result, JSON_PRETTY_PRINT);
-    $response = json_decode(json_encode($response), true);
+      $link = $response['result']['links'][0]['href'];
+      $response['result']['domain'] = PAYPAL_MODE == 'LIVE' ? 'live' : 'test'; //\str_contains($link, 'sandbox') ? 'test' : 'live';
 
-    $link = $response['result']['links'][0]['href'];
-    $response['result']['domain'] = PAYPAL_MODE == 'LIVE' ? 'live' : 'test'; //\str_contains($link, 'sandbox') ? 'test' : 'live';
-
-    return $response;
+      return $response;
+    } catch (\PayPalHttp\HttpException $th) {
+      $error =  json_decode($th->getMessage(), true);
+      return ["error" => $error['error_description']];
+    }
   }
 
   // 2. Set up your server to receive a call from the client
