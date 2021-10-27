@@ -83,8 +83,7 @@ class PayPalClient
 
       return $response;
     } catch (\Throwable $th) {
-      exit($th->getMessage());
-      // ['error_description']
+      exit(json_encode($th));
       // return json_decode($error);
     }
     
