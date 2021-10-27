@@ -83,6 +83,7 @@ class PayPalClient
 
       return $response;
     } catch (\PayPalHttp\HttpException $th) {
+      error_log(json_encode($th));
       exit(json_encode($th));
       // return json_decode($error);
     }
