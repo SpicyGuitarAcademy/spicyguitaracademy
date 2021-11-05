@@ -126,6 +126,16 @@ class LessonController
       );
    }
 
+   public function updateFreeLessonOrder(Request $req, Response $res)
+   {
+      $lesson = trim($req->body()->lesson);
+      $order = trim($req->body()->order);
+      $mdl = new LessonModel();
+      $mdl->updateFreeLessonOrder($lesson, $order);
+
+      $res->redirect(SERVER . '/admin/lessons/free');
+   }
+
    public function create(Request $req, Response $res)
    {
       // courses

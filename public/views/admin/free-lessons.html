@@ -59,6 +59,7 @@
                      <tr>
                         <td>#</td>
                         <th>Lesson Title</th>
+                        <th>Lesson Order</th>
                         <th>Action</th>
                      </tr>
                   </thead>
@@ -68,6 +69,19 @@
                   <tr>
                      <td>{{$count}}</td>
                      <td>{{$lesson->lesson}}</td>
+                     <td class="d-flex justify-content-center align-items-center">
+                        <form action="@/admin/lessons/free/update/order" method="post">
+                           @method=PATCH
+                           @csrftoken
+                           <input type="hidden" name="lesson" value="{{$lesson->id}}">
+                           <div class="d-flex justify-content-center align-items-center">
+                              <input type="text" name="order" value="{{$lesson->free_order}}" placeholder="order"
+                                 style="width: 50px;" class="form- control">
+                              <button type="submit" class="btn btn-sm btn-primary"><i
+                                    class="fa fa-arrow-right"></i></button>
+                           </div>
+                        </form>
+                     </td>
                      <td>
 								<a href="@/admin/lessons/edit/{{$lesson->id}}" class="btn btn-sm btn-info" onclick=""><span class="fa fa-edit"></span> Edit</button>
                      </td>

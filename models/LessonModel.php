@@ -1,5 +1,7 @@
 <?php
+
 namespace Models;
+
 use Framework\Database\Model;
 
 class LessonModel extends Model
@@ -15,10 +17,17 @@ class LessonModel extends Model
    {
       return $this->where("active = true")->read("*");
    }
-   
+
    public function getFreeLessons()
    {
-      return $this->where("free = true AND active = true ORDER BY course, id DESC")->read("*");
+      return $this->where("free = true AND active = true ORDER BY free_order ASC")->read("*");
+   }
+
+   public function updateFreeLessonOrder($id, $order)
+   {
+      return $this->where("id = $id")->update([
+         'free_order' => $order
+      ]);
    }
 
    public function getLesson($id)
@@ -125,5 +134,4 @@ class LessonModel extends Model
          'active' => false
       ]);
    }
-
 }
