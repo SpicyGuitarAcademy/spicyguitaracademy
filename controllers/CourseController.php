@@ -29,8 +29,7 @@ class CourseController
       $amateur = $mdl->getCoursesByCategory(2);
       $intermediate = $mdl->getCoursesByCategory(3);
       $advanced = $mdl->getCoursesByCategory(4);
-
-      // TODO: consider api's too by returning json instead
+      
       $res->send(
          $res->render('admin/courses.html', [
             "beginners" => json_encode($beginners),
@@ -59,11 +58,8 @@ class CourseController
 
       $category = trim($req->body()->category);
       $course = trim($req->body()->course);
-      // NOTE: this is adding '' to description on empty field passed
       $description = (trim($req->body()->description) != '') ? trim($req->body()->description) : 'No Description';
       $order = trim($req->body()->order);
-      // $featured = isset($req->body()->featured) ? true : false;
-      // $featuredprice = isset($req->body()->featured) ? $req->body()->featuredprice : 0;
       $featured = 0;
       $featuredprice = 0;
       $thumbnail = ($req->files_exists() == true && $req->files()->thumbnail->error == 0) ? $req->files()->thumbnail : null;
@@ -386,9 +382,7 @@ class CourseController
    {
       $category = trim($req->body()->category);
       $course = trim($req->body()->course);
-      // NOTE: this is adding '' to description on empty field passed
       $description = (trim($req->body()->description) != '') ? trim($req->body()->description) : 'No Description';
-      // $order = trim($req->body()->order);
       $featured = true;
       $featuredprice = $req->body()->featuredprice ?? 0;
       $thumbnail = ($req->files_exists() == true && $req->files()->thumbnail->error == 0) ? $req->files()->thumbnail : null;

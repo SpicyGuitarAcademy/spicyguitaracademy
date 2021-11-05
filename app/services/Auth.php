@@ -28,7 +28,6 @@ class Auth
          if ($username == "admin" && $password == "admin") {
 
             // set user credentials
-            // Note: this credentials were used to authenticate the user in the ath_session method above
             $credentials = [
                "username" => $username,
                "role" => "admin"

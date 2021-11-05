@@ -11,9 +11,6 @@ use Framework\Http\Request;
 use Framework\Http\Response;
 use Models\NotificationsModel;
 
-// TODO: update packages
-// composer require paypal/paypal-checkout-sdk
-
 // Include autoload for composer packages
 include_once '../vendor/autoload.php';
 
@@ -175,8 +172,6 @@ $http->auth('web')->guard('admin', 'tutor')->privilege('LESSONS')->csrf()->patch
 
 $http->auth('web')->guard('admin', 'tutor')->privilege('LESSONS')->csrf()->patch('/admin/lessons/update/details', 'LessonController@updateDetails');
 
-// $http->auth('web')->guard('admin','tutor')->csrf()->patch('/admin/lessons/update/featured', 'LessonController@updateFeatured');
-
 // Featured Courses
 $http->auth('web')->guard('admin', 'tutor')->privilege('FEATURED COURSES')->get('/admin/courses/featured', 'CourseController@getFeaturedCourses');
 
@@ -201,6 +196,11 @@ $http->auth('web')->guard('admin', 'tutor')->privilege('FEATURED COURSES')->csrf
 $http->auth('web')->guard('admin', 'tutor')->privilege('FEATURED COURSES')->csrf()->patch('/admin/courses/featured/update/order', 'CourseController@updateFeaturedCourseOrder');
 
 $http->auth('web')->guard('admin', 'tutor')->privilege('FREE LESSONS')->get('/admin/lessons/free', 'LessonController@free');
+
+// TODO: UPDATE SQL
+// ALTER TABLE `lesson_tbl` ADD `free_order` INT NOT NULL DEFAULT '0' AFTER `free`;
+
+$http->auth('web')->guard('admin', 'tutor')->privilege('FREE LESSONS')->patch('/admin/lessons/free/update/order', 'LessonController@updateFreeLessonOrder');
 
 // students
 $http->auth('web')->guard('admin', 'tutor')->privilege('STUDENTS')->get('/admin/students', 'TutorController@students');
@@ -366,7 +366,6 @@ $http->auth('api')->guard('student')->get('/api/student/featuredcourses/bought',
 // list lessons in a course
 $http->auth('api')->guard('student')->get('/api/course/{course}/lessons', 'CourseController@getCourseLessons');
 
-// TODO
 // list lessons in a featured course
 $http->auth('api')->guard('student')->get('/api/course/featured/{course}/lessons', 'CourseController@getApiFeaturedCourseLessons');
 
@@ -376,6 +375,8 @@ $http->auth('api')->guard('student')->get('/api/lesson/{lesson}', 'LessonControl
 // get course assignment
 $http->auth('api')->guard('student')->get('/api/course/{course}/assignment', 'StudentController@getMyCourseAssignment');
 
+$http->auth('api')->guard('student')->post('/api/student/assignment/answer', 'StudentController@answerAssignment');
+
 // get a lesson for the student
 $http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}', 'StudentController@getStudentLesson');
 
@@ -384,8 +385,6 @@ $http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}/next', '
 
 // get previous lesson in a course
 $http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}/previous', 'StudentController@previousLesson');
-
-$http->auth('api')->guard('student')->post('/api/student/assignment/answer', 'StudentController@answerAssignment');
 
 // $http->auth('api')->guard('student')->get('/api/courses/search', 'CourseController@search');
 

@@ -27,7 +27,6 @@ class CategoryController
          );
       }
 
-      // TODO: consider api's too by returning json instead
       $res->send(
          $res->render('admin/categories.html', [
             "empty" => false,

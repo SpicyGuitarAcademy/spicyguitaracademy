@@ -32,9 +32,6 @@ use Models\NotificationsModel;
 class StudentController
 {
 
-   // TODO: UPDATE SQL 
-   // ALTER TABLE `student_tbl` ADD `referral_code` VARCHAR(7) NULL AFTER `telephone`, ADD `referred_by` VARCHAR(7) NULL AFTER `referral_code`, ADD `referral_units` DOUBLE NOT NULL DEFAULT '0' AFTER `referred_by`;
-
    public function register(Request $req, Response $res)
    {
       // create a resource
@@ -391,6 +388,7 @@ HTML;
       if (is_null($assignment)) {
          $res->error('No assignment');
       } else {
+         $assignment['answerNote'] = utf8_decode($assignment['answerNote']);
          $res->success('Course assignment', $assignment);
       }
    }
@@ -783,6 +781,8 @@ HTML;
          $s = new Sanitize();
          $note = $s->string($note);
 
+         $note = utf8_encode($note);
+
          $mdl = new StudentAssignmentModel();
          $mdl->answerAsNote($email, $assignment, $answerId, $note);
 
@@ -893,6 +893,9 @@ HTML;
          exit;
       }
 
+      // encode comment to utf8
+      $comment = utf8_encode($comment);
+
       $commentMdl = new StudentCommentsModel();
       $response = $commentMdl->addComment($lessonId, $comment, $email, $receiver);
 
@@ -935,6 +938,7 @@ HTML;
          $tMdl = new TutorModel();
          $count = 0;
          foreach ($comments as $comment) {
+            $comments[$count]['comment'] = utf8_decode($comments[$count]['comment']);
             if ($comment['sender'] != $email) {
                // this is a tutor
                $tutorDetails = $tMdl->getTutor($comment['sender']);
@@ -1008,8 +1012,9 @@ HTML;
       $categoryId = $req->body()->categoryId ?? '';
       $replyId = $req->body()->replyId ?? null;
 
+
       $s = new Sanitize();
-      $comment = $s->string($comment);
+      $comment = $s->string(utf8_encode($comment));
 
       if ($categoryId == null) {
          $res->error('Invalid category id');
@@ -1029,7 +1034,6 @@ HTML;
       $commentMdl = new ForumsModel();
       $response = $commentMdl->addMessage($categoryId, $comment, $email, $replyId);
 
-      // exit("Hi");
       // if reply id, send notification to sender
       if ($replyId !== null && $replyId > 0) {
          $replyMsg = $commentMdl->getMessage($replyId)[0];
@@ -1082,6 +1086,7 @@ HTML;
          $sMdl = new StudentModel();
          $count = 0;
          foreach ($comments as $comment) {
+            $comments[$count]['comment'] = utf8_decode($comments[$count]['comment']);
             if ($comment['sender'] != $email) {
                if ($comment['is_admin'] == true) {
                   // is admin

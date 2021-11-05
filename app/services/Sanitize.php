@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use Framework\Database\Database;
@@ -9,10 +10,9 @@ class Sanitize
    public function string(string $value)
    {
       return filter_var($value, FILTER_SANITIZE_STRING);
-    
-        // $value = str_replace('\\', '\\\\', $value);
-        // return htmlentities($value, ENT_QUOTES);
-  }
+      // $value = str_replace('\\', '\\\\', $value);
+      // return htmlentities($value, ENT_QUOTES);
+   }
 
    // email
    public function email(string $value)
@@ -29,7 +29,7 @@ class Sanitize
    // amount
    public function amount(string $value)
    {
-      return filter_var($value, FILTER_SANITIZE_FLOAT, [FILTER_FLAG_ALLOW_FRACTION, FILTER_FLAG_ALLOW_THOUSAND]);
+      return filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, [FILTER_FLAG_ALLOW_FRACTION, FILTER_FLAG_ALLOW_THOUSAND]);
    }
 
    // numbers
@@ -49,5 +49,4 @@ class Sanitize
    {
       return filter_var($value, FILTER_SANITIZE_URL);
    }
-
 }

@@ -51,12 +51,6 @@ class PaymentModel extends Model
          ]);
    }
 
-   // TODO: UPDATE SQL
-   // ALTER TABLE `payment_tbl` CHANGE `paystack_ref_id` `paystack_medium_id` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
-   // UPDATE `payment_tbl` SET payment_medium = 'Paystack' WHERE payment_medium = 'Mobile App';
-   // ALTER TABLE `payment_tbl` CHANGE `payment_channel` `payment_channel` VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'card, bank, ussd, paypal etc', CHANGE `payment_medium` `payment_medium` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Paystack, Paypal';
-   // ALTER TABLE `payment_tbl` CHANGE `paystack_medium_id` `payment_medium_id` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
-
    public function updatePaymentRecordForPaymentWithPayPal($id, $domain, $reference, $product, $amount, $currency, $channel, $ipAddress, $log, $status, $gatewayResponse, $message, $createdAt, $paidAt)
    {
       return $this->where("reference = '$reference'")

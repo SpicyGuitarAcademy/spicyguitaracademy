@@ -253,9 +253,6 @@ class AuthController
       }
    }
 
-   // TODO: UPDATE SQL 
-   // ALTER TABLE `auth_tbl` ADD `device` VARCHAR(250) NULL AFTER `privileges`;
-
    public function verifyAccountDevice(Request $req, Response $res)
    {
       $deviceInfo = trim($req->body()->device ?? '');
