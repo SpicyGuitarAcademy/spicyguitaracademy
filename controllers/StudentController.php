@@ -911,6 +911,30 @@ HTML;
 HTML;
       Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, "You have a reply from {$student['firstname']} {$student['lastname']}", $email);
 
+      // send notifications to all the admins
+      $adMdl = new TutorModel();
+      $tutors = $adMdl->getTutors();
+
+      $lMdl = new LessonModel();
+      $lessonDetails = $lMdl->getLesson($lessonId)[0];
+
+      foreach ($tutors as $tutor) {
+
+         $receiver = $tutor['email'];
+
+         // notify the receiver
+         $student = (new StudentModel())->getStudent($email)[0];
+         (new NotificationsModel())->addNotification($receiver, "There is a new comment on the lesson ({$lessonDetails['lesson']}) from {$student['firstname']} {$student['lastname']} -- $comment", "/admin/student/qa?student=$email&lessonId=$lessonId");
+
+         $msg = <<<HTML
+      <div>
+         <h3>There is a new comment on the lesson ({$lessonDetails['lesson']}) from {$student['firstname']} {$student['lastname']}</h3>
+         <p>$comment</p>
+      </div>
+HTML;
+         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, "A new comment on a lesson", $email);
+      }
+
       if ($response == true) {
          $res->success('Added successfully');
       } else {
@@ -1012,7 +1036,6 @@ HTML;
       $categoryId = $req->body()->categoryId ?? '';
       $replyId = $req->body()->replyId ?? null;
 
-
       $s = new Sanitize();
       $comment = $s->string(utf8_encode($comment));
 
@@ -1055,6 +1078,27 @@ HTML;
       </div>
 HTML;
          Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], "You have a reply from $from", $email);
+      }
+
+      // send notifications to all the admins
+      $adMdl = new TutorModel();
+      $tutors = $adMdl->getTutors();
+
+      foreach ($tutors as $tutor) {
+
+         $receiver = $tutor['email'];
+
+         // notify the receiver
+         $student = (new StudentModel())->getStudent($email)[0];
+         (new NotificationsModel())->addNotification($receiver, "There is a new message on the Forum from {$student['firstname']} {$student['lastname']} -- $comment", "/admin/chatforums/$categoryId");
+
+         $msg = <<<HTML
+      <div>
+         <h3>There is a new message on the Forum from {$student['firstname']} {$student['lastname']}</h3>
+         <p>$comment</p>
+      </div>
+HTML;
+         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, "A new message on the Forum", $email);
       }
 
       if ($response == true) {

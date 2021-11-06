@@ -172,6 +172,7 @@ HTML;
          $count = 0;
          $comments == array_reverse($comments);
          foreach ($comments as $comment) {
+            $comments[$count]['comment'] = utf8_decode($comments[$count]['comment']);
             // if ($comment['sender'] != $email) {
             if ($comment['is_admin'] == true) {
                // is admin
@@ -382,6 +383,7 @@ HTML;
          $count = 0;
          foreach ($comments as $item) {
             $studentDetails = $sMdl->getStudent($item['sender']);
+            $comments[$count]['comment'] = utf8_decode($comments[$count]['comment']);
             $comments[$count]['sendername'] = $studentDetails[0]['firstname'] . ' ' . $studentDetails[0]['lastname'];
             if ($comments[$count]['sendername'] == " ") {
                // is admin
