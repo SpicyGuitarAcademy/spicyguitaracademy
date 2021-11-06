@@ -224,6 +224,31 @@ HTML;
       );
    }
 
+   public function overrideCategory(Request $req, Response $res)
+   {
+      $student = trim($req->body()->student);
+      $categoryId = trim($req->body()->categoryId);
+
+      $sMdl = new StudentModel();
+      $studentId = $sMdl->getStudent($student)[0]['id'];
+
+      // add student category
+      $mdl = new StudentCategoryModel();
+      $mdl->addStudentCategory($student, $categoryId);
+
+      $category = (new CategoryModel())->getCategoryById($categoryId)[0];
+      (new NotificationsModel())->addNotification($student, "You have have been moved to {$category['category']} Category");
+
+      $msg = <<<HTML
+            <div>
+               <p>You have have been moved to {$category['category']} Category</p>
+            </div>
+      HTML;
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $student, 'Category Changed', 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+
+      $res->redirect($req->referer());
+   }
+
    public function makeCategoryActive(Request $req, Response $res)
    {
       $student = trim($req->body()->student);
@@ -255,11 +280,13 @@ HTML;
       $studentname = $studentDetails[0]['firstname'] . ' ' . $studentDetails[0]['lastname'];
 
       $list = [];
+      $categories = [];
 
       if ($page == 'category') {
          $catMdl = new CategoryModel();
          $mdl = new StudentCategoryModel();
          $list = $mdl->listStudentCategory($student);
+         $categories = $catMdl->getCategories();
 
          $count = 0;
          foreach ($list as $item) {
@@ -333,7 +360,8 @@ HTML;
             'student' => $student,
             'studentname' => $studentname,
             'list' => json_encode($list),
-            'authstatus' => $authstatus
+            'authstatus' => $authstatus,
+            'categories' => json_encode($categories)
          ])
       );
    }

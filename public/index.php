@@ -209,6 +209,8 @@ $http->auth('web')->guard('admin', 'tutor')->privilege('STUDENTS')->get('/admin/
 
 $http->auth('web')->guard('admin', 'tutor')->privilege('STUDENTS')->csrf()->patch('/admin/student/details/category/update', 'TutorController@makeCategoryActive');
 
+$http->auth('web')->guard('admin', 'tutor')->privilege('STUDENTS')->csrf()->patch('/admin/student/details/category/override', 'TutorController@overrideCategory');
+
 $http->auth('web')->guard('admin', 'tutor')->privilege('STUDENTS')->csrf()->patch('/admin/student/details/access/update', 'TutorController@updateStudentStatus');
 
 // chat forums

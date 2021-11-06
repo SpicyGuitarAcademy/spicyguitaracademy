@@ -123,6 +123,22 @@
             </div>
             @endforeach
 
+            <div class="border rounded p-2 my-1 mx-2 mt-5">
+               <h5>Override student category</h5>
+               @php $categories = json_decode($categories);
+               <form action="@/admin/student/details/category/override" onsubmit="return confirm('Are you sure you want to override category for this student?')" method="post">
+                  @method=PATCH
+                  @csrftoken
+                  <input type="hidden" name="student" value="{{$student}}">
+                  <select name="categoryId" class="form-control w-50">
+                     @foreach ($categories as $category)
+                     <option value="{{$category->id}}">{{$category->category}}</option>
+                     @endforeach
+                  </select>
+                  <button class="btn btn-sm btn-danger mt-3" type="submit">Override</button>
+               </form>
+            </div>
+
             @endif
 
             <!-- ---------------------------------------------------------------- -->
