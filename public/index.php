@@ -133,19 +133,48 @@ $http->auth('web')->guard('admin', 'tutor')->privilege('COURSES')->csrf()->delet
 
 // Assignments & Answers
 
-$http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{id}/assignment', 'AssignmentController@index');
+// TODO: UPDATE SQL
+
+// alter student_assignment table to allow for total ratings
+// ALTER TABLE `student_course_tbl` ADD `assignment_rating` INT NOT NULL DEFAULT '0' AFTER `date_started`;
+
+// create the course_assignment table
+// CREATE TABLE `spicyguitar_db`.`course_assignment` ( `id` INT NOT NULL AUTO_INCREMENT ,  `course_id` INT NOT NULL ,  `assignment_number` INT NOT NULL DEFAULT '1' ,  `assignment_order` INT NOT NULL DEFAULT '1' ,  `type` VARCHAR(10) NOT NULL ,  `content` TEXT NOT NULL ,    PRIMARY KEY  (`id`),    INDEX  (`course_id`)) ENGINE = InnoDB;
+
+// update the course assignment
+// ALTER TABLE `course_assignment` CHANGE `id` `id` DOUBLE NOT NULL AUTO_INCREMENT, CHANGE `course_id` `course_id` DOUBLE NOT NULL;
+
+// create student assignment
+// CREATE TABLE `spicyguitar_db`.`student_assignment` ( `id` DOUBLE NOT NULL AUTO_INCREMENT , `course_id` DOUBLE NOT NULL , `assignment_number` INT NOT NULL , `student_id` DOUBLE NOT NULL , `rating` INT NOT NULL DEFAULT '0' , PRIMARY KEY (`id`), INDEX (`course_id`), INDEX (`student_id`)) ENGINE = InnoDB;
+
+// create assignment answer
+// CREATE TABLE `spicyguitar_db`.`assignment_answer` ( `id` DOUBLE NOT NULL AUTO_INCREMENT , `course_id` DOUBLE NOT NULL , `assignment_number` INT NOT NULL , `type` VARCHAR(10) NOT NULL , `content` TEXT NOT NULL , `student_id` DOUBLE NULL , `tutor_id` DOUBLE NULL , `date_added` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`), INDEX (`course_id`)) ENGINE = InnoDB;
+
+// ALTER TABLE `student_assignment` CHANGE `student_id` `student` VARCHAR(40) NOT NULL;
+
+// ALTER TABLE `assignment_answer` CHANGE `student_id` `student` VARCHAR(40) NULL DEFAULT NULL, CHANGE `tutor_id` `tutor` VARCHAR(40) NULL DEFAULT NULL;
+
+$http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{id}/assignments', 'AssignmentController@index');
+
+$http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{courseId}/assignment/{assignmentNumber}/answers', 'AssignmentController@courseAssignmentAnswers');
+
+$http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{courseId}/assignments/{student}/ratings', 'AssignmentController@studentAssignmentRatings');
+
+$http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->csrf()->patch('/admin/assignment/update-average-rating', 'AssignmentController@updateAverageRating');
+
+$http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->csrf()->post('/admin/assignment/admin/answer', 'AssignmentController@answerAssignmentAsAdmin');
 
 $http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->csrf()->patch('/admin/assignment/answer/update-rating', 'AssignmentController@updateRating');
 
-$http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{id}/assignment/new', 'AssignmentController@new');
+$http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->csrf()->post('/admin/courses/{id}/assignments/add', 'AssignmentController@create');
 
-$http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->csrf()->post('/admin/courses/{id}/assignment/add', 'AssignmentController@create');
+$http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->csrf()->delete('/admin/courses/{id}/assignments/{assignment}/delete', 'AssignmentController@delete');
 
-$http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{id}/assignment/edit', 'AssignmentController@edit');
+// $http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{id}/assignment/new', 'AssignmentController@new');
 
-$http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->csrf()->patch('/admin/courses/{id}/assignment/update', 'AssignmentController@update');
+// $http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{id}/assignment/edit', 'AssignmentController@edit');
 
-$http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->csrf()->delete('/admin/courses/{id}/assignment/delete', 'AssignmentController@delete');
+// $http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->csrf()->patch('/admin/courses/{id}/assignment/update', 'AssignmentController@update');
 
 // lessons
 $http->auth('web')->guard('admin', 'tutor')->privilege('LESSONS')->get('/admin/lessons', 'LessonController@index');
@@ -376,6 +405,8 @@ $http->auth('api')->guard('student')->get('/api/lesson/{lesson}', 'LessonControl
 
 // get course assignment
 $http->auth('api')->guard('student')->get('/api/course/{course}/assignment', 'StudentController@getMyCourseAssignment');
+
+$http->auth('api')->guard('student')->get('/api/student/course/{courseId}/assignment/{assignmentNumber}/answers', 'StudentController@getAssignmentAnswers');
 
 $http->auth('api')->guard('student')->post('/api/student/assignment/answer', 'StudentController@answerAssignment');
 

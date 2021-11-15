@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Student Assignments | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+
+<body class="bg-light">
+
+   @vars
+
+   @import admin/header.html
+
+   @php $unratedAssignments = json_decode($unratedAssignments, true);
+   @php $ratedAssignments = json_decode($ratedAssignments, true);
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/courses">
+         <div class="float-left">
+            <i class="fa fa-list-ul"></i>
+            Courses
+         </div>
+      </a>&nbsp;/&nbsp;
+      <a class='text-decoration-none' href="@/admin/courses/{{$courseId}}/assignments">
+         Assignments
+      </a>
+      <span class="h5">&nbsp;/&nbsp;Students</span>
+   </nav>
+
+   <main class="container my-5">
+
+      <div class="">
+
+         <!-- assignment -->
+         <section id="assignment" class="">
+
+            <h5>Unrated Answers</h5>
+
+            @if ($unratedAssignments == [])
+            <div class="alert show text-dark text-center">
+               No student submitted answer for this assignment yet.
+            </div>
+            @else
+            <div class="container my-3">
+
+               @foreach ($unratedAssignments as $assignment)
+
+               @php $assignmentNumber = $assignment['assignment_number'];
+               @php $student = $assignment['student'];
+
+               <div class="mb-3 border p-3 d-flex justify-content-between text-dark">
+                  <a href="@/admin/courses/{{$courseId}}/assignment/{{$assignmentNumber}}/answers?student={{$student}}"
+                     class="text-decoration-none">
+                     Answers from {{$student}}
+                  </a>
+
+                  <a href="@/admin/courses/{{$courseId}}/assignments/{{$student}}/ratings"
+                     class="btn btn-primary btn-sm">
+                     All ratings
+                  </a>
+               </div>
+
+               @endforeach
+
+            </div>
+            @endif
+
+
+            <h5>Rated Answers</h5>
+
+            @if ($ratedAssignments == [])
+            <div class="alert show text-dark text-center">
+               No student submitted answer for this assignment yet.
+            </div>
+            @else
+            <div class="container my-3">
+
+               @foreach ($ratedAssignments as $assignment)
+
+               @php $assignmentNumber = $assignment['assignment_number'];
+               @php $student = $assignment['student'];
+
+               <div class="mb-3 border p-3 d-flex justify-content-between text-dark">
+                  <a href="@/admin/courses/{{$courseId}}/assignment/{{$assignmentNumber}}/answers?student={{$student}}"
+                     class="text-decoration-none">
+                     Answers from {{$student}}
+                  </a>
+
+                  <a href="@/admin/courses/{{$courseId}}/assignments/{{$student}}/ratings"
+                     class="btn btn-primary btn-sm">
+                     All ratings
+                  </a>
+               </div>
+
+               @endforeach
+
+            </div>
+            @endif
+
+         </section>
+
+      </div>
+
+   </main>
+
+</body>
+
+</html>

@@ -8,57 +8,49 @@ class StudentAssignmentModel extends Model
 {
    public function __construct()
    {
-      parent::__construct('student_assignment_tbl');
+      parent::__construct('student_assignment');
    }
 
-   // write wonderful model codes...
-   public function getAnswers($courseId)
-   {
-      return $this->where("course_id = $courseId AND status = 1 AND rating < 3")->read("*");
-   }
-
-   public function addAssignmentForStudent($studentId, $courseId, $assignmentId, $tutorId)
+   public function addAssignmentForStudent($student, $courseId, $assignmentNumber)
    {
       return $this->create([
-         "student_id" => $studentId,
          "course_id" => $courseId,
-         "assignment_id" => $assignmentId,
-         "tutor_id" => $tutorId
+         "assignment_number" => $assignmentNumber,
+         "student" => $student
       ]);
    }
 
-   public function getAvailableAssignment($email, $course)
+   public function getAssignment($student, $courseId, $assignmentNumber)
    {
-      return $this->custom("SELECT a.note as questionNote, a.video as questionVideo, b.note as answerNote, b.video as answerVideo, b.review, b.rating, b.date_added as answerDate, a.id, b.id as answerId, b.status, b.tutor_id, CONCAT(c.firstname, ' ', c.lastname) as tutor FROM assignment_tbl a, student_assignment_tbl b, admin_tbl c WHERE b.assignment_id = a.id AND b.student_id = '$email' AND b.course_id = $course AND b.tutor_id = c.id LIMIT 1", true);
+      return $this->where("course_id = $courseId AND assignment_number = $assignmentNumber AND student = '$student'")
+         ->misc("LIMIT 1")
+         ->read("*");
    }
 
-   public function answerAsVideo($email, $assignmentId, $answerId, $path)
+   public function updateRating($courseId, $assignmentNumber, $student, $rating)
    {
-      return $this->where("student_id = '$email' AND assignment_id = $assignmentId AND id = $answerId")
+      return $this
+         ->where("course_id = $courseId AND assignment_number = $assignmentNumber AND student = '$student'")
          ->update([
-            'video' => $path,
-            'status' => 1,
-            'rating' => 0
+            'rating' => $rating
          ]);
    }
 
-   public function answerAsNote($email, $assignmentId, $answerId, $note)
+   public function getAssignmentsForStudent($student, $courseId)
    {
-      return $this->where("student_id = '$email' AND assignment_id = $assignmentId AND id = $answerId")
-         ->update([
-            'note' => $note,
-            'status' => 1,
-            'rating' => 0
-         ]);
+      return $this->where("course_id = $courseId AND student = '$student'")
+         ->read("id, assignment_number, rating");
    }
 
-   public function updateRating($answerId, $review, $rating)
+   public function getUnratedAssignments($courseId, $assignmentNumber)
    {
-      return $this->where("id = $answerId")
-         ->update([
-            'review' => $review,
-            'rating' => $rating,
-            'status' => ($rating >= 3) ? 1 : 0
-         ]);
+      return $this->where("course_id = $courseId AND assignment_number = $assignmentNumber AND rating = 0")
+         ->read("*");
+   }
+
+   public function getRatedAssignments($courseId, $assignmentNumber)
+   {
+      return $this->where("course_id = $courseId AND assignment_number = $assignmentNumber")
+         ->read("*");
    }
 }

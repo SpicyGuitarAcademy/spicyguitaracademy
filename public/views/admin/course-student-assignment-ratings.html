@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Student Assignments | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+
+<body class="bg-light">
+
+   @vars
+
+   @import admin/header.html
+
+   @php $assignments = json_decode($assignments, true);
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/courses">
+         <div class="float-left">
+            <i class="fa fa-list-ul"></i>
+            Courses
+         </div>
+      </a>&nbsp;/&nbsp;
+      <a class='text-decoration-none' href="@/admin/courses/{{$courseId}}/assignments">
+         Assignments
+      </a>&nbsp;/&nbsp;
+      <span class="h5">{{$student}}</span>
+   </nav>
+
+   <main class="container my-5">
+
+      <div class="">
+
+         <!-- assignment -->
+         <section id="assignment" class="">
+
+            @if ($assignments == [])
+            <div class="alert show text-dark text-center">
+               No submitted assignments for this student yet.
+            </div>
+            @else
+            <div class="container my-3">
+
+               @foreach ($assignments as $assignment)
+
+               @php $assignmentNumber = $assignment['assignment_number'];
+
+               <div class="mb-3 border p-3 d-flex justify-content-between text-dark">
+                  <a href="@/admin/courses/{{$courseId}}/assignment/{{$assignmentNumber}}/answers?student={{$student}}"
+                     class="text-decoration-none">
+                     Assignment {{$assignmentNumber}}
+                  </a>
+
+                  <span class="badge badge-primary badge-sm py-2 px-3">
+                     Rating: {{$assignment['rating']}}
+                  </span>
+               </div>
+
+               @endforeach
+
+               <div class="mb-3 border p-3 d-flex justify-content-between text-primary">
+
+                  <p>Averate Rating: {{$rating}}</p>
+
+                  <form action="@/admin/assignment/update-average-rating" method="post">
+                     @csrftoken
+                     @method=PATCH
+
+                     <input type="hidden" name="courseId" value="{{$courseId}}">
+                     <input type="hidden" name="student" value="{{$student}}">
+
+                     <button type="submit" class="btn btn-primary btn-sm py-2 px-3">
+                        Calculate Average Rating
+                     </button>
+                  </form>
+               </div>
+
+            </div>
+            @endif
+
+         </section>
+
+      </div>
+
+   </main>
+
+</body>
+
+</html>

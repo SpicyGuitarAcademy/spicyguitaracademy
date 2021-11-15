@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Assignment Answers | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+
+<body class="bg-light">
+
+   @vars
+
+   @import admin/header.html
+
+   @php $answers = json_decode($answers, true);
+   @php $questions = json_decode($questions, true);
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/courses">
+         <div class="float-left">
+            <i class="fa fa-list-ul"></i>
+            Courses
+         </div>
+      </a>&nbsp;/&nbsp;
+      <a class='text-decoration-none' href="@/admin/courses/{{$courseId}}/assignments">
+         Assignments
+      </a>&nbsp;/&nbsp;
+      <a class='text-decoration-none' href="@/admin/courses/{{$courseId}}/assignment/{{$assignmentNumber}}/answers">
+         Students
+      </a>
+      <span class="h5">&nbsp;/&nbsp;Answers</span>
+
+   </nav>
+
+   <main class="container my-5">
+
+      <div class="">
+
+         <section id="answers" class="">
+
+            <h5>Questions</h5>
+
+            @foreach ($questions as $question)
+
+            <div class="border rounded p-2 mt-3">
+
+               @if ($question['type'] == 'text')
+
+               <p class="m-0">{{$question['content']}}</p>
+
+               @elseif ($question['type'] == 'image')
+
+               <img class="w-50" src="@/{{$question['content']}}" alt="Question Image">
+
+               @elseif ($question['type'] == 'audio')
+
+               <audio class="w-50" controls src="@/{{$question['content']}}"></audio>
+
+               @elseif ($question['type'] == 'video')
+
+               <video class="w-50" controls src="@/{{$question['content']}}"></video>
+
+               @endif
+
+            </div>
+
+            @endforeach
+
+         </section>
+
+         <section id="answers" class="mt-5">
+
+            <h5>Answers</h5>
+
+            @if ($answers == [])
+            <div class="alert show text-dark text-center">
+               There is no answer for this assignment yet.
+            </div>
+            @else
+
+            @foreach ($answers as $answer)
+
+            <div class="border rounded p-2 mt-3">
+
+               @if ($answer['type'] == 'text')
+
+               <p class="m-0">{{$answer['content']}}</p>
+
+               @elseif ($answer['type'] == 'image')
+
+               <img class="w-50" src="@/{{$answer['content']}}" alt="Answer Image">
+
+               @elseif ($answer['type'] == 'audio')
+
+               <audio class="w-50" controls src="@/{{$answer['content']}}"></audio>
+
+               @elseif ($answer['type'] == 'video')
+
+               <video class="w-50" controls src="@/{{$answer['content']}}"></video>
+
+               @endif
+
+            </div>
+
+            @endforeach
+
+            @endif
+
+         </section>
+
+         <section class="mt-5 border rounded p-3">
+
+            <h5>Rate Answer</h5>
+
+            <form action="@/admin/assignment/answer/update-rating" method="post" enctype="multipart/form-data"
+               class="container row mb-3 ">
+               @csrftoken
+               @method=PATCH
+
+               <input type="hidden" name="courseId" value="{{$courseId}}">
+               <input type="hidden" name="assignmentNumber" value="{{$assignmentNumber}}">
+               <input type="hidden" name="student" value="{{$student}}">
+
+               <input type='number' name='rating' max='5' min='0' class='form-control w-25' value='{{$rating}}' />
+               <input type="submit" value="Submit" class="ml-3 btn btn-sm btn-primary">
+            </form>
+
+            <h5>Add Comment</h5>
+
+            @if (isset($errors))
+            @php $errors = json_decode($errors);
+            <div class="v-100 my-3 border-danger text-center">
+               @foreach ($errors as $error)
+               <li class="text-danger">{{$error}}</li>
+               @endforeach
+            </div>
+            @endif
+
+            <form action="@/admin/assignment/admin/answer" enctype="multipart/form-data" method="post">
+
+               @csrftoken
+               <input type="hidden" name="courseId" value="{{$courseId}}">
+               <input type="hidden" name="assignmentNumber" value="{{$assignmentNumber}}">
+               <input type="hidden" name="student" value="{{$student}}">
+
+               <div class="row">
+
+                  <div class="col-md-4 col-12">
+                     <label for="type">Comment Type</label>
+                     <select name="type" id="type" class="form-control" onchange="updateInputElement();">
+                        <option value="text">Text</option>
+                        <option value="image">Image</option>
+                        <option value="audio">Audio</option>
+                        <option value="video">Video</option>
+                     </select>
+                  </div>
+
+               </div>
+
+               <div>
+
+                  <label class="mt-3">Comment</label>
+
+                  <div id="text-type">
+                     <textarea name="text" id="text" cols="30" rows="10" maxlength="65535"
+                        class="my-2 form-control"></textarea>
+                  </div>
+
+                  <div id="image-type">
+                     <input type="file" name="image" id="image" accept="image/*" class="my-2"
+                        onchange="previewFile(this, 'previewImage');">
+                     <br>
+                     <img src="" id="previewImage" width="100%" class="img img-responsive"></img>
+                  </div>
+
+                  <div id="audio-type">
+                     <input type="file" name="audio" id="audio" accept="audio/*" class="my-2"
+                        onchange="previewFile(this, 'previewAudio');">
+                     <br>
+                     <audio controls src="" id="previewAudio" width="100%" class="img img-responsive"></video>
+                  </div>
+
+                  <div id="video-type">
+                     <input type="file" name="video" id="video" accept="video/*" class="my-2"
+                        onchange="previewFile(this, 'previewVideo');">
+                     <br>
+                     <video controls src="" id="previewVideo" width="100%" class="img img-responsive"></video>
+                  </div>
+
+               </div>
+
+               <button class="mt-4 btn btn-primary btn-block btn-bg">Add</button>
+
+            </form>
+         </section>
+
+      </div>
+
+
+   </main>
+
+   <script>
+
+      function previewFile(input, dest) {
+         if (input.files && input.files[0]) {
+            let reader = new FileReader();
+
+            reader.onload = function (e) {
+               $("#" + dest).attr('src', e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0])
+         }
+      }
+
+      updateInputElement();
+      function updateInputElement() {
+         var type = document.getElementById('type').value;
+         switch (type) {
+            case 'text':
+               document.getElementById('image-type').style.display = 'none';
+               document.getElementById('audio-type').style.display = 'none';
+               document.getElementById('video-type').style.display = 'none';
+               document.getElementById('text-type').style.display = 'block';
+               break;
+            case 'image':
+               document.getElementById('audio-type').style.display = 'none';
+               document.getElementById('video-type').style.display = 'none';
+               document.getElementById('text-type').style.display = 'none';
+               document.getElementById('image-type').style.display = 'block';
+               break;
+            case 'audio':
+               document.getElementById('image-type').style.display = 'none';
+               document.getElementById('video-type').style.display = 'none';
+               document.getElementById('text-type').style.display = 'none';
+               document.getElementById('audio-type').style.display = 'block';
+               break;
+            case 'video':
+               document.getElementById('image-type').style.display = 'none';
+               document.getElementById('audio-type').style.display = 'none';
+               document.getElementById('text-type').style.display = 'none';
+               document.getElementById('video-type').style.display = 'block';
+               break;
+
+            default:
+               break;
+         }
+      }
+
+   </script>
+
+</body>
+
+</html>

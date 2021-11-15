@@ -12,6 +12,7 @@ use App\Services\Validate;
 use App\Services\Sanitize;
 use App\Services\Upload;
 use App\Services\User;
+use Models\AssignmentAnswerModel;
 use Models\AuthModel;
 use Models\TutorModel;
 use Models\StudentModel;
@@ -23,6 +24,7 @@ use Models\CourseModel;
 use Models\LessonModel;
 use Models\AssignmentModel;
 use Models\CategoryModel;
+use Models\CourseAssignmentModel;
 use Models\StudentSubscriptionModel;
 use Models\QuickLessonModel;
 use Models\StudentCommentsModel;
@@ -279,9 +281,10 @@ HTML;
             }
          }
 
+         // TODO: revisit this logic
          // make sure assignment for the previous course have been answered
          $sAMdl = new StudentAssignmentModel();
-         $assignment = $sAMdl->getAvailableAssignment($email, $previousCourseId)[0] ?? null;
+         $assignment = null; // $sAMdl->getAvailableAssignment($email, $previousCourseId)[0] ?? null;
 
          // if the assignment have been taken but didn't pass the minimum score
          if (!is_null($assignment) && $assignment['status'] == '0' && (intval($assignment['rating']) > 0 && intval($assignment['rating']) < 3)) {
@@ -323,7 +326,8 @@ HTML;
 
       // make sure assignment for the previous course have been answered
       $sAMdl = new StudentAssignmentModel();
-      $assignment = $sAMdl->getAvailableAssignment($email, $courseId)[0] ?? null;
+      // TODO: revisit this logic
+      $assignment = null; // $sAMdl->getAvailableAssignment($email, $courseId)[0] ?? null;
 
       // if the assignment have been taken but didn't pass the minimum score
       if (!is_null($assignment) && $assignment['status'] == '0' && (intval($assignment['rating']) > 0 && intval($assignment['rating']) < 3)) {
@@ -354,17 +358,17 @@ HTML;
       $studentCourseMdl->addCourseForStudent($category, $courseId, $email, "NORMAL");
 
       // if there is an assignment for this course, add it to the studentassignment tbl
-      $assignmentMdl = new AssignmentModel();
-      $assignment = $assignmentMdl->getAssignment($courseId);
-      if ($assignment != []) {
-         $ass = $assignment[0];
-
-         $id = $ass['id'];
-         $tutor = $ass['tutor_id'];
-         $course = $ass['course_id'];
-
+      $assignmentMdl = new CourseAssignmentModel();
+      $assignmentNumbers = $assignmentMdl->getAssignmentNumbers($courseId);
+      if ($assignmentNumbers != []) {
          $studentAssignmentMdl = new StudentAssignmentModel();
-         $studentAssignmentMdl->addAssignmentForStudent($email, $course, $id, $tutor);
+         foreach ($assignmentNumbers as $assignmentNumber) {
+            $studentAssignmentMdl->addAssignmentForStudent(
+               $email,
+               $courseId,
+               $assignmentNumber['assignment_number']
+            );
+         }
       }
    }
 
@@ -380,16 +384,38 @@ HTML;
       $s = new Sanitize();
       $course = $s->numbers($course);
 
-      //  $mdl = new AssignmentModel();
-      //  $assignment = $mdl->getAssignment($course)['0'] ?? null;
       $sAMdl = new StudentAssignmentModel();
-      $assignment = $sAMdl->getAvailableAssignment($email, $course)['0'] ?? null;
+      $assignments = $sAMdl->getAssignmentsForStudent($email, $course);
 
-      if (is_null($assignment)) {
+      if (count($assignments) == 0) {
          $res->error('No assignment');
       } else {
-         $assignment['answerNote'] = utf8_decode($assignment['answerNote']);
-         $res->success('Course assignment', $assignment);
+
+         $cAMdl = new CourseAssignmentModel();
+         $count = 0;
+         foreach ($assignments as $assignment) {
+
+            // get asignment questions
+            $assignments[$count]['questions'] =
+               $cAMdl->getAssignmentQuestions($course, $assignment['assignment_number']);
+
+            $qCount = 0;
+            foreach ($assignments[$count]['questions'] as $question) {
+               $assignments[$count]['questions'][$qCount]['content']
+                  = utf8_decode($question['content']);
+               $qCount++;
+            }
+
+            $count++;
+         }
+
+         $sCMdl = new StudentCourseModel();
+         $rating = $sCMdl->getAssignmentRating($course, $email)[0]['assignment_rating'] ?? 0;
+
+         $res->success('Course assignment', [
+            "rating" => $rating,
+            "assignments" => $assignments
+         ]);
       }
    }
 
@@ -667,7 +693,8 @@ HTML;
 
             // check for assignment
             $mdl = new StudentAssignmentModel();
-            $assignmentId = $mdl->getAvailableAssignment($email, $currentcourse)[0]['assignment_id'] ?? null;
+            // TODO: revisit this logic
+            $assignmentId = null; // $mdl->getAvailableAssignment($email, $currentcourse)[0]['assignment_id'] ?? null;
 
             if (!is_null($assignmentId)) {
                // get the assignment
@@ -727,69 +754,116 @@ HTML;
 
    public function answerAssignment(Request $req, Response $res)
    {
-      // temporary
-      $email = User::$email;
-      $assignment = $req->body()->assignment ?? null;
-      $answerId = $req->body()->answerId ?? null;
+      $student = User::$email;
       $courseId = $req->body()->courseId ?? null;
-      $note = $req->body()->note ?? null;
-      $video = $req->files()->video ?? null;
+      $assignmentNumber = $req->body()->assignmentNumber ?? null;
+      $type = $req->body()->type ?? null;
 
-      if (is_null($assignment) || is_null($answerId)) {
+      if (is_null($assignmentNumber) || is_null($courseId)) {
          $res->error('Invalid Assignment');
       }
 
       $v = new Validate();
-      $v->numbers('assignment', $assignment, "Invalid Assignment")->minvalue(1);
+      $v->numbers('assignmentNumber', $assignmentNumber, "Invalid Assignment")->minvalue(1);
+      $v->numbers('courseId', $courseId, "Invalid Assignment")->minvalue(1);
       $errors = $v->errors();
 
       if ($errors) {
          $res->error('Invalid Assignment');
       }
 
-      $student = (new StudentModel())->getStudent($email)[0];
-      $course = (new CourseModel())->getCourse($courseId)[0];
-      (new NotificationsModel())->addNotification('admin', "{$student['firstname']} {$student['lastname']} answered the assignment question on course: {$course['course']}.", "/admin/courses/$courseId/assignment");
-
-      $msg = <<<HTML
-      <div>
-         <h3>Hello Admin</h3>
-         <p>{$student['firstname']} {$student['lastname']} answered the assignment question on course: {$course['course']}.</p>
-      </div>
-HTML;
-      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", 'Assignment Answer', $email);
-
-      if (!is_null($video)) {
-         // if video is sent, upload video and update the database
-         $up = new Upload();
-         $up->video('video', $video, "Assignment Video was not uploaded", ["video/mp4"]);
-         $up->max(30, 'Mb');
-         $up->upload("tutorials/answers/", Encrypt::hash());
-
-         $errors = $up->errors();
-         if ($errors) {
-            $res->error('Upload failed. File must be less than 30mb.', [$errors['video']]);
-         }
-         $path = $up->uri('video');
-
-         $mdl = new StudentAssignmentModel();
-         $mdl->answerAsVideo($email, $assignment, $answerId, $path);
-
-         $res->success('Answer is submitted', ['path' => $path]);
-      } elseif (!is_null($note)) {
+      if ($type == 'text') {
+         $content = $req->body()->content ?? null;
 
          $s = new Sanitize();
-         $note = $s->string($note);
-
-         $note = utf8_encode($note);
-
-         $mdl = new StudentAssignmentModel();
-         $mdl->answerAsNote($email, $assignment, $answerId, $note);
-
-         $res->success('Answer is submitted');
+         $content = $s->string($content);
+         $content = utf8_encode($content);
       } else {
-         $res->error('Invalid Answer');
+         $content = ($req->files_exists() == true && $req->files()->content->error == 0) ? $req->files()->content : null;
+
+         if ($type == 'image') {
+            // upload answer image
+            $up = new Upload();
+            $up->image('content', $content, "Answer Image was not uploaded", [
+               "image/png", "image/jpeg", "image/gif", "image/bmp"
+            ]);
+            $up->max(30, 'Mb');
+            $up->upload("tutorials/answers/", Encrypt::hash());
+
+            $errors = $up->errors();
+            if ($errors) {
+               $res->error('Upload failed. File must be less than 30mb.', [$errors['content']]);
+            }
+            $content = $up->uri('content');
+         } else if ($type == 'audio') {
+            // upload answer audio
+            $up = new Upload();
+            $up->audio('content', $content, "Answer Audio was not uploaded", [
+               "audio/mp3", "audio/mpeg", "audio/webm", "audio/wav", "audio/ogg"
+            ]);
+            $up->max(30, 'Mb');
+            $up->upload("tutorials/answers/", Encrypt::hash());
+
+            $errors = $up->errors();
+            if ($errors) {
+               $res->error('Upload failed. File must be less than 30mb.', [$errors['content']]);
+            }
+            $content = $up->uri('content');
+         } else if ($type == 'video') {
+            // upload answer video
+            $up = new Upload();
+            $up->video('content', $content, "Answer Video was not uploaded", [
+               "video/mpeg", "video/mp4", "video/ogg", "video/mp2t", "video/3gpp", "video/webm"
+            ]);
+            $up->max(30, 'Mb');
+            $up->upload("tutorials/answers/", Encrypt::hash());
+
+            $errors = $up->errors();
+            if ($errors) {
+               $res->error('Upload failed. File must be less than 30mb.', [$errors['content']]);
+            }
+            $content = $up->uri('content');
+         }
       }
+
+      $studentDetails = (new StudentModel())->getStudent($student)[0];
+      $course = (new CourseModel())->getCourse($courseId)[0];
+      (new NotificationsModel())->addNotification('admin', "{$studentDetails['firstname']} {$studentDetails['lastname']} answered the assignment question on course: {$course['course']}.", "/admin/courses/$courseId/assignments/$student/ratings");
+
+      $msg = <<<HTML
+            <div>
+               <h3>Hello Admin</h3>
+               <p>{$studentDetails['firstname']} {$studentDetails['lastname']} answered the assignment question on course: {$course['course']}.</p>
+            </div>
+      HTML;
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", 'Assignment Answer', $student);
+
+      $mdl = new AssignmentAnswerModel();
+      $mdl->addAnswer($courseId, $assignmentNumber, $type, $content, $student);
+      $res->success('Answer is submitted', ['path' => $content]);
+   }
+
+   public function getAssignmentAnswers(Request $req, Response $res)
+   {
+      $student = User::$email;
+      $courseId = $req->params()->courseId ?? null;
+      $assignmentNumber = $req->params()->assignmentNumber ?? null;
+      
+      if (is_null($assignmentNumber) || is_null($courseId)) {
+         $res->error('Invalid Assignment');
+      }
+
+      $aAMdl = new AssignmentAnswerModel();
+      $answers = $aAMdl->getAnswers($courseId, $assignmentNumber, $student);
+      
+      $count = 0;
+      foreach ($answers as $answer) {
+         if ($answer['type'] == 'text')
+            $answers[$count]['content'] = utf8_decode($answer['content']);
+         $count++;
+      }
+
+      $res->success("Assignment answers", $answers);
    }
 
    public function invitefriend(Request $req, Response $res)
