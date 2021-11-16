@@ -154,6 +154,8 @@ $http->auth('web')->guard('admin', 'tutor')->privilege('COURSES')->csrf()->delet
 
 // ALTER TABLE `assignment_answer` CHANGE `student_id` `student` VARCHAR(40) NULL DEFAULT NULL, CHANGE `tutor_id` `tutor` VARCHAR(40) NULL DEFAULT NULL;
 
+// ALTER TABLE `student_assignment` ADD `status` VARCHAR(10) NOT NULL DEFAULT 'pending' COMMENT 'pending, answered, reviewed' AFTER `rating`;
+
 $http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{id}/assignments', 'AssignmentController@index');
 
 $http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{courseId}/assignment/{assignmentNumber}/answers', 'AssignmentController@courseAssignmentAnswers');
@@ -414,10 +416,10 @@ $http->auth('api')->guard('student')->post('/api/student/assignment/answer', 'St
 $http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}', 'StudentController@getStudentLesson');
 
 // get next lesson in a course
-$http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}/next', 'StudentController@nextLesson');
+// $http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}/next', 'StudentController@nextLesson');
 
-// get previous lesson in a course
-$http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}/previous', 'StudentController@previousLesson');
+// // get previous lesson in a course
+// $http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}/previous', 'StudentController@previousLesson');
 
 // $http->auth('api')->guard('student')->get('/api/courses/search', 'CourseController@search');
 

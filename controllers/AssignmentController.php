@@ -87,7 +87,8 @@ class AssignmentController
          $ratedAssignments = [];
          $unratedAssignments = [];
 
-         $assignments = $sAMdl->getUnratedAssignments($courseId, $assignmentNumber);
+         $assignments = $sAMdl->getUnreviewedAssignments($courseId, $assignmentNumber);
+         // exit(json_encode($assignments));
          foreach ($assignments as $assignment) {
             $answers = $aAMdl->getAnswers($courseId, $assignmentNumber, $assignment['student']);
             if (count($answers) > 0) {
@@ -95,7 +96,7 @@ class AssignmentController
             }
          }
 
-         $assignments = $sAMdl->getRatedAssignments($courseId, $assignmentNumber);
+         $assignments = $sAMdl->getReviewedAssignments($courseId, $assignmentNumber);
          foreach ($assignments as $assignment) {
             $answers = $aAMdl->getAnswers($courseId, $assignmentNumber, $assignment['student']);
             if (count($answers) > 0) {

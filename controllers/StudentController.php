@@ -281,25 +281,34 @@ HTML;
             }
          }
 
-         // TODO: revisit this logic
-         // make sure assignment for the previous course have been answered
+         // make sure assignment for the course have been answered
          $sAMdl = new StudentAssignmentModel();
-         $assignment = null; // $sAMdl->getAvailableAssignment($email, $previousCourseId)[0] ?? null;
+         $isPending = $sAMdl->courseAssignmentIsPending($previousCourseId, $email);
+         $isAnswered = $sAMdl->courseAssignmentIsAnswered($previousCourseId, $email);
+         $isReviewed = $sAMdl->courseAssignmentIsReviewed($previousCourseId, $email);
 
-         // if the assignment have been taken but didn't pass the minimum score
-         if (!is_null($assignment) && $assignment['status'] == '0' && (intval($assignment['rating']) > 0 && intval($assignment['rating']) < 3)) {
+         // TODO: revisit this logic
+
+         $sCMdl = new StudentCourseModel();
+         $assignment = $sCMdl->getAssignmentRating($previousCourseId, $email)[0] ?? null;
+         $rating = $assignment['assignment_rating'] ?? 0;
+
+         // if the assignment have been taken and reviewed but didn't pass the minimum score
+         if (!is_null($assignment) && $isReviewed == true && (intval($rating) > 0 && intval($rating) < 3)) {
             $res->error('Your score is below average, please carefully study the course and attempt the assignment again.');
          }
 
          // if the assignment have not been taken
-         if (!is_null($assignment) && $assignment['status'] == '0') {
-            $res->error('Complete assignment for the previous course');
+         if (!is_null($assignment) && $isPending == true) {
+            $res->error('Complete assignments for the previous course');
          }
 
          // if the assignment have been taken but is still awaiting review
-         if (!is_null($assignment) && $assignment['status'] == '1' && $assignment['rating'] == '0') {
+         if (!is_null($assignment) && $isAnswered == true) {
             $res->error('The tutors are still reviewing your answer. This might take a while.');
          }
+
+
 
          if ($studentCourseMdl->where("medium = 'NORMAL' AND student_id = '$email' AND course_id = '$courseId'")->exist() == false) {
             $this->makeCourseActive($courseId, $email);
@@ -324,23 +333,30 @@ HTML;
       $email = User::$email;
       $courseId = $req->body()->course ?? null;
 
-      // make sure assignment for the previous course have been answered
+      // make sure assignment for the course have been answered
       $sAMdl = new StudentAssignmentModel();
-      // TODO: revisit this logic
-      $assignment = null; // $sAMdl->getAvailableAssignment($email, $courseId)[0] ?? null;
+      $isPending = $sAMdl->courseAssignmentIsPending($courseId, $email);
+      $isAnswered = $sAMdl->courseAssignmentIsAnswered($courseId, $email);
+      $isReviewed = $sAMdl->courseAssignmentIsReviewed($courseId, $email);
 
-      // if the assignment have been taken but didn't pass the minimum score
-      if (!is_null($assignment) && $assignment['status'] == '0' && (intval($assignment['rating']) > 0 && intval($assignment['rating']) < 3)) {
+      // TODO: revisit this logic
+
+      $sCMdl = new StudentCourseModel();
+      $assignment = $sCMdl->getAssignmentRating($courseId, $email)[0] ?? null;
+      $rating = $assignment['assignment_rating'] ?? 0;
+
+      // if the assignment have been taken and reviewed but didn't pass the minimum score
+      if (!is_null($assignment) && $isReviewed == true && (intval($rating) > 0 && intval($rating) < 3)) {
          $res->error('Your score is below average, please carefully study the course and attempt the assignment again.');
       }
 
       // if the assignment have not been taken
-      if (!is_null($assignment) && $assignment['status'] == '0') {
-         $res->error('Complete assignment for the course');
+      if (!is_null($assignment) && $isPending == true) {
+         $res->error('Complete assignments for the course');
       }
 
       // if the assignment have been taken but is still awaiting review
-      if (!is_null($assignment) && $assignment['status'] == '1' && $assignment['rating'] == '0') {
+      if (!is_null($assignment) && $isAnswered == true) {
          $res->error('The tutors are still reviewing your answer. This might take a while.');
       }
 
@@ -660,97 +676,97 @@ HTML;
       }
    }
 
-   public function nextLesson(Request $req, Response $res)
-   {
-      // temporary
-      $email = User::$email;
-      $currentlesson = $req->params()->lesson ?? null;
-      $currentcourse = $req->query()->course ?? null;
+   // public function nextLesson(Request $req, Response $res)
+   // {
+   //    // temporary
+   //    $email = User::$email;
+   //    $currentlesson = $req->params()->lesson ?? null;
+   //    $currentcourse = $req->query()->course ?? null;
 
-      if (!is_null($currentlesson) && !is_null($currentcourse)) {
+   //    if (!is_null($currentlesson) && !is_null($currentcourse)) {
 
-         $s = new Sanitize();
-         $currentlesson = $s->numbers($currentlesson);
-         $currentcourse = $s->numbers($currentcourse);
+   //       $s = new Sanitize();
+   //       $currentlesson = $s->numbers($currentlesson);
+   //       $currentcourse = $s->numbers($currentcourse);
 
-         // get the next lesson id
-         $mdl = new StudentLessonModel();
-         $lessonId = $mdl->getNextLesson($email, $currentcourse, $currentlesson)[0]['lesson_id'] ?? null;
+   //       // get the next lesson id
+   //       $mdl = new StudentLessonModel();
+   //       $lessonId = $mdl->getNextLesson($email, $currentcourse, $currentlesson)[0]['lesson_id'] ?? null;
 
-         // die(!is_null($lessonId));
+   //       // die(!is_null($lessonId));
 
-         if (!is_null($lessonId)) {
-            $mdl = new LessonModel();
-            $lesson = $mdl->getLesson($lessonId)[0];
+   //       if (!is_null($lessonId)) {
+   //          $mdl = new LessonModel();
+   //          $lesson = $mdl->getLesson($lessonId)[0];
 
-            // update the next lesson status
-            $mdl = new StudentLessonModel();
-            $mdl->updateLessonStatus($lessonId, $email, 1);
+   //          // update the next lesson status
+   //          $mdl = new StudentLessonModel();
+   //          $mdl->updateLessonStatus($lessonId, $email, 1);
 
-            $res->success('success', $lesson);
-         } else {
-            // last lesson in the course
+   //          $res->success('success', $lesson);
+   //       } else {
+   //          // last lesson in the course
 
-            // check for assignment
-            $mdl = new StudentAssignmentModel();
-            // TODO: revisit this logic
-            $assignmentId = null; // $mdl->getAvailableAssignment($email, $currentcourse)[0]['assignment_id'] ?? null;
+   //          // check for assignment
+   //          $mdl = new StudentAssignmentModel();
+   //          // *** revisit this logic
+   //          $assignmentId = null; // $mdl->getAvailableAssignment($email, $currentcourse)[0]['assignment_id'] ?? null;
 
-            if (!is_null($assignmentId)) {
-               // get the assignment
+   //          if (!is_null($assignmentId)) {
+   //             // get the assignment
 
-               $mdl = new AssignmentModel();
-               $assignment = $mdl->getAssignment($currentcourse)[0];
+   //             $mdl = new AssignmentModel();
+   //             $assignment = $mdl->getAssignment($currentcourse)[0];
 
-               $res->send(
-                  $res->json(["assignment" => $assignment])
-               );
-            } else {
-               $res->error('No more lessons for this course');
-            }
-         }
-      } else {
-         $res->error('No course');
-      }
-   }
+   //             $res->send(
+   //                $res->json(["assignment" => $assignment])
+   //             );
+   //          } else {
+   //             $res->error('No more lessons for this course');
+   //          }
+   //       }
+   //    } else {
+   //       $res->error('No course');
+   //    }
+   // }
 
-   public function previousLesson(Request $req, Response $res)
-   {
-      // temporary
-      $email = User::$email;
-      $currentlesson = $req->params()->lesson ?? null;
-      $currentcourse = $req->query()->course ?? null;
+   // public function previousLesson(Request $req, Response $res)
+   // {
+   //    // temporary
+   //    $email = User::$email;
+   //    $currentlesson = $req->params()->lesson ?? null;
+   //    $currentcourse = $req->query()->course ?? null;
 
-      if (!is_null($currentlesson) && !is_null($currentcourse)) {
+   //    if (!is_null($currentlesson) && !is_null($currentcourse)) {
 
-         $s = new Sanitize();
-         $currentlesson = $s->numbers($currentlesson);
-         $currentcourse = $s->numbers($currentcourse);
+   //       $s = new Sanitize();
+   //       $currentlesson = $s->numbers($currentlesson);
+   //       $currentcourse = $s->numbers($currentcourse);
 
-         // get the previous lesson id
-         $mdl = new StudentLessonModel();
-         $lessonId = $mdl->getPreviousLesson($email, $currentcourse, $currentlesson)[0]['lesson_id'] ?? null;
+   //       // get the previous lesson id
+   //       $mdl = new StudentLessonModel();
+   //       $lessonId = $mdl->getPreviousLesson($email, $currentcourse, $currentlesson)[0]['lesson_id'] ?? null;
 
-         // die(!is_null($lessonId));
+   //       // die(!is_null($lessonId));
 
-         if (!is_null($lessonId)) {
-            $mdl = new LessonModel();
-            $lesson = $mdl->getLesson($lessonId)[0];
+   //       if (!is_null($lessonId)) {
+   //          $mdl = new LessonModel();
+   //          $lesson = $mdl->getLesson($lessonId)[0];
 
-            // update the next lesson status
-            $mdl = new StudentLessonModel();
-            $mdl->updateLessonStatus($lessonId, $email, 1);
+   //          // update the next lesson status
+   //          $mdl = new StudentLessonModel();
+   //          $mdl->updateLessonStatus($lessonId, $email, 1);
 
-            $res->success('success', $lesson);
-         } else {
-            // last lesson in the course
+   //          $res->success('success', $lesson);
+   //       } else {
+   //          // last lesson in the course
 
-            $res->error('No more previous lessons for this course');
-         }
-      } else {
-         $res->error('No course');
-      }
-   }
+   //          $res->error('No more previous lessons for this course');
+   //       }
+   //    } else {
+   //       $res->error('No course');
+   //    }
+   // }
 
    public function answerAssignment(Request $req, Response $res)
    {
@@ -840,6 +856,9 @@ HTML;
 
       $mdl = new AssignmentAnswerModel();
       $mdl->addAnswer($courseId, $assignmentNumber, $type, $content, $student);
+
+      $sAMdl = new StudentAssignmentModel();
+      $sAMdl->updateStatus($courseId, $assignmentNumber, $student, 'answered');
       $res->success('Answer is submitted', ['path' => $content]);
    }
 
@@ -848,14 +867,14 @@ HTML;
       $student = User::$email;
       $courseId = $req->params()->courseId ?? null;
       $assignmentNumber = $req->params()->assignmentNumber ?? null;
-      
+
       if (is_null($assignmentNumber) || is_null($courseId)) {
          $res->error('Invalid Assignment');
       }
 
       $aAMdl = new AssignmentAnswerModel();
       $answers = $aAMdl->getAnswers($courseId, $assignmentNumber, $student);
-      
+
       $count = 0;
       foreach ($answers as $answer) {
          if ($answer['type'] == 'text')

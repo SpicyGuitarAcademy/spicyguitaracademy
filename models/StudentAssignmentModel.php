@@ -32,8 +32,39 @@ class StudentAssignmentModel extends Model
       return $this
          ->where("course_id = $courseId AND assignment_number = $assignmentNumber AND student = '$student'")
          ->update([
-            'rating' => $rating
+            'rating' => $rating,
+            'status' => 'reviewed'
          ]);
+   }
+
+   public function updateStatus($courseId, $assignmentNumber, $student, $status)
+   {
+      return $this
+         ->where("course_id = $courseId AND assignment_number = $assignmentNumber AND student = '$student'")
+         ->update([
+            'status' => $status
+         ]);
+   }
+
+   public function courseAssignmentIsPending($courseId, $student)
+   {
+      return $this
+         ->where("course_id = $courseId AND student = '$student' AND status = 'pending'")
+         ->exist();
+   }
+
+   public function courseAssignmentIsAnswered($courseId, $student)
+   {
+      return $this
+         ->where("course_id = $courseId AND student = '$student' AND status = 'answered'")
+         ->exist();
+   }
+
+   public function courseAssignmentIsReviewed($courseId, $student)
+   {
+      return $this
+         ->where("course_id = $courseId AND student = '$student' AND status = 'reviewed'")
+         ->exist();
    }
 
    public function getAssignmentsForStudent($student, $courseId)
@@ -42,15 +73,15 @@ class StudentAssignmentModel extends Model
          ->read("id, assignment_number, rating");
    }
 
-   public function getUnratedAssignments($courseId, $assignmentNumber)
+   public function getUnreviewedAssignments($courseId, $assignmentNumber)
    {
-      return $this->where("course_id = $courseId AND assignment_number = $assignmentNumber AND rating = 0")
+      return $this->where("course_id = $courseId AND assignment_number = $assignmentNumber AND status = 'answered'")
          ->read("*");
    }
 
-   public function getRatedAssignments($courseId, $assignmentNumber)
+   public function getReviewedAssignments($courseId, $assignmentNumber)
    {
-      return $this->where("course_id = $courseId AND assignment_number = $assignmentNumber")
+      return $this->where("course_id = $courseId AND assignment_number = $assignmentNumber and status = 'reviewed'")
          ->read("*");
    }
 }
