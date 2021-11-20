@@ -94,8 +94,15 @@ $http->csrf()->post('/admin/auth', 'AuthController@authAdminLogin');
 
 // Dashboard
 $http->auth('web')->guard('admin', 'tutor')->get('/admin/dashboard', function (Request $req, Response $res) {
+   $mdl = new NotificationsModel();
+   $notifications = $mdl->getNotifications(User::$email);
+   $adminNotifications = $mdl->getNotifications('admin');
+
    $res->send(
-      $res->render('admin/dashboard.html'),
+      $res->render('admin/dashboard.html', [
+         'notifications' => count($notifications),
+         'adminNotifications' => count($adminNotifications)
+      ]),
       200
    );
 });
@@ -293,11 +300,13 @@ $http->auth('web')->guard('admin', 'tutor')->get('/admin/notifications', functio
    $count = 0;
    foreach ($notifications as $notification) {
       $notifications[$count]['message'] = utf8_decode($notification['message']);
+      $count++;
    }
 
    $count = 0;
    foreach ($adminNotifications as $notification) {
       $adminNotifications[$count]['message'] = utf8_decode($notification['message']);
+      $count++;
    }
 
    $res->send(
@@ -346,6 +355,7 @@ $http->auth('api')->guard('student')->get('/api/notifications', function (Reques
    $count = 0;
    foreach ($notifications as $notification) {
       $notifications[$count]['message'] = utf8_decode($notification['message']);
+      $count++;
    }
 
    $res->success('Your notifications', ["notifications" => $notifications]);
