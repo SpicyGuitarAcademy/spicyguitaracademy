@@ -193,7 +193,7 @@ class AssignmentController
       $rating = round($ratings / $count);
 
       $sCMdl = new StudentCourseModel();
-      $rating = $sCMdl->updateAssignmentRating($courseId, $student, $rating);
+      $sCMdl->updateAssignmentRating($courseId, $student, $rating);
 
       $ratingComment = $rating >= 3
          ? "Congratulations, you have a $rating star rating, you can proceed to the next course."
