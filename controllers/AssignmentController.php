@@ -266,7 +266,7 @@ class AssignmentController
       $cMdl = new CourseModel();
       $courseTitle = $cMdl->getCourse($courseId)[0]['course'];
 
-      $ratingsComment = "You scored a rating of $rating star for Assignment $assignmentNumber in Course: $courseTitle.";
+      $ratingsComment = "You scored a rating of $rating star for Question $assignmentNumber in Course: $courseTitle.";
 
       $amdl = new StudentAssignmentModel();
       $amdl->updateRating($courseId, $assignmentNumber, $student, $rating);
