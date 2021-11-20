@@ -237,11 +237,11 @@ HTML;
       $mdl->addStudentCategory($student, $categoryId);
 
       $category = (new CategoryModel())->getCategoryById($categoryId)[0];
-      (new NotificationsModel())->addNotification($student, "You have have been moved to {$category['category']} Category");
+      (new NotificationsModel())->addNotification($student, "You have been moved to {$category['category']} Category");
 
       $msg = <<<HTML
             <div>
-               <p>You have have been moved to {$category['category']} Category</p>
+               <p>You have been moved to {$category['category']} Category</p>
             </div>
       HTML;
       Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $student, 'Category Changed', 'info@spicyguitaracademy.com:Spicy Guitar Academy');

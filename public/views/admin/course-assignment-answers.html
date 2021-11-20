@@ -75,7 +75,7 @@
 
                @elseif ($question['type'] == 'video')
 
-               <video class="w-50" controls src="@/{{$question['content']}}"></video>
+               <video class="img img-fluid" wid th="500px" hei ght="300px" controls src="@/{{$question['content']}}"></video>
 
                @endif
 
@@ -109,11 +109,11 @@
 
                @elseif ($answer['type'] == 'audio')
 
-               <audio class="w-50" controls src="@/{{$answer['content']}}"></audio>
+               <audio class="w-75" controls src="@/{{$answer['content']}}"></audio>
 
                @elseif ($answer['type'] == 'video')
 
-               <video class="w-50" controls src="@/{{$answer['content']}}"></video>
+               <video class="img img-fluid" wid th="500px" hei ght="300px" controls src="@/{{$answer['content']}}"></video>
 
                @endif
 

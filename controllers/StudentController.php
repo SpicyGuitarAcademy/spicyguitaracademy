@@ -308,8 +308,6 @@ HTML;
             $res->error('The tutors are still reviewing your answer. This might take a while.');
          }
 
-
-
          if ($studentCourseMdl->where("medium = 'NORMAL' AND student_id = '$email' AND course_id = '$courseId'")->exist() == false) {
             $this->makeCourseActive($courseId, $email);
             $res->success('Course activated');
@@ -1078,6 +1076,7 @@ HTML;
 
       $s = new Sanitize();
       $comment = $s->string($comment);
+      $comment = utf8_encode($comment);
 
       if ($categoryId == null) {
          $res->redirect(SERVER . '/admin/chatforums/' . $categoryId);
@@ -1097,23 +1096,23 @@ HTML;
       // if reply id, send notification to sender
       if ($replyId !== '0') {
          $replyMsg = $commentMdl->getMessage($replyId)[0];
-
+         $notificationComment = utf8_decode($comment);
 
          $from = "";
          if ($replyMsg['is_admin'] == '1') {
             $student = (new StudentModel())->getStudent($email)[0];
             $from = "{$student['firstname']} {$student['lastname']}";
-            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply from $from -- $comment", "/admin/chatforums/$categoryId");
+            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply from $from -- $notificationComment", "/admin/chatforums/$categoryId");
          } else {
             $tutor = (new TutorModel())->getTutor($email)[0];
             $from = "Admin {$tutor['firstname']} {$tutor['lastname']}";
-            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply from $from -- $comment", "/forums");
+            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply from $from -- $notificationComment", "/forums");
          }
 
          $msg = <<<HTML
       <div>
          <h3>You have a reply from $from</h3>
-         <p>$comment</p>
+         <p>$notificationComment</p>
       </div>
 HTML;
          Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], "You have a reply from $from", $email);
@@ -1130,7 +1129,8 @@ HTML;
       $replyId = $req->body()->replyId ?? null;
 
       $s = new Sanitize();
-      $comment = $s->string(utf8_encode($comment));
+      $comment = $s->string($comment);
+      $comment = utf8_encode($comment);
 
       if ($categoryId == null) {
          $res->error('Invalid category id');
@@ -1153,21 +1153,22 @@ HTML;
       // if reply id, send notification to sender
       if ($replyId !== null && $replyId > 0) {
          $replyMsg = $commentMdl->getMessage($replyId)[0];
+         $notificationComment = utf8_decode($comment);
 
          if ($replyMsg['is_admin'] == '1') {
             $student = (new StudentModel())->getStudent($email)[0];
             $from = "{$student['firstname']} {$student['lastname']}";
-            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply from $from -- $comment", "/admin/chatforums/$categoryId");
+            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply from $from -- $notificationComment", "/admin/chatforums/$categoryId");
          } else {
             $tutor = (new TutorModel())->getTutor($email)[0];
             $from = "Admin {$tutor['firstname']} {$tutor['lastname']}";
-            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply from $from -- $comment", "/forums");
+            (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply from $from -- $notificationComment", "/forums");
          }
 
          $msg = <<<HTML
       <div>
          <h3>You have a reply from $from</h3>
-         <p>$comment</p>
+         <p>$notificationComment</p>
       </div>
 HTML;
          Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], "You have a reply from $from", $email);

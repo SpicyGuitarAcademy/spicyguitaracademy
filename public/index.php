@@ -290,6 +290,16 @@ $http->auth('web')->guard('admin', 'tutor')->get('/admin/notifications', functio
    $notifications = $mdl->getNotifications(User::$email);
    $adminNotifications = $mdl->getNotifications('admin');
 
+   $count = 0;
+   foreach ($notifications as $notification) {
+      $notifications[$count]['message'] = utf8_decode($notification['message']);
+   }
+
+   $count = 0;
+   foreach ($adminNotifications as $notification) {
+      $adminNotifications[$count]['message'] = utf8_decode($notification['message']);
+   }
+
    $res->send(
       $res->render('admin/notifications.html', [
          "notifications" => json_encode(array_merge($notifications, $adminNotifications))
@@ -332,6 +342,11 @@ $http->get('/api/paystack/key', function (Request $req, Response $res) {
 $http->auth('api')->guard('student')->get('/api/notifications', function (Request $req, Response $res) {
    $mdl = new NotificationsModel();
    $notifications = $mdl->getNotifications(User::$email);
+
+   $count = 0;
+   foreach ($notifications as $notification) {
+      $notifications[$count]['message'] = utf8_decode($notification['message']);
+   }
 
    $res->success('Your notifications', ["notifications" => $notifications]);
 });

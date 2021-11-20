@@ -265,7 +265,7 @@ class AssignmentController
 
       $cMdl = new CourseModel();
       $courseTitle = $cMdl->getCourse($courseId)[0]['course'];
-      
+
       $ratingsComment = "You scored a rating of $rating star for Assignment $assignmentNumber in Course: $courseTitle.";
 
       $amdl = new StudentAssignmentModel();
@@ -379,7 +379,7 @@ class AssignmentController
             $content = $up->uri('content');
          } else if ($type == 'video') {
             // upload answer video
-            $content = ($req->files_exists() == true && $req->files()->image->error == 0) ? $req->files()->image : null;
+            $content = ($req->files_exists() == true && $req->files()->video->error == 0) ? $req->files()->video : null;
             $up = new Upload();
             $up->video('content', $content, "Comment Video was not uploaded", [
                "video/mpeg", "video/mp4", "video/ogg", "video/mp2t", "video/3gpp", "video/webm"
@@ -398,8 +398,22 @@ class AssignmentController
          }
       }
 
-      $notificationContent = $type == 'text' ? $content : 'An ' + $type + ' media file.';
-
+      $notificationContent = "";
+      switch ($type) {
+         case 'text':
+            $notificationContent = utf8_decode($content);
+            break;
+         case 'image':
+            $notificationContent = "An image media file";
+            break;
+         case 'audio':
+            $notificationContent = "An audio media file";
+            break;
+         case 'video':
+            $notificationContent = "A video media file";
+            break;
+      }
+      
       $tutor = (new TutorModel())->getTutor(User::$email)[0];
       (new NotificationsModel())->addNotification($student, "Assignment Review from  Admin {$tutor['firstname']} {$tutor['lastname']} -- $notificationContent");
 
