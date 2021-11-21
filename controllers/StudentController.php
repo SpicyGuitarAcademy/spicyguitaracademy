@@ -984,6 +984,8 @@ HTML;
          exit;
       }
 
+      $s = new Sanitize();
+      $comment = $s->string($comment);
       // encode comment to utf8
       $comment = utf8_encode($comment);
 
@@ -1023,8 +1025,11 @@ HTML;
          <p>$comment</p>
       </div>
 HTML;
-         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, "A new comment on a lesson", $email);
+         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Spicy Guitar Academy", "A new comment on a lesson", $email);
       }
+
+      // send to info account
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Administrator", $receiver, "A new comment on a lesson", $email);
 
       if ($response == true) {
          $res->success('Added successfully');
@@ -1173,6 +1178,8 @@ HTML;
 HTML;
          Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], "You have a reply from $from", $email);
       }
+
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", "You have a reply from $from", $email);
 
       // send notifications to all the admins
       $adMdl = new TutorModel();

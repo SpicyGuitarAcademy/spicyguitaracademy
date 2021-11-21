@@ -93,7 +93,7 @@
                @csrftoken
                <input type="hidden" name="categoryId" value="{{$categoryId}}">
                <input type="hidden" name="replyId" id="replyId" value="0">
-               <textarea name="comment" cols="30" rows="3" maxlength="250" style="resize: none;" placeholder="write message"
+               <textarea name="comment" cols="30" rows="3" maxlength="65535" style="resize: none;" placeholder="write message"
                   class="form-control" required></textarea>
                <div class="d-flex justify-content-end">
                   <button type="button" onclick="location.reload()" class="btn btn-sm py-0 mx-2 mt-2"><span

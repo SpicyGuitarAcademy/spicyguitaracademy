@@ -163,6 +163,8 @@ $http->auth('web')->guard('admin', 'tutor')->privilege('COURSES')->csrf()->delet
 
 // ALTER TABLE `student_assignment` ADD `status` VARCHAR(10) NOT NULL DEFAULT 'pending' COMMENT 'pending, answered, reviewed' AFTER `rating`;
 
+// ALTER TABLE `forums` CHANGE `comment` `comment` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL;
+
 $http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{id}/assignments', 'AssignmentController@index');
 
 $http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{courseId}/assignment/{assignmentNumber}/answers', 'AssignmentController@courseAssignmentAnswers');
@@ -244,6 +246,8 @@ $http->auth('web')->guard('admin', 'tutor')->privilege('FREE LESSONS')->patch('/
 $http->auth('web')->guard('admin', 'tutor')->privilege('STUDENTS')->get('/admin/students', 'TutorController@students');
 
 $http->auth('web')->guard('admin', 'tutor')->privilege('STUDENTS')->get('/admin/student/details', 'TutorController@studentDetails');
+
+$http->auth('web')->guard('admin', 'tutor')->privilege('STUDENTS')->csrf()->patch('/admin/student/details/spicyunits/update', 'TutorController@addSpicyUnits');
 
 $http->auth('web')->guard('admin', 'tutor')->privilege('STUDENTS')->csrf()->patch('/admin/student/details/category/update', 'TutorController@makeCategoryActive');
 

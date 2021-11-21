@@ -224,6 +224,19 @@ HTML;
       );
    }
 
+   public function addSpicyUnits(Request $req, Response $res) {
+      $student = trim($req->body()->student);
+      $units = trim($req->body()->units) ?? 0;
+
+      $sMdl = new StudentModel();
+      $studentDetails = $sMdl->getStudent($student)[0];
+      $referralUnits = $studentDetails['referral_units'];
+      $newReferralUnits = intval($referralUnits) + intval($units);
+
+      $sMdl->updateRefUnits($student, $newReferralUnits);
+      $res->redirect($req->referer());
+   }
+
    public function overrideCategory(Request $req, Response $res)
    {
       $student = trim($req->body()->student);
@@ -361,7 +374,8 @@ HTML;
             'studentname' => $studentname,
             'list' => json_encode($list),
             'authstatus' => $authstatus,
-            'categories' => json_encode($categories)
+            'categories' => json_encode($categories),
+            'referralUnits' => $studentDetails[0]['referral_units']
          ])
       );
    }
