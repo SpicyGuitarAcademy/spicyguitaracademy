@@ -202,8 +202,9 @@ class SubscriptionController
             }
          } else if ($medium == 'paypal') {
 
-            $res->error('Unavailable for now, Please try again later.');
-            exit;
+            // TODO:
+            // $res->error('Unavailable for now, Please try again later.');
+            // exit;
 
             // conversion rate
             $conversion_rate = CurrencyConverter::getNairaToDollarRate();
@@ -469,13 +470,13 @@ class SubscriptionController
                // notify student of subscription details
                (new NotificationsModel())->addNotification(User::$email, "Thank you for subscribing. You have Subscribed to a $planToWords plan. Your Subscription expires ($endDate).");
 
-               $msg = <<<HTML
-                     <div>
-                        <h3>Thank you for subscribing</h3>
-                        <p>You have subscribed to a <b>{$planToWords}</b> plan. Your Subscription expires (<b>$endDate</b>).</p>
-                     </div>
-HTML;
-               Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Subscribing.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+//                $msg = <<<HTML
+//                      <div>
+//                         <h3>Thank you for subscribing</h3>
+//                         <p>You have subscribed to a <b>{$planToWords}</b> plan. Your Subscription expires (<b>$endDate</b>).</p>
+//                      </div>
+// HTML;
+//                Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Subscribing.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
 
                if ($medium == 'paypal' || $medium == 'paystack') {
                   // add spicy units for referral
@@ -604,15 +605,15 @@ HTML;
                // notify student of subscription details
                (new NotificationsModel())->addNotification(User::$email, "Thank you for Buying a Course. You have lifetime Access to this course and all its features.");
 
-               $msg = <<<HTML
-         <div>
-            <h3>Thank you for Buying a Course.</h3>
-            <p>You have lifetime Access to this course and all its features.</p>
+//                $msg = <<<HTML
+//          <div>
+//             <h3>Thank you for Buying a Course.</h3>
+//             <p>You have lifetime Access to this course and all its features.</p>
 
-            <p>Thanks.</p>
-         </div>
-HTML;
-               Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Buying.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
+//             <p>Thanks.</p>
+//          </div>
+// HTML;
+//                Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Buying.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
 
                if ($medium == 'paypal' || $medium == 'paystack') {
                   // add spicy units for referral
