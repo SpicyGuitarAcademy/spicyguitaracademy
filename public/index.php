@@ -298,14 +298,14 @@ $http->auth('web')->guard('admin', 'tutor')->privilege('SEND NOTIFICATIONS')->cs
 // Admin notifications
 $http->auth('web')->guard('admin', 'tutor')->get('/admin/notifications', function (Request $req, Response $res) {
    $mdl = new NotificationsModel();
-   $notifications = $mdl->getNotifications(User::$email);
-   $adminNotifications = $mdl->getNotifications('admin');
-
-   $count = 0;
-   foreach ($notifications as $notification) {
-      $notifications[$count]['message'] = utf8_decode($notification['message']);
-      $count++;
-   }
+   // $notifications = $mdl->getNotifications(User::$email);
+   // $count = 0;
+   // foreach ($notifications as $notification) {
+   //    $notifications[$count]['message'] = utf8_decode($notification['message']);
+   //    $count++;
+   // }
+   
+   $adminNotifications = $mdl->getAdminNotifications(User::$email);
 
    $count = 0;
    foreach ($adminNotifications as $notification) {
@@ -315,7 +315,7 @@ $http->auth('web')->guard('admin', 'tutor')->get('/admin/notifications', functio
 
    $res->send(
       $res->render('admin/notifications.html', [
-         "notifications" => json_encode(array_merge($notifications, $adminNotifications))
+         "notifications" => json_encode($adminNotifications)
       ])
    );
 });
