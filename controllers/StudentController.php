@@ -1170,13 +1170,13 @@ HTML;
             (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply from $from -- $notificationComment", "/forums");
          }
 
-//          $msg = <<<HTML
-//       <div>
-//          <h3>You have a reply from $from</h3>
-//          <p>$notificationComment</p>
-//       </div>
-// HTML;
-//          Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], "You have a reply from $from", $email);
+         $msg = <<<HTML
+      <div>
+         <h3>You have a reply from $from</h3>
+         <p>$notificationComment</p>
+      </div>
+HTML;
+         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], "You have a reply from $from", $email);
       }
 
       // Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", "You have a reply from $from", $email);
