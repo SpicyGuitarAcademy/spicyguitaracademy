@@ -1183,6 +1183,7 @@ HTML;
       // send notifications to all the admins
       $adMdl = new TutorModel();
       $tutors = $adMdl->getTutors();
+      $notificationComment = utf8_decode($comment);
       
       foreach ($tutors as $tutor) {
          
@@ -1194,7 +1195,7 @@ HTML;
          
             $msg = <<<HTML
          <div>
-            <h3>There is a new message on the Forum from {$student['firstname']} {$student['lastname']}</h3>
+            <p>There is a new message on the Forum from {$student['firstname']} {$student['lastname']}</p>
             <p>$notificationComment</p>
          </div>
    HTML;
@@ -1202,7 +1203,7 @@ HTML;
       }
       
       // Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", "You have a reply from $from", $email);
-      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "ebukaodini@gmail.com:Administrator", "You have a reply from $from", $email);
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "ebukaodini@gmail.com:Administrator", "A new message on the Forum", $email);
 
       if ($response == true) {
          $res->success('Added successfully');
