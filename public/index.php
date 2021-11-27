@@ -298,13 +298,6 @@ $http->auth('web')->guard('admin', 'tutor')->privilege('SEND NOTIFICATIONS')->cs
 // Admin notifications
 $http->auth('web')->guard('admin', 'tutor')->get('/admin/notifications', function (Request $req, Response $res) {
    $mdl = new NotificationsModel();
-   // $notifications = $mdl->getNotifications(User::$email);
-   // $count = 0;
-   // foreach ($notifications as $notification) {
-   //    $notifications[$count]['message'] = utf8_decode($notification['message']);
-   //    $count++;
-   // }
-   
    $adminNotifications = $mdl->getAdminNotifications(User::$email);
 
    $count = 0;

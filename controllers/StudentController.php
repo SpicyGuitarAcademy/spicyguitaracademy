@@ -1196,7 +1196,7 @@ HTML;
          $msg = <<<HTML
       <div>
          <h3>There is a new message on the Forum from {$student['firstname']} {$student['lastname']}</h3>
-         <p>$comment</p>
+         <p>$notificationComment</p>
       </div>
 HTML;
          Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, "A new message on the Forum", $email);
