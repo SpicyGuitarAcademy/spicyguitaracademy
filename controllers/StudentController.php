@@ -1201,7 +1201,8 @@ HTML;
             // Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, "A new message on the Forum", $email);
       }
       
-      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", "You have a reply from $from", $email);
+      // Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", "You have a reply from $from", $email);
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "ebukaodini@gmail.com:Administrator", "You have a reply from $from", $email);
 
       if ($response == true) {
          $res->success('Added successfully');
