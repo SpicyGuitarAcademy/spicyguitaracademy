@@ -1179,7 +1179,7 @@ HTML;
          Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], "You have a reply from $from", $email);
       }
 
-      // Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", "You have a reply from $from", $email);
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", "You have a reply from $from", $email);
 
       // send notifications to all the admins
       $adMdl = new TutorModel();
