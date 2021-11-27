@@ -1170,16 +1170,16 @@ HTML;
             (new NotificationsModel())->addNotification($replyMsg['sender'], "You have a reply from $from -- $notificationComment", "/forums");
          }
 
-         $msg = <<<HTML
-      <div>
-         <h3>You have a reply from $from</h3>
-         <p>$notificationComment</p>
-      </div>
-HTML;
-         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], "You have a reply from $from", $email);
+//          $msg = <<<HTML
+//       <div>
+//          <h3>You have a reply from $from</h3>
+//          <p>$notificationComment</p>
+//       </div>
+// HTML;
+//          Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], "You have a reply from $from", $email);
       }
 
-      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", "You have a reply from $from", $email);
+      // Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", "You have a reply from $from", $email);
 
       // send notifications to all the admins
       $adMdl = new TutorModel();
@@ -1193,13 +1193,13 @@ HTML;
          $student = (new StudentModel())->getStudent($email)[0];
          (new NotificationsModel())->addNotification($receiver, "There is a new message on the Forum from {$student['firstname']} {$student['lastname']} -- $comment", "/admin/chatforums/$categoryId");
 
-         $msg = <<<HTML
-      <div>
-         <h3>There is a new message on the Forum from {$student['firstname']} {$student['lastname']}</h3>
-         <p>$notificationComment</p>
-      </div>
-HTML;
-         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, "A new message on the Forum", $email);
+//          $msg = <<<HTML
+//       <div>
+//          <h3>There is a new message on the Forum from {$student['firstname']} {$student['lastname']}</h3>
+//          <p>$notificationComment</p>
+//       </div>
+// HTML;
+//          Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, "A new message on the Forum", $email);
       }
 
       if ($response == true) {
