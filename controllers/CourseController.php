@@ -2,20 +2,16 @@
 
 namespace Controllers;
 
-use Framework\Http\Http;
 use Framework\Http\Request;
 use Framework\Http\Response;
-use App\Services\Auth;
 use App\Services\Validate;
 use App\Services\Sanitize;
 use App\Services\Upload;
 use App\Services\User;
-use DateTime;
 use Framework\Cipher\Encrypt;
 use Models\CategoryModel;
 use Models\CourseModel;
 use Models\LessonModel;
-use Models\AssignmentModel;
 
 class CourseController
 {
@@ -979,36 +975,7 @@ class CourseController
       }
    }
 
-   public function getCourseAssignment(Request $req, Response $res)
-   {
-      $course = $req->params()->course ?? null;
-
-      if (is_null($course)) {
-         //  $res->send(
-         //     $res->json(['status' => false, 'message' => 'Invalid course'])
-         //  ); 
-         $res->error('Invalid course');
-      }
-
-      $s = new Sanitize();
-      $course = $s->numbers($course);
-
-      $mdl = new AssignmentModel();
-      $assignment = $mdl->getAssignment($course)['0'] ?? null;
-
-      if (is_null($assignment)) {
-         //  $res->send(
-         //     $res->json(['status' => false, 'message' => 'No assignment'])
-         //  );
-         $res->error('No assignment');
-      } else {
-         //  $res->send(
-         //     $res->json(['status' => true, 'data' => $assignment])
-         //  );
-         $res->success('Course assignment', $assignment);
-      }
-   }
-
+   
    public function search(Request $req, Response $res)
    {
       $query = $req->query()->q ?? '';
