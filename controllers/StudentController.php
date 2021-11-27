@@ -1184,26 +1184,23 @@ HTML;
       $adMdl = new TutorModel();
       $tutors = $adMdl->getTutors();
       $notificationComment = utf8_decode($comment);
-      
+   
+         $msg = <<<HTML
+      <div>
+         <p>There is a new message on the Forum from {$student['firstname']} {$student['lastname']}</p>
+         <p>$notificationComment</p>
+      </div>
+HTML;
+
       foreach ($tutors as $tutor) {
-         
          $receiver = $tutor['email'];
-         
          // notify the receiver
          $student = (new StudentModel())->getStudent($email)[0];
          (new NotificationsModel())->addNotification($receiver, "There is a new message on the Forum from {$student['firstname']} {$student['lastname']} -- $comment", "/admin/chatforums/$categoryId");
-         
-            $msg = <<<HTML
-         <div>
-            <p>There is a new message on the Forum from {$student['firstname']} {$student['lastname']}</p>
-            <p>$notificationComment</p>
-         </div>
-   HTML;
-            // Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, "A new message on the Forum", $email);
+         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, "A new message on the Forum", $email);
       }
-      
-      // Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", "You have a reply from $from", $email);
-      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "ebukaodini@gmail.com:Administrator", "A new message on the Forum", $email);
+
+      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Administrator", "A new message on the Forum", $email);
 
       if ($response == true) {
          $res->success('Added successfully');
