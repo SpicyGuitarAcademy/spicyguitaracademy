@@ -12,7 +12,6 @@ use Framework\Cipher\Encrypt;
 use Framework\Mail\Mail;
 use Models\AssignmentAnswerModel;
 use Models\TutorModel;
-use Models\AssignmentModel;
 use Models\CourseAssignmentModel;
 use Models\CourseModel;
 use Models\NotificationsModel;

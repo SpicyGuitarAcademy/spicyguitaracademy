@@ -284,8 +284,6 @@ HTML;
          $isAnswered = $sAMdl->courseAssignmentIsAnswered($previousCourseId, $email);
          $isReviewed = $sAMdl->courseAssignmentIsReviewed($previousCourseId, $email);
 
-         // TODO: revisit this logic
-
          $sCMdl = new StudentCourseModel();
          $assignment = $sCMdl->getAssignmentRating($previousCourseId, $email)[0] ?? null;
          $rating = $assignment['assignment_rating'] ?? 0;
@@ -333,8 +331,6 @@ HTML;
       $isPending = $sAMdl->courseAssignmentIsPending($courseId, $email);
       $isAnswered = $sAMdl->courseAssignmentIsAnswered($courseId, $email);
       $isReviewed = $sAMdl->courseAssignmentIsReviewed($courseId, $email);
-
-      // TODO: revisit this logic
 
       $sCMdl = new StudentCourseModel();
       $assignment = $sCMdl->getAssignmentRating($courseId, $email)[0] ?? null;

@@ -203,8 +203,8 @@ class SubscriptionController
          } else if ($medium == 'paypal') {
 
             // TODO:
-            // $res->error('Unavailable for now, Please try again later.');
-            // exit;
+            $res->error('Unavailable for now, Please try again later.');
+            exit;
 
             // conversion rate
             $conversion_rate = CurrencyConverter::getNairaToDollarRate();
@@ -297,8 +297,8 @@ class SubscriptionController
          } else if ($medium == 'paypal') {
 
             // TODO
-            // $res->error('Unavailable for now, Please try again later.');
-            // exit;
+            $res->error('Unavailable for now, Please try again later.');
+            exit;
 
             // conversion rate
             $conversion_rate = CurrencyConverter::getNairaToDollarRate();
