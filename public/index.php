@@ -303,7 +303,8 @@ $http->auth('web')->guard('admin', 'tutor')->get('/admin/notifications', functio
 
    $count = 0;
    foreach ($adminNotifications as $notification) {
-      $adminNotifications[$count]['created_at'] = date("d/m/Y h:m A", $notification['created_at']);
+      $dt = new DateTime($notification['created_at']);
+      $adminNotifications[$count]['created_at'] = date_format($dt, "d/m/Y h:m A", );
       $adminNotifications[$count]['message'] = utf8_decode($notification['message']);
       $count++;
    }
