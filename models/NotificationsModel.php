@@ -24,7 +24,7 @@ class NotificationsModel extends Model
    {
       return $this->where("email = '$email' OR email = 'admin' AND status = 'unread'")
          ->misc('ORDER BY created_at DESC')
-         ->read("*, DATE_FORMAT(created_at,'%d/%m/%y %l:%i %p') as created_at");
+         ->read("*");
    }
 
    public function addNotification($email, $message, $route = '')
