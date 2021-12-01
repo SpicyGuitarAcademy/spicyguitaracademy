@@ -165,6 +165,8 @@ $http->auth('web')->guard('admin', 'tutor')->privilege('COURSES')->csrf()->delet
 
 // ALTER TABLE `forums` CHANGE `comment` `comment` TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL;
 
+// =============
+
 // DROP TABLE `assignment_tbl`
 
 $http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{id}/assignments', 'AssignmentController@index');
