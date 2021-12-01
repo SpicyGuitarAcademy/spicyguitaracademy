@@ -15,9 +15,9 @@ class NotificationsModel extends Model
 
    public function getNotifications($email)
    {
-      return $this->where("email = '$email'")
-         ->misc('ORDER BY status DESC, created_at DESC')
-         ->read("*, DATE_FORMAT(created_at,'%d/%m/%y %l:%i %p') as created_at");
+      return $this->where("email = '$email' AND status = 'unread'")
+         ->misc("ORDER BY created_at DESC")
+         ->read("*");
    }
 
    public function getAdminNotifications($email)

@@ -354,6 +354,8 @@ $http->auth('api')->guard('student')->get('/api/notifications', function (Reques
 
    $count = 0;
    foreach ($notifications as $notification) {
+      $dt = new DateTime($notification['created_at']);
+      $adminNotifications[$count]['created_at'] = date_format($dt, "d/m/Y h:m A", );
       $notifications[$count]['message'] = utf8_decode($notification['message']);
       $count++;
    }
