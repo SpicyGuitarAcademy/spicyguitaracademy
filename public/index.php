@@ -423,6 +423,9 @@ $http->get('/api/student/featuredcourses/all', 'StudentController@allFeaturedCou
 
 $http->auth('api')->guard('student')->get('/api/student/featuredcourses/bought', 'StudentController@boughtFeaturedCourses');
 
+// list lessons in a category
+$http->auth('api')->guard('student')->get('/api/category/{category}/lessons', 'CourseController@getCategoryLessons');
+
 // list lessons in a course
 $http->auth('api')->guard('student')->get('/api/course/{course}/lessons', 'CourseController@getCourseLessons');
 
@@ -442,14 +445,6 @@ $http->auth('api')->guard('student')->post('/api/student/assignment/answer', 'St
 // get a lesson for the student
 $http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}', 'StudentController@getStudentLesson');
 
-// get next lesson in a course
-// $http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}/next', 'StudentController@nextLesson');
-
-// // get previous lesson in a course
-// $http->auth('api')->guard('student')->get('/api/student/lesson/{lesson}/previous', 'StudentController@previousLesson');
-
-// $http->auth('api')->guard('student')->get('/api/courses/search', 'CourseController@search');
-
 $http->auth('api')->guard('student')->post('/api/student/invite-a-friend', 'StudentController@invitefriend');
 
 $http->auth('api')->guard('student')->post('/api/commentlesson', 'StudentController@addLessonComment');
@@ -461,7 +456,9 @@ $http->auth('api')->guard('student')->post('/api/student/avatar/update', 'Studen
 // ->auth('api')->guard('student')
 $http->get('/api/student/freelessons', 'StudentController@freeLessons');
 
+$http->get('/api/student/alllessons', 'StudentController@allLessons');
 
+// /api/category/$studyingCategory/lessons
 
 $http->auth('api')->guard('student')->post('/api/forum/message', 'StudentController@addForumMessage');
 

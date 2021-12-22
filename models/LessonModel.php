@@ -18,6 +18,11 @@ class LessonModel extends Model
       return $this->where("active = true")->read("*");
    }
 
+   public function getLimitedLessons()
+   {
+      return $this->where("active = true")->misc("LIMIT 400")->read("*");
+   }
+
    public function getFreeLessons()
    {
       return $this->where("free = true AND active = true ORDER BY free_order ASC")->read("*");

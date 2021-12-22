@@ -33,7 +33,7 @@ class Upload
       "audio/midi"=>".midi",
       // "audio/x-midi"=>".mid",
       "audio/x-midi"=>".midi",
-      "audio/mpeg"=>".mpeg",
+      "audio/mpeg"=>".mp3",
       "audio/mp3"=>".mp3",
       "audio/webm"=>".weba",
       "audio/3gpp"=>".3gp",

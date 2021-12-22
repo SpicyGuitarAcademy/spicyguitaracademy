@@ -242,7 +242,7 @@ HTML;
             <p>A Spicy Guitar Academy student ($email) wants to reselect another category ($categoryLabel)</p>
          </div>
 HTML;
-         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", 'info@spicyguitaracademy.com', "Re-select Category.", $email);
+         // Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", 'info@spicyguitaracademy.com', "Re-select Category.", $email);
 
          $res->success('Your request to change category is being reviewed. This might take awhile.');
       } else {
@@ -942,6 +942,19 @@ HTML;
       }
    }
 
+   public function allLessons(Request $req, Response $res)
+   {
+      // return all resources
+      $mdl = new LessonModel();
+      $lessons = $mdl->getLimitedLessons();
+
+      if (count($lessons) > 0) {
+         $res->success('All lessons', $lessons);
+      } else {
+         $res->error('No lesson');
+      }
+   }
+
    public function freeLessons(Request $req, Response $res)
    {
       // return all resources
@@ -995,7 +1008,7 @@ HTML;
          <p>$comment</p>
       </div>
 HTML;
-      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, "You have a reply from {$student['firstname']} {$student['lastname']}", $email);
+      // Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $receiver, "You have a reply from {$student['firstname']} {$student['lastname']}", $email);
 
       // send notifications to all the admins
       $adMdl = new TutorModel();
@@ -1018,11 +1031,11 @@ HTML;
          <p>$comment</p>
       </div>
 HTML;
-         Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Spicy Guitar Academy", "A new comment on a lesson", $email);
+         // Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", "info@spicyguitaracademy.com:Spicy Guitar Academy", "A new comment on a lesson", $email);
       }
 
       // send to info account
-      Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Administrator", $receiver, "A new comment on a lesson", $email);
+      // Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Administrator", $receiver, "A new comment on a lesson", $email);
 
       if ($response == true) {
          $res->success('Added successfully');
