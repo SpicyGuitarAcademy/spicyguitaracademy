@@ -74,10 +74,22 @@ class TutorController
    public function notifyStudents(Request $req, Response $res)
    {
       $mdl = new StudentModel();
-      $students = $mdl->getAllStudents();
+      // all students
+      $allStudents = $mdl->getAllStudents();
+      $count = 0;
+      $sSMdl = new StudentSubscriptionModel();
+      foreach ($allStudents as $student) {
+         // subscribed students
+         $allStudents[$count]['hasSubscribed'] =  ($sSMdl->getStudentActiveOrExpiredSubscriptionStatus($student['email'])[0] ?? null) !== null ? true : false;
+         // actively subscribed students
+         $allStudents[$count]['isActivelySubscribed'] = ($sSMdl->getStudentActiveSubscriptionStatus($student['email'])[0] ?? null) !== null ? true : false;
+         // students with featured courses
+         $allStudents[$count]['hasFeaturedCourse'] = ($sSMdl->getSubscribedQuickLessons($student['email'])[0] ?? null) !== null ? true : false;
+         $count++;
+      }
       $res->send(
          $res->render('admin/notifystudents.html', [
-            'students' => json_encode($students)
+            'students' => json_encode($allStudents)
          ])
       );
    }
@@ -224,7 +236,8 @@ HTML;
       );
    }
 
-   public function addSpicyUnits(Request $req, Response $res) {
+   public function addSpicyUnits(Request $req, Response $res)
+   {
       $student = trim($req->body()->student);
       $units = trim($req->body()->units) ?? 0;
 

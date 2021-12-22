@@ -118,7 +118,7 @@ class SubscriptionController
       $email = User::$email;
 
       $studentSubMdl = new StudentSubscriptionModel();
-      $sub = $studentSubMdl->getStudentSubscriptionStatus($email)[0] ?? null;
+      $sub = $studentSubMdl->getStudentActiveSubscriptionStatus($email)[0] ?? null;
 
       if (!is_null($sub)) {
 

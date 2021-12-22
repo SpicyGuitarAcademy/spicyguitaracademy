@@ -43,13 +43,31 @@
 
          <div class="row no-gutters">
             <div class="chats col-12 col-md-4">
-               <div class="w-100 font-weight-bold d-flex justify-content-between align-items-center px-2">
+               <div class="w-100 font-weight-bold px-2">
                   <span>Students</span>
+               </div>
+               <hr class="m-0">
+
+               <div class="px-2">
+                  <p>Filter</p>
                   <div>
-                     <label for="allstudents" class="cursor-pointer">Select All</label>
-                     <input class="cursor-pointer" onchange="allStudent(this);" type="checkbox" id="allstudents">
+                     <input class="mr-2 cursor-pointer" onchange="selectAllStudents(this);" type="checkbox" id="allStudents">
+                     <label for="allStudents" class="cursor-pointer">Select All</label>
+                  </div>
+                  <div>
+                     <input class="mr-2 cursor-pointer" onchange="selectSubscribedStudents(this);" type="checkbox" id="subscribedStudents">
+                     <label for="subscribedStudents" class="cursor-pointer">Select Subscribed Students</label>
+                  </div>
+                  <div>
+                     <input class="mr-2 cursor-pointer" onchange="selectActivelySubscribedStudents(this);" type="checkbox" id="activelySubscribedStudents">
+                     <label for="activelySubscribedStudents" class="cursor-pointer">Select Active Subscribed Students</label>
+                  </div>
+                  <div>
+                     <input class="mr-2 cursor-pointer" onchange="selectStudentsWithFeaturedCourses(this);" type="checkbox" id="studentsWithFeaturedCourse">
+                     <label for="studentsWithFeaturedCourse" class="cursor-pointer">Select Students with Featured Course</label>
                   </div>
                </div>
+
                <hr class="m-0">
 
                <div style="overflow-y: scroll; height: 100%;">
@@ -65,8 +83,10 @@
                         <span>{{$student->firstname}} {{$student->lastname}}</span> <br>
                         <small><b>{{$student->email}}</b></small>
                      </label>
-                     <input class="student cursor-pointer" onchange="updateViewBox();" type="checkbox" name="students[]"
-                        id="{{$student->email}}" value="{{$student->email}}">
+                     <input
+                        class="student {{$student->hasSubscribed ? 'hasSubscribed' : ''}} {{$student->isActivelySubscribed ? 'isActivelySubscribed' : ''}} {{$student->hasFeaturedCourse ? 'hasFeaturedCourse' : ''}} cursor-pointer"
+                        onchange="updateViewBox();" type="checkbox" name="students[]" id="{{$student->email}}"
+                        value="{{$student->email}}">
                   </div>
                   @endforeach
                   @endif
@@ -95,7 +115,7 @@
             </div>
 
          </div>
-     
+
       </form>
 
       <script>
@@ -112,8 +132,29 @@
             })
          }
 
-         function allStudent(e) {
+         function selectAllStudents(e) {
             document.querySelectorAll('input[type=checkbox].student').forEach((box) => {
+               box.checked = e.checked;
+            });
+            updateViewBox()
+         }
+
+         function selectSubscribedStudents(e) {
+            document.querySelectorAll('input[type=checkbox].student.hasSubscribed').forEach((box) => {
+               box.checked = e.checked;
+            });
+            updateViewBox()
+         }
+
+         function selectActivelySubscribedStudents(e) {
+            document.querySelectorAll('input[type=checkbox].student.isActivelySubscribed').forEach((box) => {
+               box.checked = e.checked;
+            });
+            updateViewBox()
+         }
+
+         function selectStudentsWithFeaturedCourses(e) {
+            document.querySelectorAll('input[type=checkbox].student.hasFeaturedCourse').forEach((box) => {
                box.checked = e.checked;
             });
             updateViewBox()
