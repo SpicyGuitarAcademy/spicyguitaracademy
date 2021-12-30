@@ -60,7 +60,7 @@
          <table class="table table-striped table-hover text-center border border-primary">
             <thead class="bg-primary text-light">
                <tr>
-                  <td></td>
+                  <td>ID</td>
                   <td>Email</td>
                   <td>Transaction&nbsp;Reference</td>
                   <td>Service</td>
@@ -73,7 +73,7 @@
 
             <tbody>
 
-               @php $count = 1;
+               @php $count = $start + 1;
                @foreach ($transactions as $transaction)
 
                <tr>
@@ -93,10 +93,10 @@
                      @php $list = ['','1','3', '6', '12']
                      @php $extract = substr("{$transaction->txnref}", 4, 2); $service = "";
                      @if ($extract[0] == "N")
-                        @php $service = "Paid for {$list[$extract[1]]} months subscription plan";
+                     @php $service = "Paid for {$list[$extract[1]]} months subscription plan";
                      @endif
                      @if ($extract[0] == "Q")
-                        @php $service = "Bought a featured course with ID: {$extract[1]}";
+                     @php $service = "Bought a featured course with ID: {$extract[1]}";
                      @endif
                      {{$service}}
                   </td>
@@ -123,6 +123,22 @@
             </tbody>
 
          </table>
+
+         <div class="d-flex justify-content-between align-items-center">
+            @php $prev = $page - 1;
+            <a href="@/admin/transactions?page={{$prev}}" class="btn btn-primary btn-sm">
+               Previous
+            </a>
+            <span>page {{$page}} of {{$total}}</span>
+            @php $next = $page + 1;
+            @if ($next <= $total)
+            <a href="@/admin/transactions?page={{$next}}" class="btn btn-primary btn-sm">
+               Next
+            </a>
+            @else
+            <button class="btn btn-primary btn-sm" disabled>Next</button>
+            @endif
+         </div>
 
       </div>
 
