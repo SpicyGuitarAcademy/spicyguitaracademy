@@ -546,6 +546,35 @@ HTML;
       $res->success('Studying courses', $ncourse);
    }
 
+   public function previousStudyingCourses(Request $req, Response $res)
+   {
+      // temporary
+      $email = User::$email;
+      $categoryId = $req->params()->category ?? null;
+
+      if ($categoryId == null) {
+         $res->error('No active category');
+      }
+
+      $courseMdl = new CourseModel();
+      $lessonMdl = new LessonModel();
+      $studentCourseMdl = new StudentCourseModel();
+      $studentLessonMdl = new StudentLessonModel();
+
+      $courses = $courseMdl->getCoursesByCategory($categoryId);
+      $ncourse = [];
+      foreach ($courses as $course) {
+         $id = $course['id'];
+         $course['status'] = $studentCourseMdl->where("course_id = '$id' AND student_id = '$email' AND medium = 'NORMAL'")->exist();
+         $course['done'] = "" . $studentLessonMdl->countNormalLessonsTakenByStudent($email, $id) . "";
+         $course['total'] = "" . count($lessonMdl->getLessonsByCourse($id)) . "" ?? "0";
+         //  $course['total'] = $stats[1];
+         $ncourse[] = $course;
+      }
+
+      $res->success('Studying courses', $ncourse);
+   }
+
    public function allFeaturedCourses(Request $req, Response $res)
    {
       $email = User::$email;
@@ -609,6 +638,44 @@ HTML;
       // get the active category
       $mdl = new StudentCategoryModel();
       $categoryId = $mdl->getActiveCategory($email)[0]['category_id'] ?? null;
+
+      if (!is_null($categoryId)) {
+
+         // takenCourses: count all courses in the student course tbl with the current category id
+         // allCourses: count all courses in the course tbl with the current category id
+         // takenLessons: count all lessons in the student lesson tbl with their course id as one of the takenCourses
+         // allLessons: count all lessons in the lesson tbl with their course id as one of the allCourses
+
+         $studentCourseMdl = new StudentCourseModel();
+         $courseMdl = new CourseModel();
+         $studentLessonMdl = new StudentLessonModel();
+         $lessonMdl = new LessonModel();
+
+         $countCoursesDone = count($studentCourseMdl->where("student_id = '$email' AND category_id = '$categoryId' AND medium = 'NORMAL'")->read("*") ?? []);
+
+         $countCoursesTotal = count($courseMdl->where("category = '$categoryId' AND active = 1")->read("*") ?? []);
+
+         $countLessonsDone = count($studentLessonMdl->custom("SELECT * FROM student_lesson_tbl WHERE course_id IN (SELECT course_id FROM student_course_tbl WHERE student_id = '$email' AND category_id = '$categoryId') AND medium = 'NORMAL' AND student_id = '$email'", true) ?? []);
+
+         $countLessonsTotal = count($lessonMdl->custom("SELECT * FROM lesson_tbl WHERE course IN (SELECT id FROM course_tbl WHERE category = '$categoryId' AND active = 1) AND active = 1", true) ?? []);
+
+         $res->success('Student statistics', [
+            "takenCourses" => $countCoursesDone,
+            "allCourses" => $countCoursesTotal,
+            "takenLessons" => $countLessonsDone,
+            "allLessons" => $countLessonsTotal,
+            "category" => intval($categoryId)
+         ]);
+      } else {
+         $res->error('No Courses or Lessons taken');
+      }
+   }
+
+   public function previousStats(Request $req, Response $res)
+   {
+      // temporary
+      $email = User::$email;
+      $categoryId = $req->params()->category ?? null;
 
       if (!is_null($categoryId)) {
 
@@ -1185,13 +1252,13 @@ HTML;
          Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", $replyMsg['sender'], "You have a reply from $from", $email);
       }
 
-      
+
       // send notifications to all the admins
       $adMdl = new TutorModel();
       $tutors = $adMdl->getTutors();
       $notificationComment = utf8_decode($comment);
-   
-         $msg = <<<HTML
+
+      $msg = <<<HTML
       <div>
          <p>There is a new message on the Forum from {$student['firstname']} {$student['lastname']}</p>
          <p>$notificationComment</p>
@@ -1288,6 +1355,22 @@ HTML;
       } else {
          $res->error("Message was not sent, please try again");
       }
+   }
+
+   public function getPreviousCategories(Request $req, Response $res)
+   {
+      $catMdl = new CategoryModel();
+      $mdl = new StudentCategoryModel();
+      $categories = $mdl->listStudentCategory(User::$email);
+
+      $count = 0;
+      foreach ($categories as $item) {
+         // get category label
+         $categories[$count]['categoryLabel'] = $catMdl->getCategoryById($item['category_id'])[0]['category'];
+         $count++;
+      }
+
+      $res->success('Student previous cateogries', $categories);
    }
 
    public function func(Request $req, Response $res)

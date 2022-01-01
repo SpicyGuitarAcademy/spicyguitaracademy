@@ -1,11 +1,7 @@
 <?php
 // namespace App;
 
-use App\Services\CurrencyConverter;
-use App\Services\PayPalClient;
-// use App\Services\PaypalService;
 use App\Services\User;
-use Framework\Handler\IException;
 use Framework\Http\Http;
 use Framework\Http\Request;
 use Framework\Http\Response;
@@ -304,7 +300,7 @@ $http->auth('web')->guard('admin', 'tutor')->get('/admin/notifications', functio
    $count = 0;
    foreach ($adminNotifications as $notification) {
       $dt = new DateTime($notification['created_at']);
-      $adminNotifications[$count]['created_at'] = date_format($dt, "d/m/Y h:m A", );
+      $adminNotifications[$count]['created_at'] = date_format($dt, "d/m/Y h:m A",);
       $adminNotifications[$count]['message'] = utf8_decode($notification['message']);
       $count++;
    }
@@ -355,7 +351,7 @@ $http->auth('api')->guard('student')->get('/api/notifications', function (Reques
    $count = 0;
    foreach ($notifications as $notification) {
       $dt = new DateTime($notification['created_at']);
-      $adminNotifications[$count]['created_at'] = date_format($dt, "d/m/Y h:m A", );
+      $adminNotifications[$count]['created_at'] = date_format($dt, "d/m/Y h:m A",);
       $notifications[$count]['message'] = utf8_decode($notification['message']);
       $count++;
    }
@@ -394,13 +390,19 @@ $http->auth('api')->guard('student')->post('/api/subscription/{medium}/verify-fe
 // student statistics
 $http->auth('api')->guard('student')->get('/api/student/statistics', 'StudentController@stats');
 
+$http->auth('api')->guard('student')->get('/api/student/statistics/previous/{{category}}', 'StudentController@previousStats');
+
 // student selects a cateogry
 $http->auth('api')->guard('student')->post('/api/student/category/select', 'StudentController@chooseCategory');
 
 // student selects another cateogry
 $http->auth('api')->guard('student')->post('/api/student/category/re-select', 'StudentController@rechooseCategory');
 
+// student completes a category
 $http->auth('api')->guard('student')->post('/api/student/category/complete', 'StudentController@completeCategory');
+
+// get previously studied categories
+$http->auth('api')->guard('student')->get('/api/student/category/previous', 'StudentController@getPreviousCategories');
 
 // make course active
 $http->auth('api')->guard('student')->post('/api/student/course/activate', 'StudentController@activateNormalCourse');
@@ -416,6 +418,8 @@ $http->auth('api')->guard('student')->get('/api/student/courses/all', 'StudentCo
 
 // list student studying course
 $http->auth('api')->guard('student')->get('/api/student/courses/studying', 'StudentController@studyingCourses');
+
+$http->auth('api')->guard('student')->get('/api/student/courses/studying/previous/{{category}}', 'StudentController@previousStudyingCourses');
 
 // list all featured courses
 // ->auth('api')->guard('student')
@@ -459,6 +463,69 @@ $http->get('/api/student/freelessons', 'StudentController@freeLessons');
 $http->get('/api/student/alllessons', 'StudentController@allLessons');
 
 // /api/category/$studyingCategory/lessons
+
+// $http->auth('api')->guard('student')->post('/api/forum/message', function (Request $req, Response $res) {
+
+//    /* Allow the script to hang around waiting for connections. */
+//    set_time_limit(0);
+
+//    /* Turn on implicit output flushing so we see what we're getting as it comes in. */
+//    ob_implicit_flush();
+
+//    // $address = '192.168.1.53';
+//    // https://spicyguitaracademy.com/
+//    $address = SERVER;
+//    $port = 8080;
+
+//    if (($sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) === false) {
+//       echo "socket_create() failed: reason: " . socket_strerror(socket_last_error()) . "\n";
+//    }
+
+//    if (socket_bind($sock, $address, $port) === false) {
+//       echo "socket_bind() failed: reason: " . socket_strerror(socket_last_error($sock)) . "\n";
+//    }
+
+//    if (socket_listen($sock, 5) === false) {
+//       echo "socket_listen() failed: reason: " . socket_strerror(socket_last_error($sock)) . "\n";
+//    }
+
+//    do {
+//       if (($msgsock = socket_accept($sock)) === false) {
+//          echo "socket_accept() failed: reason: " . socket_strerror(socket_last_error($sock)) . "\n";
+//          break;
+//       }
+//       /* Send instructions. */
+//       $msg = "\nWelcome to the PHP Test Server. \n" .
+//          "To quit, type 'quit'. To shut down the server type 'shutdown'.\n";
+//       socket_write($msgsock, $msg, strlen($msg));
+
+//       do {
+//          if (false === ($buf = socket_read($msgsock, 2048, PHP_NORMAL_READ))) {
+//             echo "socket_read() failed: reason: " . socket_strerror(socket_last_error($msgsock)) . "\n";
+//             break 2;
+//          }
+//          if (!$buf = trim($buf)) {
+//             continue;
+//          }
+//          if ($buf == 'quit') {
+//             break;
+//          }
+//          if ($buf == 'shutdown') {
+//             socket_close($msgsock);
+//             break 2;
+//          }
+
+//          $talkback = "PHP: You said '$buf'.\n";
+//          socket_write($msgsock, $talkback, strlen($talkback));
+//          echo "$buf\n";
+         
+//       } while (true);
+
+//       socket_close($msgsock);
+//    } while (true);
+
+//    socket_close($sock);
+// });
 
 $http->auth('api')->guard('student')->post('/api/forum/message', 'StudentController@addForumMessage');
 
