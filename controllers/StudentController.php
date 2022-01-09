@@ -105,7 +105,7 @@ class StudentController
          // Notify Student
          (new NotificationsModel())->addNotification($email, "Hi, $firstname. Welcome to Spicy Guitar Academy. Spicy Guitar Academy is aimed at guiding beginners to fulfill their dreams of becoming professional guitar players. Please verify your account");
 
-         (new NotificationsModel())->addNotification($email, "Hi, $firstname. Invite your friends to Spicy Guitar Academy with your referral code $refCode and Win Spicy Units everytime they subscribe or buy a Featured Course. You can use these Spicy Units to buy Featured Courses you find interesting.");
+         (new NotificationsModel())->addNotification($email, "Hi, $firstname. Invite your friends to Spicy Guitar Academy with your referral code $refCode and receive Spicy Unit when ever they Subscribe or buy Courses. You can use your Spicy Units to either subscribe or buy courses.");
 
          $msg = <<<HTML
          <div>
@@ -118,7 +118,9 @@ class StudentController
 
             <p>Use this token <b>$token</b> to verify your account.</p>
 
-            <p>You can also invite your friends to Spicy Guitar Academy with your referral code <b>$refCode</b> and WIN Spicy Units everytime they subscribe or buy a Featured Course. You can use these Spicy Units to buy Featured Courses you find interesting.</p>
+            <p>You can also invite your friends to Spicy Guitar Academy with your referral code <b>$refCode</b> and receive Spicy Unit when ever they Subscribe or buy Courses.</p>
+            
+            <p>You can use your Spicy Units to either subscribe or buy courses.</p>
 
          </div>
 HTML;

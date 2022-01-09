@@ -20,7 +20,7 @@ class LessonModel extends Model
 
    public function getLimitedLessons()
    {
-      return $this->where("active = true")->misc("LIMIT 400")->read("*");
+      return $this->where("active = true")->misc("ORDER BY RAND() LIMIT 50")->read("*");
    }
 
    public function getFreeLessons()

@@ -169,6 +169,8 @@ $http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/adm
 
 $http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{courseId}/assignment/{assignmentNumber}/answers', 'AssignmentController@courseAssignmentAnswers');
 
+$http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/assignments', 'AssignmentController@coursesAssignments');
+
 $http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->get('/admin/courses/{courseId}/assignments/{student}/ratings', 'AssignmentController@studentAssignmentRatings');
 
 $http->auth('web')->guard('admin', 'tutor')->privilege('ASSIGNMENTS')->csrf()->patch('/admin/assignment/update-average-rating', 'AssignmentController@updateAverageRating');
@@ -427,9 +429,6 @@ $http->get('/api/student/featuredcourses/all', 'StudentController@allFeaturedCou
 
 $http->auth('api')->guard('student')->get('/api/student/featuredcourses/bought', 'StudentController@boughtFeaturedCourses');
 
-// list lessons in a category
-$http->auth('api')->guard('student')->get('/api/category/{category}/lessons', 'CourseController@getCategoryLessons');
-
 // list lessons in a course
 $http->auth('api')->guard('student')->get('/api/course/{course}/lessons', 'CourseController@getCourseLessons');
 
@@ -457,7 +456,6 @@ $http->auth('api')->guard('student')->get('/api/lesson/{lessonId}/comments', 'St
 
 $http->auth('api')->guard('student')->post('/api/student/avatar/update', 'StudentController@uploadAvatar');
 
-// ->auth('api')->guard('student')
 $http->get('/api/student/freelessons', 'StudentController@freeLessons');
 
 $http->get('/api/student/alllessons', 'StudentController@allLessons');

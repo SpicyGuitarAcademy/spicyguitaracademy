@@ -52,6 +52,25 @@ class AssignmentController
       }
    }
 
+   public function coursesAssignments(Request $req, Response $res)
+   {
+      $sAMdl = new StudentAssignmentModel();
+      $ratedAssignments = [];
+      $unratedAssignments = [];
+
+      $unratedAssignments = $sAMdl->getAllUnreviewedAssignments();
+      $ratedAssignments = $sAMdl->getAllReviewedAssignments();
+
+      // exit(json_encode($unratedAssignments));
+      
+      $res->send(
+         $res->render('admin/courses-assignments.html', [
+            "ratedAssignments" => json_encode($ratedAssignments),
+            "unratedAssignments" => json_encode($unratedAssignments),
+         ])
+      );
+   }
+
    public function courseAssignmentAnswers(Request $req, Response $res)
    {
       $courseId = $req->params()->courseId;
@@ -412,7 +431,7 @@ class AssignmentController
             $notificationContent = "A video media file";
             break;
       }
-      
+
       $tutor = (new TutorModel())->getTutor(User::$email)[0];
       (new NotificationsModel())->addNotification($student, "Assignment Review from  Admin {$tutor['firstname']} {$tutor['lastname']} -- $notificationContent");
 

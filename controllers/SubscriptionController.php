@@ -465,15 +465,14 @@ class SubscriptionController
                $mdl->addStudentSubscription(User::$email, $reference, $plan, 0, $start, $end);
                
                $planToWords = $this->planToWords($plan);
-               $endDate = date("d-m-Y H:i:s", $end);
 
                // notify student of subscription details
-               (new NotificationsModel())->addNotification(User::$email, "Thank you for subscribing. You have Subscribed to a $planToWords plan. Your Subscription expires ($endDate).");
+               (new NotificationsModel())->addNotification(User::$email, "Thank you for subscribing. You have Subscribed to a $planToWords plan. Your Subscription expires ($end).");
 
                $msg = <<<HTML
                      <div>
                         <h3>Thank you for subscribing</h3>
-                        <p>You have subscribed to a <b>{$planToWords}</b> plan. Your Subscription expires (<b>$endDate</b>).</p>
+                        <p>You have subscribed to a <b>{$planToWords}</b> plan. Your Subscription expires (<b>$end</b>).</p>
                      </div>
 HTML;
                Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Subscribing.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
@@ -705,15 +704,14 @@ HTML;
                $sMdl->updateRefUnits(User::$email, ($spicyUnits - $price));
 
                $planToWords = $this->planToWords($plan);
-               $endDate = date("d-m-Y H:i:s", $end);
 
                // notify student of subscription details
-               (new NotificationsModel())->addNotification(User::$email, "Thank you for subscribing. You have Subscribed to a $planToWords plan. Your Subscription expires ($endDate).");
+               (new NotificationsModel())->addNotification(User::$email, "Thank you for subscribing. You have Subscribed to a $planToWords plan. Your Subscription expires ($end).");
 
                $msg = <<<HTML
                      <div>
                         <h3>Thank you for subscribing</h3>
-                        <p>You have subscribed to a <b>{$planToWords}</b> plan. Your Subscription expires (<b>$endDate</b>).</p>
+                        <p>You have subscribed to a <b>{$planToWords}</b> plan. Your Subscription expires (<b>$end</b>).</p>
                      </div>
 HTML;
                Mail::asHTML($msg)->send("info@spicyguitaracademy.com:Spicy Guitar Academy", User::$email, "Thank You For Subscribing.", 'info@spicyguitaracademy.com:Spicy Guitar Academy');
@@ -842,3 +840,9 @@ HTML;
       $res->success('Subscription plans', $plans);
    }
 }
+
+
+$date = date_create();
+date_add($date, date_interval_create_from_date_string('12 Months'));
+$end = date_format($date, "Y-m-d H:i:s");
+echo $end;

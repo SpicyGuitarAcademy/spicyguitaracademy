@@ -51,7 +51,7 @@
             <div class="border rounded p-2 my-2">
                <div>
                   @if ($notification->email == 'admin')
-                     <span class="fa fa-shield text-primary"></span>
+                  <span class="fa fa-shield text-primary"></span>
                   @endif
                   <span>{{$notification->message}}</span> <br>
                   <small><b>{{$notification->created_at}}</b></small>

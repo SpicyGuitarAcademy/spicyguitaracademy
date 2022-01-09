@@ -933,35 +933,6 @@ class CourseController
       }
    }
 
-   public function getCategoryLessons(Request $req, Response $res)
-   {
-      $category = $req->params()->category ?? null;
-
-      if (!is_null($category)) {
-
-         $s = new Sanitize();
-         $course = $s->numbers($category);
-
-         $cMdl = new CourseModel();
-         $courses = $cMdl->getCoursesByCategory($category);
-
-         $lMdl = new LessonModel();
-         $lessons = [];
-
-         foreach ($courses as $course) {
-            $lessons =  array_merge($lessons, $lMdl->getLessonsByCourse($course['id']));
-         }
-
-         if (count($lessons) > 0) {
-            $res->success('Category lessons', $lessons);
-         } else {
-            $res->error('No lessons');
-         }
-      } else {
-         $res->error('Invalid category');
-      }
-   }
-
    public function getApiFeaturedCourseLessons(Request $req, Response $res)
    {
       $course = $req->params()->course ?? null;

@@ -84,4 +84,16 @@ class StudentAssignmentModel extends Model
       return $this->where("course_id = $courseId AND assignment_number = $assignmentNumber and status = 'reviewed'")
          ->read("*");
    }
+
+   public function getAllUnreviewedAssignments()
+   {
+      return $this->where("student_assignment.status = 'answered' AND student_assignment.course_id = course_tbl.id")
+      ->readJoin("student_assignment, course_tbl", "student_assignment.*, course_tbl.course");
+   }
+
+   public function getAllReviewedAssignments()
+   {
+      return $this->where("student_assignment.status = 'reviewed' AND student_assignment.course_id = course_tbl.id")
+      ->readJoin("student_assignment, course_tbl", "student_assignment.*, course_tbl.course");
+   }
 }

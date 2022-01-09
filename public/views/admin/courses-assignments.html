@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Courses Assignments | Spicy Guitar Academy</title>
+   <link rel="shortcut icon" href="@assets/imgs/spicy_logo.png" type="image/x-icon">
+
+   <!-- Jquery -->
+   <script src="@assets/js/jquery.min.js"></script>
+   <!-- Popper -->
+   <script src="@assets/js/popper.min.js"></script>
+   <!-- Bootstrap -->
+   <script src="@assets/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="@assets/css/bootstrap.css">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="@assets/css/fontawesome.css">
+   <!-- Custom -->
+   <script src="@assets/js/main.js"></script>
+   <link rel="stylesheet" href="@assets/css/main.css">
+
+</head>
+
+<body class="bg-light">
+
+   @vars
+
+   @import admin/header.html
+
+   @php $ratedAssignments = json_decode($ratedAssignments, true);
+   @php $unratedAssignments = json_decode($unratedAssignments, true);
+
+   <nav class="container my-4 h4">
+      <a href="@/admin/courses">
+         <div class="float-left">
+            <i class="fa fa-list-ul"></i>
+            Courses
+         </div>
+      </a>&nbsp;/&nbsp;
+      <span class="h5">Assignments</span>
+
+   </nav>
+
+   <main class="container my-5">
+
+      <div class="row no-gutters">
+
+         <aside class="col-lg-3">
+            <nav class="nav">
+               <ul type="none" class="">
+                  <li>
+                     <a style="cursor: pointer;" onclick="show('#unrated-assignments');"
+                        class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Unrated
+                        Assignments</a>
+                  </li>
+                  <li>
+                     <a style="cursor: pointer;" onclick="show('#rated-assignments');"
+                        class="nav-link my-4 border-bottom border-primary text-dark h5 font-weight-normal">Rated
+                        Assignments</a>
+                  </li>
+               </ul>
+            </nav>
+         </aside>
+
+         <div class="col-lg-8 mx-auto">
+
+            <!-- unrated assignments -->
+            <section id="unrated-assignments" class="col-lg-8" style="display: none;">
+
+               <h3 class="text-primary mb-4">Unrated Assignments</h3>
+
+               @if ($unratedAssignments == [])
+               <div class="alert show text-dark text-center">
+                  There are no rated assignments.
+               </div>
+               @else
+
+               @foreach ($unratedAssignments as $assignment)
+               <div class="container border border-primary rounded p-3 mb-3">
+                  <a href="@/admin/courses/{{$assignment['course_id']}}/assignments/{{$assignment['student']}}/ratings">
+                     <h5>{{$assignment['course']}}</h5>
+                     <span>{{$assignment['student']}}</span>
+                  </a>
+               </div>
+               @endforeach
+               @endif
+
+            </section>
+
+            <!-- rated-assignments -->
+            <section id="rated-assignments" class="col-lg-8" style="display: none;">
+
+               <h3 class="text-primary mb-4">Rated Assignments</h3>
+
+               @if ($ratedAssignments == [])
+               <div class="alert show text-dark text-center">
+                  There are no rated assignments.
+               </div>
+               @else
+
+               @foreach ($ratedAssignments as $assignment)
+               <div class="container border border-primary rounded p-3 mb-3">
+                  <a href="@/admin/courses/{{$assignment['course_id']}}/assignments/{{$assignment['student']}}/ratings">
+                     <h5>{{$assignment['course']}}</h5>
+                     <span>{{$assignment['student']}}</span>
+                  </a>
+               </div>
+               @endforeach
+               @endif
+
+            </section>
+
+         </div>
+
+      </div>
+
+   </main>
+
+   <script>
+      window.onload = () => show('#unrated-assignments');
+      function show(id) {
+         hide();
+         $(id).show();
+      }
+
+      function hide() {
+         $('#rated-assignments').hide();
+         $('#unrated-assignments').hide();
+      }
+   </script>
+
+</body>
+
+</html>
