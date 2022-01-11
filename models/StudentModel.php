@@ -13,12 +13,15 @@ class StudentModel extends Model
 
    public function getAllStudents()
    {
-      return $this->read('*');
+      return $this->misc("ORDER BY date_added DESC")
+         ->read('*');
    }
 
    public function searchAllStudents($query)
    {
-      return $this->where("email LIKE '%$query%' OR firstname LIKE '%$query%' OR lastname LIKE '%$query%'")->read('*');
+      return $this->where("email LIKE '%$query%' OR firstname LIKE '%$query%' OR lastname LIKE '%$query%'")
+         ->misc("ORDER BY date_added DESC")
+         ->read('*');
    }
 
    // write wonderful model codes...

@@ -29,11 +29,14 @@
 
    @import admin/header.html
 
+   @php $students = json_decode($students);
+   @php $count = count($students);
+
    <nav class="container my-4 h4 d-flex justify-content-between align-items-center">
       <a href="@/admin/students">
          <div>
             <i class="fa fa-graduation-cap"></i>
-            Students
+            Students ({{$count}})
          </div>
       </a>
 
@@ -52,7 +55,6 @@
       </div>
       @endif
 
-      @php $students = json_decode($students);
       @if ($students == [])
       <div class="alert show text-dark text-center alert-dismissible">
          There are no students.

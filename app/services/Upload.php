@@ -18,7 +18,7 @@ class Upload
       "image/webp"=>".webp",
       // Video types
       "video/x-msvideo"=>".avi",
-      "video/mpeg"=>".mpeg",
+      "video/mpeg"=>".mp4",
       "video/mp4"=>".mp4",
       "video/ogg"=>".ogv",
       "video/mp2t"=>".ts",

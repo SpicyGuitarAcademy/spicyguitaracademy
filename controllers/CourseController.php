@@ -980,12 +980,6 @@ class CourseController
       $mdl = new CourseModel();
       $result = $mdl->search($query);
 
-      //   $res->send(
-      //      $res->json([
-      //         "result"=>$result
-      //      ])
-      //   );
-
       if (count($result) > 0) {
          $res->success('Search results', $result);
       } else {
